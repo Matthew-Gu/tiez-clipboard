@@ -3,7 +3,7 @@ import type { DragControls } from "framer-motion";
 import type { ClipboardEntry, Locale } from "../../shared/types";
 
 export interface QuickPasteHint {
-  slot: string;
+  slot: number;
   combo: string;
 }
 
@@ -15,19 +15,21 @@ export interface ClipboardItemProps {
   isRevealed: boolean;
   isEditingTags: boolean;
   tagInput: string;
+  /** Tags used elsewhere in history; shown as quick-pick when editing tags */
+  tagSuggestions?: string[];
   theme: string;
   language: Locale;
   t: (key: string) => string;
-  quickPasteHint?: QuickPasteHint;
-  showSourceAppIcon?: boolean;
   isAIProcessing?: boolean;
   aiEnabled?: boolean;
   tagColors?: Record<string, string>;
   aiOptionsOpen?: boolean;
   richTextSnapshotPreview?: boolean;
+  showSourceAppIcon?: boolean;
   sensitiveMaskPrefixVisible?: number;
   sensitiveMaskSuffixVisible?: number;
   sensitiveMaskEmailDomain?: boolean;
+  quickPasteHint?: QuickPasteHint;
 
   onSelect: () => void;
   onCopy: (withFormat?: boolean) => void;
@@ -38,6 +40,10 @@ export interface ClipboardItemProps {
   onToggleTagEditor: (e: MouseEvent) => void;
   onTagInput: (val: string) => void;
   onTagAdd: () => void;
+  /** Pick an existing tag from the suggestion list (typically closes editor after add) */
+  onTagPick?: (tag: string) => void;
+  /** Close tag editor without adding (e.g. Escape) */
+  onTagEditCancel?: () => void;
   onTagDelete: (tag: string) => void;
   onAIAction?: (type: string) => void;
   onAIOptionsToggle?: () => void;

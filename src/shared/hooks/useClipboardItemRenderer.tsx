@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+
+const EMPTY_TAG_SUGGESTIONS: string[] = [];
 import type { Dispatch, SetStateAction, MouseEvent, ReactNode } from "react";
 import type { DragControls } from "framer-motion";
 import ClipboardItem from "../../features/clipboard/components/ClipboardItem";
@@ -14,12 +16,13 @@ interface UseClipboardItemRendererOptions {
   isWindowPinned: boolean;
   editingTagsId: number | null;
   tagInput: string;
+  allTags: string[];
   tagColors: Record<string, string>;
   theme: string;
   language: Locale;
   t: (key: string) => string;
-  compactMode: boolean;
   showSourceAppIcon: boolean;
+  compactMode: boolean;
   richTextSnapshotPreview: boolean;
   sensitiveMaskPrefixVisible: number;
   sensitiveMaskSuffixVisible: number;
@@ -33,7 +36,9 @@ interface UseClipboardItemRendererOptions {
     id: number,
     content: string,
     contentType: string,
-    pasteWithFormat?: boolean
+    pasteWithFormat?: boolean,
+    isPinned?: boolean,
+    tags?: string[]
   ) => Promise<void>;
   setSelectedIndex: Dispatch<SetStateAction<number>>;
   setRevealedIds: Dispatch<SetStateAction<Set<number>>>;
@@ -61,12 +66,13 @@ export const useClipboardItemRenderer = ({
   isWindowPinned,
   editingTagsId,
   tagInput,
+  allTags,
   tagColors,
   theme,
   language,
   t,
-  compactMode,
   showSourceAppIcon,
+  compactMode,
   richTextSnapshotPreview,
   sensitiveMaskPrefixVisible,
   sensitiveMaskSuffixVisible,
@@ -108,20 +114,21 @@ export const useClipboardItemRenderer = ({
           isRevealed={revealedIds.has(item.id)}
           isEditingTags={isEditingTags}
           tagInput={isEditingTags ? tagInput : ""}
+          tagSuggestions={isEditingTags ? allTags : EMPTY_TAG_SUGGESTIONS}
           tagColors={tagColors}
           theme={theme}
           language={language}
           t={t}
-          quickPasteHint={quickPasteHintsById[item.id]}
-          compactMode={compactMode}
           showSourceAppIcon={showSourceAppIcon}
+          compactMode={compactMode}
           richTextSnapshotPreview={richTextSnapshotPreview}
           sensitiveMaskPrefixVisible={sensitiveMaskPrefixVisible}
           sensitiveMaskSuffixVisible={sensitiveMaskSuffixVisible}
           sensitiveMaskEmailDomain={sensitiveMaskEmailDomain}
+          quickPasteHint={quickPasteHintsById[item.id]}
           onSelect={() => setSelectedIndex(index)}
           onCopy={(withFormat) =>
-            copyToClipboard(item.id, item.content, item.content_type, withFormat)
+            copyToClipboard(item.id, item.content, item.content_type, withFormat, item.is_pinned, item.tags || [])
           }
           onToggleReveal={(e) => {
             e.stopPropagation();
@@ -156,6 +163,17 @@ export const useClipboardItemRenderer = ({
             setTagInput("");
             setEditingTagsId(null);
           }}
+          onTagPick={(picked) => {
+            const next = picked.trim();
+            if (!next || item.tags?.includes(next)) return;
+            handleUpdateTags(item.id, [...(item.tags || []), next]);
+            setTagInput("");
+            setEditingTagsId(null);
+          }}
+          onTagEditCancel={() => {
+            setTagInput("");
+            setEditingTagsId(null);
+          }}
           onTagDelete={(tag) => {
             handleUpdateTags(item.id, item.tags ? item.tags.filter((t) => t !== tag) : []);
           }}
@@ -186,12 +204,13 @@ export const useClipboardItemRenderer = ({
       isWindowPinned,
       editingTagsId,
       tagInput,
+      allTags,
       tagColors,
       theme,
       language,
       t,
-      compactMode,
       showSourceAppIcon,
+      compactMode,
       richTextSnapshotPreview,
       sensitiveMaskPrefixVisible,
       sensitiveMaskSuffixVisible,
@@ -216,5 +235,3 @@ export const useClipboardItemRenderer = ({
 
   return { renderItemContent };
 };
-
-
