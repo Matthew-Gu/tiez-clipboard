@@ -62,6 +62,10 @@ pub fn is_same_device_id(id1: &str, id2: &str) -> bool {
     n1.is_some() && n1 == n2
 }
 
+pub fn same_anon_id(left: &str, right: &str) -> bool {
+    is_same_device_id(left, right)
+}
+
 /// Window subclass procedure to handle taskbar recreation (explorer restart)
 #[cfg(target_os = "windows")]
 pub unsafe extern "system" fn tray_subclass_proc(
