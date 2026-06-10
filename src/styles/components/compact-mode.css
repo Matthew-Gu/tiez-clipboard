@@ -204,9 +204,6 @@
     transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
     pointer-events: auto;
 
-    /* Position relative for AI dropdown positioning */
-    position: relative;
-
     /* Remove container styling as requested */
     background: transparent !important;
     box-shadow: none !important;
@@ -380,53 +377,6 @@ body:not(.theme-mica):not(.theme-acrylic) .history-item.compact .item-actions .b
 .history-item.compact .item-actions .btn-icon svg {
     width: 14px !important;
     height: 14px !important;
-}
-
-/* AI Dropdown Panel - Theme Adaptation */
-/* Modern/Mica/Acrylic Theme - Glass effect */
-body.theme-mica .history-item.compact .ai-options-dropdown,
-body.theme-acrylic .history-item.compact .ai-options-dropdown {
-    background: rgba(255, 255, 255, 0.85) !important;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-    backdrop-filter: blur(12px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-    border-radius: 8px !important;
-}
-
-body.dark-mode.theme-mica .history-item.compact .ai-options-dropdown,
-body.dark-mode.theme-acrylic .history-item.compact .ai-options-dropdown {
-    background: rgba(45, 45, 45, 0.8) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* AI Dropdown Buttons in Modern Theme */
-body.theme-mica .history-item.compact .ai-options-dropdown button,
-body.theme-acrylic .history-item.compact .ai-options-dropdown button {
-    background: rgba(255, 255, 255, 0.5) !important;
-    border: 1px solid rgba(128, 128, 128, 0.2) !important;
-    box-shadow: none !important;
-    border-radius: 6px !important;
-}
-
-body.dark-mode.theme-mica .history-item.compact .ai-options-dropdown button,
-body.dark-mode.theme-acrylic .history-item.compact .ai-options-dropdown button {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Retro Theme - Keep mechanical style */
-body.theme-retro .history-item.compact .ai-options-dropdown {
-    background: var(--bg-element) !important;
-    border: 2px solid var(--border-dark) !important;
-    box-shadow: 4px 4px 0 0 var(--shadow-color) !important;
-    border-radius: 0 !important;
-}
-
-body.theme-retro .history-item.compact .ai-options-dropdown button {
-    box-shadow: 2px 2px 0 0 var(--shadow-color) !important;
-    border-radius: 0 !important;
 }
 
 /* Hide Timestamp */
@@ -631,26 +581,6 @@ html.theme-acrylic .history-item.compact .compact-pinned-indicator {
 .compact-popover-portal.retro.dark-mode .popover-meta .meta-row svg {
     color: #cccccc !important;
     opacity: 1;
-}
-
-/* AI Dropdown Panel in Compact Mode - Higher z-index than preview popover */
-.history-item.compact .item-actions [style*="z-index: 1000"] {
-    /* Ensure AI dropdown is above preview popover (z-index 99999) */
-    z-index: 100000 !important;
-}
-
-/* AI dropdown scrollbar styling */
-.history-item.compact .item-actions [style*="overflow-y: auto"]::-webkit-scrollbar {
-    width: var(--scrollbar-size-thin);
-}
-
-.history-item.compact .item-actions [style*="overflow-y: auto"]::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-background);
-}
-
-.history-item.compact .item-actions [style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb-color);
-    border-radius: var(--scrollbar-radius);
 }
 
 body.theme-mica .history-item.compact,

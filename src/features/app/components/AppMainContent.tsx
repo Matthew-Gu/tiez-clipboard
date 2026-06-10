@@ -3,10 +3,8 @@ import type { ComponentProps, RefObject, ReactNode } from "react";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import type { DragControls } from "framer-motion";
 import { ArrowUp, Clipboard } from "lucide-react";
-import FileTransferChatView from "../../file-transfer/components/FileTransferChatView";
 import SettingsPanel from "../../settings/components/SettingsPanel";
 import TagManager from "../../tag/components/TagManager";
-import EmojiPanel from "../../emoji/components/EmojiPanel";
 import { VirtualClipboardList } from "../../clipboard/components/VirtualClipboardList";
 import type { ClipboardEntry } from "../../../shared/types";
 import type { VirtualClipboardListHandle } from "../../clipboard/types";
@@ -25,16 +23,7 @@ interface AppMainContentProps {
   showSettings: boolean;
   showTagManager: boolean;
   tagManagerEnabled: boolean;
-  showEmojiPanel: boolean;
-  chatMode: boolean;
-  localIp: string;
-  actualPort: string;
   settingsPanelProps: SettingsPanelProps;
-  emojiFavorites: string[];
-  setEmojiFavorites: (val: string[] | ((prev: string[]) => string[])) => void;
-  emojiPanelTab: "emoji" | "favorites";
-  setEmojiPanelTab: (val: "emoji" | "favorites") => void;
-  saveSetting: (key: string, val: string) => void;
   filteredHistory: ClipboardEntry[];
   search: string;
   pinnedItems: ClipboardEntry[];
@@ -98,16 +87,7 @@ const AppMainContent = ({
   showSettings,
   showTagManager,
   tagManagerEnabled,
-  showEmojiPanel,
-  chatMode,
-  localIp,
-  actualPort,
   settingsPanelProps,
-  emojiFavorites,
-  setEmojiFavorites,
-  emojiPanelTab,
-  setEmojiPanelTab,
-  saveSetting,
   filteredHistory,
   search,
   pinnedItems,
@@ -201,38 +181,7 @@ const AppMainContent = ({
     );
   }
 
-  if (showEmojiPanel) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        style={{ height: "100%", overflow: "hidden" }}
-      >
-        <EmojiPanel
-          t={t}
-          favorites={emojiFavorites}
-          setFavorites={setEmojiFavorites}
-          activeTab={emojiPanelTab}
-          setActiveTab={setEmojiPanelTab}
-          saveSetting={saveSetting}
-        />
-      </motion.div>
-    );
-  }
-
   if (showSettings) {
-    if (chatMode) {
-      return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          style={{ height: "100%", overflow: "hidden" }}
-        >
-          <FileTransferChatView t={t} localIp={localIp} actualPort={actualPort} />
-        </motion.div>
-      );
-    }
-
     return (
       <motion.div
         initial={{ opacity: 0, x: 20 }}
@@ -346,4 +295,3 @@ const AppMainContent = ({
 };
 
 export default AppMainContent;
-

@@ -49,10 +49,7 @@ body:
         - Search and history
         - Tags and organization
         - Privacy and encryption
-        - MQTT sync
-        - WebDAV sync
-        - File transfer
-        - AI features
+        - Quick paste
         - UI and themes
         - Other
 

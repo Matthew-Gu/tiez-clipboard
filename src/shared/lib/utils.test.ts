@@ -144,7 +144,7 @@ describe("formatSensitivePreview", () => {
       expect(result).toBe("你好世...试文本");
     });
 
-    it("emoji 按字符计数", () => {
+    it("Unicode 字符按字符计数", () => {
       const result = formatSensitivePreview("😀😁😂🤣😃😄😅", "text");
       expect(result).toContain("...");
     });

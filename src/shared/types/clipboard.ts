@@ -9,8 +9,6 @@ export interface ClipboardEntry {
   preview: string;
   is_pinned: boolean;
   tags: string[];
-  isInputting?: boolean;
-  questionCount?: number;
   use_count?: number;
   is_external?: boolean;
   pinned_order?: number;

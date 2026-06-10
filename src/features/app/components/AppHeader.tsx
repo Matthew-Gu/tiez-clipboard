@@ -2,12 +2,10 @@ import type { RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
-  MessageSquare,
   Pin,
   PinOff,
   Search,
   Settings as SettingsIcon,
-  Smile,
   Tag,
   Trash2,
   X
@@ -22,11 +20,6 @@ interface AppHeaderProps {
   showTagManager: boolean;
   setShowTagManager: (val: boolean) => void;
   tagManagerEnabled: boolean;
-  showEmojiPanel: boolean;
-  setShowEmojiPanel: (val: boolean) => void;
-  emojiPanelEnabled: boolean;
-  chatMode: boolean;
-  fileServerEnabled: boolean;
   isWindowPinned: boolean;
   setIsWindowPinned: (val: boolean) => void;
   clearHistory: () => void;
@@ -47,7 +40,6 @@ interface AppHeaderProps {
   typeFilter: string | null;
   setTypeFilter: (val: string | null) => void;
   onBack: () => void;
-  onToggleChat: () => void;
 }
 
 const AppHeader = ({
@@ -57,11 +49,6 @@ const AppHeader = ({
   showTagManager,
   setShowTagManager,
   tagManagerEnabled,
-  showEmojiPanel,
-  setShowEmojiPanel,
-  emojiPanelEnabled,
-  chatMode,
-  fileServerEnabled,
   isWindowPinned,
   setIsWindowPinned,
   clearHistory,
@@ -81,8 +68,7 @@ const AppHeader = ({
   settingsTitle,
   typeFilter,
   setTypeFilter,
-  onBack,
-  onToggleChat
+  onBack
 }: AppHeaderProps) => {
   const getTypeName = (type: string) => {
     switch (type) {
@@ -101,16 +87,14 @@ const AppHeader = ({
   <header className="window-drag-region">
     <div className="header-top">
       <div className="header-leading">
-        {(showSettings || showTagManager || showEmojiPanel) && (
+        {(showSettings || showTagManager) && (
           <button className="btn-icon window-no-drag" onClick={onBack}>
             <ChevronLeft size={18} />
           </button>
         )}
         <div className="header-drag-region" data-tauri-drag-region>
           <span className="header-title">
-            {showEmojiPanel
-              ? (t('emoji_panel') || '表情包')
-              : showTagManager && tagManagerEnabled
+            {showTagManager && tagManagerEnabled
                 ? (t('tag_manager') || '标签管理')
                 : showSettings
                   ? settingsTitle
@@ -132,7 +116,7 @@ const AppHeader = ({
           {isWindowPinned ? <PinOff size={16} /> : <Pin size={16} />}
         </button>
 
-        {!showSettings && !showTagManager && !showEmojiPanel && (
+        {!showSettings && !showTagManager && (
           <>
             <button className="btn-icon" title={t('clear_history')} onClick={clearHistory}>
               <Trash2 size={16} />
@@ -142,24 +126,10 @@ const AppHeader = ({
                 <Tag size={16} />
               </button>
             )}
-            {emojiPanelEnabled && (
-              <button className="btn-icon" title={t('emoji_panel') || '表情包'} onClick={() => setShowEmojiPanel(true)}>
-                <Smile size={16} />
-              </button>
-            )}
             <button className="btn-icon" title={t('settings')} onClick={() => setShowSettings(true)}>
               <SettingsIcon size={16} />
             </button>
           </>
-        )}
-        {fileServerEnabled && (
-          <button
-            className={`btn-icon header-chat-btn ${chatMode && showSettings ? 'active' : ''}`}
-            title="Chat"
-            onClick={onToggleChat}
-          >
-            <MessageSquare size={16} />
-          </button>
         )}
         <button className="btn-icon" title={t('hide')} onClick={async () => {
           invoke("hide_window_cmd").catch(console.error);
@@ -169,7 +139,7 @@ const AppHeader = ({
       </div>
     </div>
 
-    {!showSettings && !showTagManager && !showEmojiPanel && (
+    {!showSettings && !showTagManager && (
       <AnimatePresence>
         {(showSearchBox || search.trim().length > 0) && (
           <motion.div

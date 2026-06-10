@@ -50,20 +50,23 @@ fn remap_fixed_window_position(
 
     let source_offset_x = (window_pos.0 - source_monitor.x).clamp(0, source_span_x);
     let source_offset_y = (window_pos.1 - source_monitor.y).clamp(0, source_span_y);
+    const EDGE_SNAP_DISTANCE: i32 = 16;
 
-    let ratio_x = if source_span_x == 0 {
-        0.0
-    } else {
-        source_offset_x as f64 / source_span_x as f64
-    };
-    let ratio_y = if source_span_y == 0 {
-        0.0
-    } else {
-        source_offset_y as f64 / source_span_y as f64
+    let map_axis = |source_offset: i32, source_span: i32, target_span: i32| {
+        if source_offset <= EDGE_SNAP_DISTANCE {
+            return 0;
+        }
+        if source_span - source_offset <= EDGE_SNAP_DISTANCE {
+            return target_span;
+        }
+        if source_span == 0 {
+            return 0;
+        }
+        ((source_offset as f64 / source_span as f64) * target_span as f64).round() as i32
     };
 
-    let mapped_x = target_monitor.x + (ratio_x * target_span_x as f64).round() as i32;
-    let mapped_y = target_monitor.y + (ratio_y * target_span_y as f64).round() as i32;
+    let mapped_x = target_monitor.x + map_axis(source_offset_x, source_span_x, target_span_x);
+    let mapped_y = target_monitor.y + map_axis(source_offset_y, source_span_y, target_span_y);
 
     (
         mapped_x.clamp(target_monitor.x, target_monitor.x + target_span_x),
@@ -525,7 +528,7 @@ mod tests {
 
         let mapped = remap_fixed_window_position((810, 340), (300, 400), source, target);
 
-        assert_eq!(mapped, (-800, 250));
+        assert_eq!(mapped, (-950, 250));
     }
 
     #[test]

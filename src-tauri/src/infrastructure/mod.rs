@@ -82,8 +82,4 @@ pub mod windows_api {
             vec![]
         }
     }
-
-    pub mod drag_drop {
-        pub fn register_emoji_drag_drop(_app_handle: tauri::AppHandle) {}
-    }
 }

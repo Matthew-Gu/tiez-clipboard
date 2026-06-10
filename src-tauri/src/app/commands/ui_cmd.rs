@@ -3,8 +3,7 @@ use crate::database::DbState;
 use crate::error::{AppError, AppResult};
 use crate::infrastructure::repository::settings_repo::SettingsRepository;
 use serde::Serialize;
-use tauri::{AppHandle, Emitter, State, Theme, WebviewWindow};
-use tauri_plugin_notification::NotificationExt;
+use tauri::{Emitter, State, Theme, WebviewWindow};
 
 #[derive(Debug, Serialize)]
 pub struct PlatformInfo {
@@ -15,47 +14,14 @@ pub struct PlatformInfo {
 
 #[tauri::command]
 pub fn get_platform_info() -> PlatformInfo {
-    #[cfg(target_os = "windows")]
-    {
-        let build = windows_version::OsVersion::current().build;
-        let is_windows_11 = build >= 22000;
-        let is_windows_10 = build >= 10240 && build < 22000;
-        PlatformInfo {
-            platform: "windows".to_string(),
-            is_windows_10,
-            is_windows_11,
-        }
+    let build = windows_version::OsVersion::current().build;
+    let is_windows_11 = build >= 22000;
+    let is_windows_10 = build >= 10240 && build < 22000;
+    PlatformInfo {
+        platform: "windows".to_string(),
+        is_windows_10,
+        is_windows_11,
     }
-
-    #[cfg(target_os = "macos")]
-    {
-        PlatformInfo {
-            platform: "macos".to_string(),
-            is_windows_10: false,
-            is_windows_11: false,
-        }
-    }
-
-    #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
-    {
-        PlatformInfo {
-            platform: "other".to_string(),
-            is_windows_10: false,
-            is_windows_11: false,
-        }
-    }
-}
-
-#[tauri::command]
-pub fn send_system_notification(app: AppHandle, title: String, body: String) -> AppResult<()> {
-    app.notification()
-        .builder()
-        .title(title)
-        .body(body)
-        .show()
-        .map_err(|err| AppError::Internal(format!("发送系统通知失败: {}", err)))?;
-
-    Ok(())
 }
 
 #[tauri::command]
@@ -176,25 +142,6 @@ pub fn set_theme(
                 let _ = window
                     .set_shadow(show_border && is_win11 && theme != "mica" && theme != "acrylic");
             }
-        }
-    }
-
-    #[cfg(not(target_os = "windows"))]
-    {
-        let is_dark = match effective_color_mode.as_deref() {
-            Some("light") => false,
-            Some("dark") => true,
-            _ => window.theme().unwrap_or(Theme::Dark) == Theme::Dark,
-        };
-
-        let _ = window_vibrancy::clear_vibrancy(&window);
-        if theme == "mica" || theme == "acrylic" {
-            let _ = window_vibrancy::apply_vibrancy(
-                &window,
-                window_vibrancy::NSVisualEffectMaterial::HudWindow,
-                None,
-                None,
-            );
         }
     }
 

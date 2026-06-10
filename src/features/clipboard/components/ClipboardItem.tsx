@@ -18,8 +18,6 @@ import {
     File,
     Plus,
     Video,
-    Sparkles,
-    Loader2,
     FileArchive,
     Music,
     FileCode,
@@ -29,7 +27,7 @@ import {
     FileQuestion,
     GripVertical
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ClipboardItemProps } from "../types";
 import {
     formatSensitivePreview,
@@ -52,11 +50,8 @@ const SPREADSHEET_SOURCE_RE = /\b(excel|et|wps|sheet|spreadsheet|calc)\b/i;
 const SPREADSHEET_APP_RE = /(?:^|[\\/])(excel|et|wps|wpssheet|soffice)(?:\.exe|\.app)?$/i;
 const STANDALONE_COLOR_RE = /^(#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})|(?:rgb|hsl)a?\(\s*[^)]+\s*\))$/i;
 const COMPACT_PREVIEW_DEBUG = false;
-const IS_MACOS =
-    typeof navigator !== "undefined" &&
-    (/Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) || /Mac/i.test(navigator.platform));
 const COMPACT_PREVIEW_WINDOW_SUPPORTED = true;
-const COMPACT_PREVIEW_WARMUP_SUPPORTED = !IS_MACOS;
+const COMPACT_PREVIEW_WARMUP_SUPPORTED = true;
 const compactPreviewLog = (...args: unknown[]) => {
     if (!COMPACT_PREVIEW_DEBUG) return;
     const ts = new Date().toISOString();
@@ -315,15 +310,12 @@ const placeAndShowPendingCompactPreview = async (
         await compactPreviewWindow.setPosition(new PhysicalPosition(target.x, target.y));
         await compactPreviewWindow.show();
         // Force top-most z-order refresh so preview is not occluded by the main top-most window.
-        // macOS skips this toggle because frequent style-mask sync can cause UI stalls.
-        if (!IS_MACOS) {
-            try {
-                await compactPreviewWindow.setAlwaysOnTop(false);
-                await compactPreviewWindow.setAlwaysOnTop(true);
-                compactPreviewLog("refresh always-on-top stacking done");
-            } catch (stackErr) {
-                compactPreviewLog("refresh always-on-top stacking failed", stackErr);
-            }
+        try {
+            await compactPreviewWindow.setAlwaysOnTop(false);
+            await compactPreviewWindow.setAlwaysOnTop(true);
+            compactPreviewLog("refresh always-on-top stacking done");
+        } catch (stackErr) {
+            compactPreviewLog("refresh always-on-top stacking failed", stackErr);
         }
         const visible = await compactPreviewWindow.isVisible().catch(() => null);
         compactPreviewLog("preview window shown", { visible, target });
@@ -578,10 +570,7 @@ const ensureCompactPreviewWindow = async (): Promise<WebviewWindow | null> => {
     return compactPreviewReady;
 };
 
-/**
- * Pre-warm the compact preview window so it's ready before the user hovers.
- * On macOS we deliberately skip warmup to reduce startup-time UI stalls.
- */
+/** Pre-warm the compact preview window so it's ready before the user hovers. */
 const warmupCompactPreviewWindow = () => {
     if (!COMPACT_PREVIEW_WINDOW_SUPPORTED || !COMPACT_PREVIEW_WARMUP_SUPPORTED) return;
     // Only warm up if not already created/creating
@@ -687,7 +676,6 @@ const ClipboardItem = ({
     theme,
     language,
     t,
-    isAIProcessing,
     onSelect,
     onCopy,
     onToggleReveal,
@@ -700,11 +688,6 @@ const ClipboardItem = ({
     onTagPick,
     onTagEditCancel,
     onTagDelete,
-    onAIAction,
-    onInputSubmit,
-    aiEnabled,
-    aiOptionsOpen,
-    onAIOptionsToggle,
     tagColors,
     richTextSnapshotPreview = false,
     showSourceAppIcon = true,
@@ -721,7 +704,6 @@ const ClipboardItem = ({
     const itemRef = useRef<HTMLDivElement | null>(null);
     const tagInputRef = useRef<HTMLInputElement>(null);
     const [localTagInput, setLocalTagInput] = useState(tagInput);
-    const [localAiOptionsOpen, setLocalAiOptionsOpen] = useState(!!aiOptionsOpen);
     const [snapshotFailed, setSnapshotFailed] = useState(false);
     const [richImageFallbackFailed, setRichImageFallbackFailed] = useState(false);
     const [sourceAppIcon, setSourceAppIcon] = useState<string | null>(() => peekSourceAppIcon(item.source_app_path) ?? null);
@@ -1165,10 +1147,6 @@ const ClipboardItem = ({
     }, [tagInput]);
 
     useEffect(() => {
-        setLocalAiOptionsOpen(!!aiOptionsOpen);
-    }, [aiOptionsOpen]);
-
-    useEffect(() => {
         setSnapshotFailed(false);
         setRichImageFallbackFailed(false);
     }, [item.id, item.html_content, richTextSnapshotPreview, compactMode]);
@@ -1203,11 +1181,6 @@ const ClipboardItem = ({
         };
     }, [useSnapshotPreviewImage, effectiveRichTextSnapshotSrc, item.id]);
 
-    const showAIOptions = localAiOptionsOpen;
-    const inlineAiVariants = {
-        open: { opacity: 1, height: "auto", marginTop: 8, marginBottom: 8 },
-        collapsed: { opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }
-    };
     useEffect(() => {
         if (isEditingTags && tagInputRef.current) {
             tagInputRef.current.focus();
@@ -1524,10 +1497,7 @@ const ClipboardItem = ({
                 if (target.closest('a')) {
                     return;
                 }
-                // e.preventDefault() stops macOS from transferring key-window focus to TieZ
-                // when the user clicks on a clipboard item, including pinned mode.
-                // Without this, the first click activates TieZ and the original input
-                // target loses focus before we dispatch the paste keystroke.
+                // Preserve the original input focus until the paste keystroke is dispatched.
                 e.preventDefault();
                 void hideCompactPreview();
                 onCopy(false); // Plain text by default
@@ -1569,8 +1539,6 @@ const ClipboardItem = ({
             }}
             onMouseEnter={(e) => {
                 if (!compactPreviewEnabled) return;
-                // Don't show preview if AI options are open to avoid interference
-                if (showAIOptions) return;
                 compactPreviewLog("mouseenter schedule preview", { itemId: item.id });
                 const requestId = hoverRequestIdRef.current + 1;
                 hoverRequestIdRef.current = requestId;
@@ -1588,8 +1556,6 @@ const ClipboardItem = ({
                 // Set a delay to show
                 hoverTimerRef.current = setTimeout(() => {
                     hoverTimerRef.current = null;
-                    // Double-check AI options are still closed before showing
-                    if (showAIOptions) return;
                     if (!target.isConnected) return;
                     if (!isHoverPreviewRequestCurrent(requestId)) return;
                     const anchor = hoverAnchorRef.current;
@@ -1671,25 +1637,6 @@ const ClipboardItem = ({
                         >
                             <Tag size={12} />
                         </button>
-                        {(item.content_type === 'text' || item.content_type === 'rich_text') && aiEnabled && (
-                            <button
-                                className={`btn-icon ai-btn ${isAIProcessing || showAIOptions ? 'active' : ''}`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (!isAIProcessing) {
-                                        // Close preview window when opening AI options
-                                        if (!showAIOptions) {
-                                            hideCompactPreview();
-                                        }
-                                        setLocalAiOptionsOpen(prev => !prev);
-                                        onAIOptionsToggle?.();
-                                    }
-                                }}
-                                title={t('ai_assistant')}
-                            >
-                                {isAIProcessing ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
-                            </button>
-                        )}
                         <button className="btn-icon" onClick={onDelete} title={t('delete')}>
                             <X size={12} />
                         </button>
@@ -1774,36 +1721,6 @@ const ClipboardItem = ({
                     </div>
                 ) : item.content_type === "file" ? (
                     renderFilePreview()
-                ) : isAIProcessing ? (
-                    <div className="ai-skeleton-wrapper">
-                        <div className="ai-skeleton-line" style={{ width: '90%' }}></div>
-                        <div className="ai-skeleton-line" style={{ width: '75%' }}></div>
-                        <div className="ai-skeleton-line" style={{ width: '85%' }}></div>
-                    </div>
-                ) : item.isInputting ? (
-                    <div className="ai-input-wrapper">
-                        <input
-                            autoFocus
-                            className="search-input"
-                            onMouseDown={() => invoke('activate_window_focus').catch(console.error)}
-                            onFocus={() => invoke('activate_window_focus').catch(console.error)}
-                            style={{ width: '100%', fontSize: '12px', padding: '8px', border: '1px solid var(--accent-color)' }}
-                            placeholder={item.content}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    const val = e.currentTarget.value.trim();
-                                    if (onInputSubmit) {
-                                        onInputSubmit(val);
-                                    }
-                                }
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                        <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '4px' }}>
-                            {language === 'zh' ? '输入补充信息后按回车提交' : 'Press Enter to submit supplementary info'}
-                        </div>
-                    </div>
                 ) : item.content_type === "rich_text" && item.html_content && !isSensitiveHidden ? (
                     richTextPreviewSrc ? (
                         <img
@@ -1896,82 +1813,6 @@ const ClipboardItem = ({
                 </div>
             </div>
 
-            {/* AI Options - Compact Mode: Dropdown Panel, Normal Mode: Inline */}
-            <AnimatePresence>
-                {showAIOptions && (
-                    <motion.div
-                        className={compactMode ? "ai-options-dropdown" : ""}
-                        initial={compactMode ? { opacity: 0, y: -10 } : "collapsed"}
-                        animate={compactMode ? { opacity: 1, y: 0 } : "open"}
-                        exit={compactMode ? { opacity: 0, y: -10 } : "collapsed"}
-                        variants={compactMode ? undefined : inlineAiVariants}
-                        transition={compactMode ? { duration: 0.16 } : { duration: 0.18 }}
-                        style={compactMode ? {
-                            position: 'absolute',
-                            top: '100%',
-                            right: '4px',
-                            zIndex: 100000,
-                            marginTop: '4px',
-                            background: 'var(--bg-element)',
-                            border: '2px solid var(--border-dark)',
-                            borderRadius: '4px',
-                            boxShadow: '4px 4px 0 0 var(--shadow-color)',
-                            padding: '6px',
-                            minWidth: '140px',
-                            maxHeight: '200px',
-                            overflowY: 'auto'
-                        } : { overflow: 'hidden' }}
-                    >
-                        <div style={compactMode ? {
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '4px'
-                        } : {
-                            padding: '8px 10px',
-                            background: 'rgba(72, 123, 219, 0.05)',
-                            border: '1.5px dashed var(--accent-color)',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: '6px',
-                            alignItems: 'center'
-                        }}>
-                            {['task', 'mouthpiece', 'translate'].map(actionType => (
-                                <button
-                                    key={actionType}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onAIAction?.(actionType);
-                                        onAIOptionsToggle?.();
-                                    }}
-                                    className="btn-icon"
-                                    style={compactMode ? {
-                                        width: '100%',
-                                        fontSize: '11px',
-                                        height: '32px',
-                                        boxShadow: '2px 2px 0 0 var(--shadow-color)',
-                                        textTransform: 'none',
-                                        justifyContent: 'flex-start',
-                                        paddingLeft: '10px'
-                                    } : {
-                                        flex: 1,
-                                        minWidth: '90px',
-                                        fontSize: '11px',
-                                        height: '32px',
-                                        padding: '0 12px',
-                                        boxShadow: '2px 2px 0 0 var(--shadow-color)',
-                                        textTransform: 'none',
-                                        whiteSpace: 'nowrap'
-                                    }}
-                                >
-                                    {t(`ai_${actionType}`)}
-                                </button>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {!overlayTagsInPreview && hasTagsSection && renderTagsContainer()}
         </motion.div >
     );
@@ -1993,9 +1834,6 @@ export default memo(ClipboardItem, (prevProps, nextProps) => {
         prevProps.item.tags === nextProps.item.tags &&
         prevProps.isRevealed === nextProps.isRevealed &&
         prevProps.isEditingTags === nextProps.isEditingTags &&
-        prevProps.isAIProcessing === nextProps.isAIProcessing &&
-        prevProps.aiOptionsOpen === nextProps.aiOptionsOpen &&
-        prevProps.aiEnabled === nextProps.aiEnabled &&
         prevProps.richTextSnapshotPreview === nextProps.richTextSnapshotPreview &&
         prevProps.showSourceAppIcon === nextProps.showSourceAppIcon &&
         prevProps.quickPasteHint?.slot === nextProps.quickPasteHint?.slot &&

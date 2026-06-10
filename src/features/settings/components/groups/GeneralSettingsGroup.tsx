@@ -2,9 +2,6 @@ import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-const isMacPlatform =
-    /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent) || /Mac/i.test(navigator.platform);
-
 interface LabelWithHintProps {
     label: string;
     hint?: string | ReactNode;
@@ -22,8 +19,6 @@ interface GeneralSettingsGroupProps {
     setSilentStart: (val: boolean) => void;
     hideTrayIcon: boolean;
     setHideTrayIcon: (val: boolean) => void;
-    hideDockIcon: boolean;
-    setHideDockIcon: (val: boolean) => void;
     edgeDocking: boolean;
     setEdgeDocking: (val: boolean) => void;
     soundEnabled: boolean;
@@ -34,8 +29,6 @@ interface GeneralSettingsGroupProps {
     setShowSearchBox: (val: boolean) => void;
     scrollTopButtonEnabled: boolean;
     setScrollTopButtonEnabled: (val: boolean) => void;
-    emojiPanelEnabled: boolean;
-    setEmojiPanelEnabled: (val: boolean) => void;
     tagManagerEnabled: boolean;
     setTagManagerEnabled: (val: boolean) => void;
     arrowKeySelection: boolean;
@@ -56,8 +49,6 @@ const GeneralSettingsGroup = ({
     setSilentStart,
     hideTrayIcon,
     setHideTrayIcon,
-    hideDockIcon,
-    setHideDockIcon,
     edgeDocking,
     setEdgeDocking,
     soundEnabled,
@@ -68,8 +59,6 @@ const GeneralSettingsGroup = ({
     setShowSearchBox,
     scrollTopButtonEnabled,
     setScrollTopButtonEnabled,
-    emojiPanelEnabled,
-    setEmojiPanelEnabled,
     tagManagerEnabled,
     setTagManagerEnabled,
     arrowKeySelection,
@@ -122,29 +111,6 @@ const GeneralSettingsGroup = ({
                         <div className="toggle"><div className="left" /><div className="right" /></div>
                     </label>
                 </div>
-
-                {isMacPlatform && (
-                    <div className="setting-item">
-                        <LabelWithHint
-                            label={t('hide_dock_icon')}
-                            hint={t('hide_dock_icon_hint')}
-                            hintKey="hide_dock_icon"
-                        />
-                        <label className="switch">
-                            <input
-                                className="cb"
-                                type="checkbox"
-                                checked={hideDockIcon}
-                                onChange={(e) => {
-                                    const val = e.target.checked;
-                                    setHideDockIcon(val);
-                                    invoke("set_dock_visible", { visible: !val }).catch(console.error);
-                                }}
-                            />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
-                        </label>
-                    </div>
-                )}
 
                 <div className="setting-item">
                     <LabelWithHint
@@ -293,26 +259,6 @@ const GeneralSettingsGroup = ({
                 </div>
                 <div className="setting-item">
                     <LabelWithHint
-                        label={t('emoji_panel_enabled') || '表情包开关'}
-                        hint={t('emoji_panel_enabled_hint') || '关闭后隐藏表情包入口'}
-                        hintKey="emoji_panel_enabled"
-                    />
-                    <label className="switch">
-                        <input
-                            className="cb"
-                            type="checkbox"
-                            checked={emojiPanelEnabled}
-                            onChange={(e) => {
-                                const enabled = e.target.checked;
-                                setEmojiPanelEnabled(enabled);
-                                saveAppSetting('emoji_panel_enabled', String(enabled));
-                            }}
-                        />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
-                    </label>
-                </div>
-                <div className="setting-item">
-                    <LabelWithHint
                         label={t('tag_manager_enabled') || '标签管理页开关'}
                         hint={t('tag_manager_enabled_hint') || '关闭后隐藏标签管理入口'}
                         hintKey="tag_manager_enabled"
@@ -352,7 +298,6 @@ const GeneralSettingsGroup = ({
                     </label>
                 </div>
 
-                {/* macOS cleanup: Removed Restart as Admin */}
             </div>
         )}
     </div>

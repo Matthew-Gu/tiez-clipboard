@@ -418,6 +418,15 @@
   border: none;
   box-shadow: none !important;
   border-radius: inherit; /* Inherit from .settings-group */
+  color: var(--text-primary);
+}
+
+.settings-nav-card .settings-subpage-note {
+  color: var(--text-secondary);
+}
+
+.settings-nav-card svg {
+  color: var(--text-primary);
 }
 
 .advanced-settings-page {

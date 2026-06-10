@@ -48,20 +48,12 @@ body:
     validations:
       required: true
 
-  - type: input
-    id: version
-    attributes:
-      label: App version
-      placeholder: "e.g. 0.3.1"
-
   - type: dropdown
     id: platform
     attributes:
       label: Platform
       options:
         - Windows
-        - macOS
-        - Other
     validations:
       required: true
 
@@ -70,7 +62,7 @@ body:
     attributes:
       label: Environment details
       description: OS version, device type, related settings, or permissions.
-      placeholder: "Windows 11 24H2, admin mode on, MQTT enabled..."
+      placeholder: "Windows 11 24H2, admin mode on..."
 
   - type: textarea
     id: logs
@@ -86,5 +78,5 @@ body:
       options:
         - label: I searched existing issues before submitting this report
           required: true
-        - label: I can reproduce this issue on the latest version
+        - label: I can reproduce this issue consistently
           required: true

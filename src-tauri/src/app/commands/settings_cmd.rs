@@ -227,29 +227,6 @@ pub fn get_settings(
 }
 
 #[tauri::command]
-pub fn set_file_server_auto_close(
-    state: State<'_, crate::app_state::SettingsState>,
-    db_state: State<'_, DbState>,
-    enabled: bool,
-) -> AppResult<()> {
-    state
-        .file_server_auto_close
-        .store(enabled, Ordering::Relaxed);
-    db_state
-        .settings_repo
-        .set("file_transfer_auto_close", &enabled.to_string())
-        .map_err(AppError::from)
-}
-
-#[tauri::command]
-pub fn set_file_transfer_auto_open(db_state: State<'_, DbState>, enabled: bool) -> AppResult<()> {
-    db_state
-        .settings_repo
-        .set("file_transfer_auto_open", &enabled.to_string())
-        .map_err(AppError::from)
-}
-
-#[tauri::command]
 pub fn set_arrow_key_selection(
     state: State<'_, crate::app_state::SettingsState>,
     enabled: bool,
@@ -294,22 +271,6 @@ pub fn set_capture_rich_text(
     db_state
         .settings_repo
         .set("app.capture_rich_text", &enabled.to_string())
-        .map_err(AppError::from)
-}
-
-#[tauri::command]
-pub fn set_auto_copy_file(
-    state: State<'_, crate::app_state::SettingsState>,
-    db_state: State<'_, DbState>,
-    enabled: bool,
-) -> AppResult<()> {
-    state.auto_copy_file.store(enabled, Ordering::Relaxed);
-    db_state
-        .settings_repo
-        .set(
-            "file_transfer_auto_copy",
-            if enabled { "true" } else { "false" },
-        )
         .map_err(AppError::from)
 }
 
@@ -428,43 +389,6 @@ pub fn set_sound_enabled(
 }
 
 #[tauri::command]
-pub fn get_mqtt_status() -> bool {
-    crate::services::mqtt_sub::get_mqtt_status()
-}
-
-#[tauri::command]
-pub fn get_mqtt_running() -> bool {
-    crate::services::mqtt_sub::get_mqtt_running()
-}
-
-#[tauri::command]
-pub fn restart_mqtt_client(app_handle: AppHandle) {
-    crate::services::mqtt_sub::restart_mqtt_client(app_handle)
-}
-
-#[tauri::command]
-pub fn get_cloud_sync_status() -> crate::services::cloud_sync::CloudSyncStatus {
-    crate::services::cloud_sync::get_cloud_sync_status()
-}
-
-#[tauri::command]
-pub fn restart_cloud_sync_client(app_handle: AppHandle) {
-    crate::services::cloud_sync::restart_cloud_sync_client(app_handle);
-}
-
-#[tauri::command]
-pub fn request_cloud_sync(app_handle: AppHandle) {
-    crate::services::cloud_sync::request_cloud_sync(app_handle);
-}
-
-#[tauri::command]
-pub async fn cloud_sync_now(
-    app_handle: AppHandle,
-) -> AppResult<crate::services::cloud_sync::CloudSyncStatus> {
-    crate::services::cloud_sync::cloud_sync_now(app_handle).await
-}
-
-#[tauri::command]
 pub fn reset_settings(
     app: AppHandle,
     state: State<'_, DbState>,
@@ -477,13 +401,6 @@ pub fn reset_settings(
         let conn = state.conn.lock().unwrap();
         seed_defaults(&conn).map_err(AppError::from)?;
     }
-
-    let machine_id = crate::app::system::get_machine_id();
-    let new_id = format!("{}-0000-0000-0000-000000000000", machine_id);
-    state
-        .settings_repo
-        .set("app.anon_id", &new_id)
-        .map_err(AppError::from)?;
 
     let main_hotkey = state
         .settings_repo

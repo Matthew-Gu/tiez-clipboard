@@ -1,281 +1,56 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { translations } from "../../../locales";
 import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
-import { useAppState } from "../../app/hooks/useAppState";
-import { useSettingsInit } from "../../../shared/hooks/useSettingsInit";
-import { useSettingsPostInit } from "../../../shared/hooks/useSettingsPostInit";
-import { useAppBootstrap } from "../../../shared/hooks/useAppBootstrap";
-import { useSettingsApply } from "../../../shared/hooks/useSettingsApply";
-import { useCustomBackground } from "../../../shared/hooks/useCustomBackground";
+import type { InstalledAppOption } from "../../app/types";
+import type { AppCleanupPolicy } from "../types";
 
 const AdvancedSettingsWindow = () => {
-    const appState = useAppState();
-    const {
-        setAppSettings,
-        setHotkey,
-        setTheme,
-        setColorMode,
-        setCompactMode,
-        language,
-        setLanguage,
-        customBackground,
-        setCustomBackground,
-        customBackgroundOpacity,
-        setCustomBackgroundOpacity,
-        surfaceOpacity,
-        setSurfaceOpacity,
-        setPersistent,
-        setPersistentLimitEnabled,
-        setPersistentLimit,
-        setDeduplicate,
-        setCaptureFiles,
-        setCaptureRichText,
-        setRichTextSnapshotPreview,
-        setPrivacyProtection,
-        setPrivacyProtectionKinds,
-        setPrivacyProtectionCustomRules,
-        cleanupRules,
-        setCleanupRules,
-        appCleanupPolicies,
-        setAppCleanupPolicies,
-        setSensitiveMaskPrefixVisible,
-        setSensitiveMaskSuffixVisible,
-        setSensitiveMaskEmailDomain,
-        setSilentStart,
-        setFollowMouse,
-        showAppBorder,
-        setShowAppBorder,
-        setShowSourceAppIcon,
-        setDeleteAfterPaste,
-        setMoveToTopAfterPaste,
-        setHideTrayIcon,
-        setEdgeDocking,
-        setShowSearchBox,
-        setScrollTopButtonEnabled,
-        setArrowKeySelection,
-        setMqttEnabled,
-        setMqttServer,
-        setRegistryWinVEnabled,
-        setMqttPort,
-        setMqttUser,
-        setMqttPass,
-        setMqttTopic,
-        setMqttProtocol,
-        setMqttWsPath,
-        setMqttNotificationEnabled,
-        setCloudSyncEnabled,
-        setCloudSyncAuto,
-        setCloudSyncProvider,
-        setCloudSyncServer,
-        setCloudSyncApiKey,
-        setCloudSyncIntervalSec,
-        setCloudSyncSnapshotIntervalMin,
-        setCloudSyncWebdavUrl,
-        setCloudSyncWebdavUsername,
-        setCloudSyncWebdavPassword,
-        setCloudSyncWebdavBasePath,
-        setFileServerAutoClose,
-        setFileTransferAutoOpen,
-        setFileTransferAutoCopy,
-        setFileServerPort,
-        setSequentialHotkey,
-        setRichPasteHotkey,
-        setSearchHotkey,
-        setQuickPasteModifier,
-        setSequentialModeState,
-        theme,
-        colorMode,
-        compactMode,
-        settingsLoaded,
-        clipboardItemFontSize,
-        setClipboardItemFontSize,
-        clipboardTagFontSize,
-        setClipboardTagFontSize,
-        setEmojiPanelEnabled,
-        setTagManagerEnabled,
-        setEmojiPanelTab,
-        setEmojiFavorites,
-        setAutoStart,
-        setWinClipboardDisabled,
-        setDefaultApps,
-        setFileServerEnabled,
-        setActualPort,
-        setLocalIp,
-        setAvailableIps,
-        setDataPath,
-        setInstalledApps,
-        setIsWindowPinned,
-        setAiEnabled,
-        setAiTargetLang,
-        setAiThinkingBudget,
-        setAiProfiles,
-        setAiAssignedProfileTask,
-        setAiAssignedProfileMouthpiece,
-        setAiAssignedProfileTranslate,
-        setSettingsLoaded,
-        setSoundEnabled,
-        setSoundVolume,
-        setPasteSoundEnabled,
-        setPasteMethod,
-        installedApps,
-        setFileTransferPath,
-        hideDockIcon: _hideDockIcon,
-        setHideDockIcon,
-        cloudSyncContentPrefs: _cloudSyncContentPrefs,
-        setCloudSyncContentPrefs
-    } = appState;
+  const [language, setLanguage] = useState<"zh" | "en" | "tw">("zh");
+  const [cleanupRules, setCleanupRules] = useState("");
+  const [appCleanupPolicies, setAppCleanupPolicies] = useState<AppCleanupPolicy[]>([]);
+  const [installedApps, setInstalledApps] = useState<InstalledAppOption[]>([]);
 
-    const tagManagerSizeRef = useRef<{ width: number; height: number } | null>(null);
+  const t = useCallback((key: string) => {
+    const translationKey = key as keyof typeof translations.zh;
+    return translations[language][translationKey] || translations.en[translationKey] || key;
+  }, [language]);
 
-    const t = useCallback((key: string) => {
-        const k = key as keyof typeof translations["zh"];
-        return translations[language][k] || translations["en"][k] || key;
-    }, [language]);
+  useEffect(() => {
+    invoke<Record<string, string>>("get_settings")
+      .then((settings) => {
+        setLanguage(settings["app.language"] === "en" || settings["app.language"] === "tw"
+          ? settings["app.language"]
+          : "zh");
+        setCleanupRules(settings["app.cleanup_rules"] || "");
+        try {
+          setAppCleanupPolicies(JSON.parse(settings["app.app_cleanup_policies"] || "[]"));
+        } catch {
+          setAppCleanupPolicies([]);
+        }
+      })
+      .catch(console.error);
 
-    const settings = useSettingsInit({
-        setAppSettings,
-        setHotkey,
-        setTheme,
-        setColorMode,
-        setCompactMode,
-        setLanguage
-    });
+    invoke<{ name: string; path: string }[]>("scan_installed_apps")
+      .then((apps) => setInstalledApps(
+        apps.map((app) => ({ label: app.name, value: app.path }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+      ))
+      .catch(console.error);
+  }, []);
 
-    useSettingsPostInit({
-        settings,
-        tagManagerSizeRef,
-        setCustomBackground,
-        setCustomBackgroundOpacity,
-        setSurfaceOpacity,
-        setPersistent,
-        setPersistentLimitEnabled,
-        setPersistentLimit,
-        setDeduplicate,
-        setCaptureFiles,
-        setCaptureRichText,
-        setRichTextSnapshotPreview,
-        setPrivacyProtection,
-        setPrivacyProtectionKinds,
-        setPrivacyProtectionCustomRules,
-        setSensitiveMaskPrefixVisible,
-        setSensitiveMaskSuffixVisible,
-        setSensitiveMaskEmailDomain,
-        setCleanupRules,
-        setAppCleanupPolicies,
-        setSilentStart,
-        setFollowMouse,
-        setShowAppBorder,
-        setShowSourceAppIcon,
-        setDeleteAfterPaste,
-        setMoveToTopAfterPaste,
-        setHideTrayIcon,
-        setEdgeDocking,
-        setShowSearchBox,
-        setScrollTopButtonEnabled,
-        setArrowKeySelection,
-        setMqttEnabled,
-        setMqttServer,
-        setRegistryWinVEnabled,
-        setMqttPort,
-        setMqttUser,
-        setMqttPass,
-        setMqttTopic,
-        setMqttProtocol,
-        setMqttWsPath,
-        setMqttNotificationEnabled,
-        setCloudSyncEnabled,
-        setCloudSyncAuto,
-        setCloudSyncProvider,
-        setCloudSyncServer,
-        setCloudSyncApiKey,
-        setCloudSyncIntervalSec,
-        setCloudSyncSnapshotIntervalMin,
-        setCloudSyncWebdavUrl,
-        setCloudSyncWebdavUsername,
-        setCloudSyncWebdavPassword,
-        setCloudSyncWebdavBasePath,
-        setFileServerAutoClose,
-        setFileTransferAutoOpen,
-        setFileTransferAutoCopy,
-        setFileServerPort,
-        setSequentialHotkey,
-        setRichPasteHotkey,
-        setSearchHotkey,
-        setQuickPasteModifier,
-        setSequentialModeState,
-        setSoundEnabled,
-        setSoundVolume,
-        setPasteSoundEnabled,
-        setPasteMethod,
-        setAiEnabled,
-        setAiTargetLang,
-        setAiThinkingBudget,
-        setIsWindowPinned,
-        setAiProfiles,
-        setAiAssignedProfileTask,
-        setAiAssignedProfileMouthpiece,
-        setAiAssignedProfileTranslate,
-        setSettingsLoaded,
-        setClipboardItemFontSize,
-        setClipboardTagFontSize,
-        setEmojiPanelEnabled,
-        setTagManagerEnabled,
-        setEmojiPanelTab,
-        setEmojiFavorites,
-        setHideDockIcon,
-        setCloudSyncContentPrefs
-    });
-
-    const fetchEffectiveTransferPath = useCallback(() => {
-        invoke<string>("get_active_file_transfer_path")
-            .then(setFileTransferPath)
-            .catch(console.error);
-    }, [setFileTransferPath]);
-
-    useAppBootstrap({
-        fetchEffectiveTransferPath,
-        setDataPath,
-        setInstalledApps,
-        setAutoStart,
-        setWinClipboardDisabled,
-        setDefaultApps,
-        setFileServerEnabled,
-        setActualPort,
-        setLocalIp,
-        setAvailableIps
-    });
-
-    useSettingsApply({
-        theme,
-        colorMode,
-        showAppBorder,
-        compactMode,
-        settingsLoaded,
-        clipboardItemFontSize,
-        clipboardTagFontSize,
-        surfaceOpacity
-    });
-
-    useCustomBackground({
-        customBackground,
-        customBackgroundOpacity,
-        theme
-    });
-
-
-    return (
-        <div className="advanced-settings-window-shell">
-            <AdvancedSettingsGroup
-                t={t}
-                cleanupRules={cleanupRules}
-                setCleanupRules={setCleanupRules}
-                appCleanupPolicies={appCleanupPolicies}
-                setAppCleanupPolicies={setAppCleanupPolicies}
-                installedApps={installedApps}
-            />
-        </div>
-    );
+  return (
+    <div className="advanced-settings-window-shell">
+      <AdvancedSettingsGroup
+        t={t}
+        cleanupRules={cleanupRules}
+        setCleanupRules={setCleanupRules}
+        appCleanupPolicies={appCleanupPolicies}
+        setAppCleanupPolicies={setAppCleanupPolicies}
+        installedApps={installedApps}
+      />
+    </div>
+  );
 };
 
 export default AdvancedSettingsWindow;

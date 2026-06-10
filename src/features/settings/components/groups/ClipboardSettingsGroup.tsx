@@ -3,7 +3,6 @@ import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { getHotkeyDisplayTokens } from "../../../../shared/lib/hotkeyDisplay";
-import { isMacPlatform } from "../../../../shared/lib/platform";
 import type { QuickPasteModifier } from "../../../app/types";
 
 interface LabelWithHintProps {
@@ -80,21 +79,13 @@ interface ClipboardSettingsGroupProps {
 }
 
 const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
-    const quickPasteOptions: Array<{ value: QuickPasteModifier; label: string }> = isMacPlatform()
-        ? [
-            { value: "disabled", label: props.t("quick_paste_modifier_disabled") },
-            { value: "ctrl", label: "Control (⌃)" },
-            { value: "alt", label: "Option (⌥)" },
-            { value: "shift", label: "Shift (⇧)" },
-            { value: "win", label: "Command (⌘)" }
-        ]
-        : [
-            { value: "disabled", label: props.t("quick_paste_modifier_disabled") },
-            { value: "ctrl", label: props.t("quick_paste_modifier_ctrl") },
-            { value: "alt", label: props.t("quick_paste_modifier_alt") },
-            { value: "shift", label: props.t("quick_paste_modifier_shift") },
-            { value: "win", label: props.t("quick_paste_modifier_win") }
-        ];
+    const quickPasteOptions: Array<{ value: QuickPasteModifier; label: string }> = [
+        { value: "disabled", label: props.t("quick_paste_modifier_disabled") },
+        { value: "ctrl", label: props.t("quick_paste_modifier_ctrl") },
+        { value: "alt", label: props.t("quick_paste_modifier_alt") },
+        { value: "shift", label: props.t("quick_paste_modifier_shift") },
+        { value: "win", label: props.t("quick_paste_modifier_win") }
+    ];
     const [persistentLimitDraft, setPersistentLimitDraft] = useState(
         props.persistentLimit.toString()
     );
@@ -120,11 +111,11 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
     };
 
     const renderHotkeyCaps = (hotkey: string) => {
-        const tokens = getHotkeyDisplayTokens(hotkey, { preferMacSymbols: true });
+        const tokens = getHotkeyDisplayTokens(hotkey);
         if (tokens.length === 0) {
             return <div className="key-cap" style={{ width: '8em', opacity: 0.5 }}>{props.t('not_set')}</div>;
         }
-        const compactLabel = tokens.map((token) => token.label).join("");
+        const compactLabel = tokens.map((token) => token.label).join(" + ");
         return <div className="key-cap key-cap-chord">{compactLabel}</div>;
     };
 
@@ -391,7 +382,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             onChange={(e) => {
                                 const value = e.target.value as QuickPasteModifier;
                                 props.setQuickPasteModifier(value);
-                                invoke("set_quick_paste_modifier", { modifier: value }).catch(console.error);
+                                invoke("save_setting", {
+                                    key: "app.quick_paste_modifier",
+                                    value
+                                }).catch(console.error);
                             }}
                             style={{
                                 padding: '4px 8px',
@@ -450,7 +444,6 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             <div className="toggle"><div className="left" /><div className="right" /></div>
                         </label>
                     </div>
-                    {/* macOS cleanup: Removed Paste Method selection */}
                     <div className="setting-item">
                         <props.LabelWithHint
                             label={props.t('sequential_paste_mode')}
@@ -744,7 +737,6 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         </div>
                     </div>
 
-                    {/* macOS cleanup: Removed Win+V Shortcut switch */}
                 </div>
             )}
         </div>

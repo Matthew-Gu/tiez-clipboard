@@ -8,10 +8,7 @@
   ],
   "permissions": [
     "core:default",
-    "core:app:allow-version",
     "core:app:default",
-    "opener:default",
-    "opener:allow-open-url",
     "core:event:default",
     "core:event:allow-listen",
     "core:event:allow-unlisten",
@@ -38,10 +35,6 @@
     "sql:default",
     "dialog:default",
     "dialog:allow-open",
-    "window-state:default",
-    "process:allow-restart",
-    "updater:allow-check",
-    "updater:allow-download-and-install",
-    "notification:default"
+    "window-state:default"
   ]
 }

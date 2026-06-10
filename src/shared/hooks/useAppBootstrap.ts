@@ -2,44 +2,25 @@ import { useEffect } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { DefaultAppsMap, InstalledAppOption } from "../../features/app/types";
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
 import { isTauriRuntime } from "../lib/tauriRuntime";
 
 interface UseAppBootstrapOptions {
-  fetchEffectiveTransferPath: () => void;
   setDataPath: Dispatch<SetStateAction<string>>;
   setInstalledApps: Dispatch<SetStateAction<InstalledAppOption[]>>;
   setAutoStart: Dispatch<SetStateAction<boolean>>;
   setDefaultApps: Dispatch<SetStateAction<DefaultAppsMap>>;
-  setFileServerEnabled: Dispatch<SetStateAction<boolean>>;
-  setActualPort: Dispatch<SetStateAction<string>>;
-  setLocalIp: Dispatch<SetStateAction<string>>;
-  setAvailableIps: Dispatch<SetStateAction<string[]>>;
   setWinClipboardDisabled: Dispatch<SetStateAction<boolean>>;
 }
 
-interface FileServerStatusPayload {
-  enabled: boolean;
-  port: number;
-  ip: string;
-}
-
 export const useAppBootstrap = ({
-  fetchEffectiveTransferPath,
   setDataPath,
   setInstalledApps,
   setAutoStart,
   setDefaultApps,
-  setFileServerEnabled,
-  setActualPort,
-  setLocalIp,
-  setAvailableIps,
   setWinClipboardDisabled: _setWinClipboardDisabled
 }: UseAppBootstrapOptions) => {
   useEffect(() => {
     if (!isTauriRuntime()) return;
-
-    fetchEffectiveTransferPath();
 
     invoke<string>("get_data_path").then(setDataPath).catch(console.error);
 
@@ -72,47 +53,10 @@ export const useAppBootstrap = ({
       }
     });
 
-    const setupServerListener = async () => {
-      const unlisten = await listen<FileServerStatusPayload>("file-server-status-changed", (event) => {
-        const payload = event.payload;
-        setFileServerEnabled(payload.enabled);
-        setActualPort(payload.port === 0 ? "" : payload.port.toString());
-        setLocalIp(payload.ip);
-      });
-      return unlisten;
-    };
-
-    let unlistenServer: (() => void) | undefined;
-    setupServerListener().then((u) => {
-      unlistenServer = u;
-    });
-
-    invoke<FileServerStatusPayload>("get_file_server_status")
-      .then((status) => {
-        setFileServerEnabled(status.enabled);
-        setActualPort(status.port === 0 ? "" : status.port.toString());
-        setLocalIp(status.ip);
-      })
-      .catch(console.error);
-
-    invoke<string[]>("get_available_ips")
-      .then((ips) => {
-        if (ips && ips.length > 0) setAvailableIps(ips);
-      })
-      .catch(console.error);
-
-    return () => {
-      if (unlistenServer) unlistenServer();
-    };
   }, [
-    fetchEffectiveTransferPath,
-    setActualPort,
     setAutoStart,
-    setAvailableIps,
     setDataPath,
     setDefaultApps,
-    setFileServerEnabled,
     setInstalledApps,
-    setLocalIp,
   ]);
 };
