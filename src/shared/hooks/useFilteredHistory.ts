@@ -20,6 +20,8 @@ export const useFilteredHistory = ({
         return false;
       }
 
+      if (lowerSearch) return true;
+
       let effectiveSearch = lowerSearch;
       const isTagSearch = effectiveSearch.startsWith("tag:");
       if (isTagSearch) {

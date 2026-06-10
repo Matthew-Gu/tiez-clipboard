@@ -401,4 +401,55 @@ mod tests {
         let val = repo.get("test_key").unwrap();
         assert_eq!(val, Some("test_value".to_string()));
     }
+
+    #[test]
+    fn test_cursor_page_reads_older_items_without_duplicates() {
+        let conn = setup_test_db();
+        let conn_arc = Arc::new(Mutex::new(conn));
+        let repo = SqliteClipboardRepository::new(conn_arc.clone());
+
+        for timestamp in [300, 200, 100] {
+            let entry = ClipboardEntry {
+                id: 0,
+                content_type: "text".to_string(),
+                content: format!("item-{timestamp}"),
+                html_content: None,
+                source_app: "TestApp".to_string(),
+                source_app_path: None,
+                timestamp,
+                preview: format!("item-{timestamp}"),
+                is_pinned: false,
+                tags: vec![],
+                use_count: 0,
+                is_external: false,
+                pinned_order: 0,
+                file_preview_exists: true,
+            };
+            repo.save(&entry, None).unwrap();
+        }
+
+        let conn = conn_arc.lock().unwrap();
+        let first = repo
+            .get_cursor_page_with_conn(&conn, 2, "older", None, None)
+            .unwrap();
+        let cursor = first.last().map(|entry| (entry.timestamp, entry.id));
+        let second = repo
+            .get_cursor_page_with_conn(&conn, 2, "older", cursor, None)
+            .unwrap();
+
+        assert_eq!(
+            first
+                .iter()
+                .map(|entry| entry.timestamp)
+                .collect::<Vec<_>>(),
+            vec![300, 200]
+        );
+        assert_eq!(
+            second
+                .iter()
+                .map(|entry| entry.timestamp)
+                .collect::<Vec<_>>(),
+            vec![100]
+        );
+    }
 }

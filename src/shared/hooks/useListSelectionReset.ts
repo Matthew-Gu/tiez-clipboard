@@ -10,9 +10,9 @@ export const useListSelectionReset = ({
   filteredHistory,
   setSelectedIndex
 }: UseListSelectionResetOptions) => {
+  const itemIds = filteredHistory.map((item) => item.id).join(",");
   useEffect(() => {
     setSelectedIndex(0);
-  }, [filteredHistory, setSelectedIndex]);
+  }, [itemIds, setSelectedIndex]);
 };
-
 

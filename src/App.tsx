@@ -54,37 +54,6 @@ import {
 } from "./features/clipboard/lib/compactPreviewControls";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
 
-const insertHistoryItem = (list: ClipboardEntry[], item: ClipboardEntry) => {
-  const next = list.slice();
-  const isPinned = !!item.is_pinned;
-  let insertIndex = 0;
-
-  if (isPinned) {
-    while (insertIndex < next.length) {
-      const current = next[insertIndex];
-      if (!current.is_pinned) break;
-      if (current.timestamp < item.timestamp) break;
-      insertIndex++;
-    }
-  } else {
-    while (insertIndex < next.length && next[insertIndex].is_pinned) {
-      insertIndex++;
-    }
-    while (insertIndex < next.length) {
-      const current = next[insertIndex];
-      if (current.is_pinned) {
-        insertIndex++;
-        continue;
-      }
-      if (current.timestamp < item.timestamp) break;
-      insertIndex++;
-    }
-  }
-
-  next.splice(insertIndex, 0, item);
-  return next;
-};
-
 const QUICK_PASTE_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] as const;
 
 const buildQuickPasteHintsById = (
@@ -270,7 +239,18 @@ const App = () => {
     {}
   );
   const PAGE_SIZE = 80;
-  const { fetchHistory, loadMoreHistory } = useHistoryFetch({
+  const {
+    fetchHistory,
+    loadMoreHistory,
+    loadNewerHistory,
+    hydratedHistory,
+    firstItemIndex,
+    hasNewer,
+    prefetchVisibleRange,
+    prefetchDetails,
+    handleSummaryUpdated,
+    handleRemoved
+  } = useHistoryFetch({
     debouncedSearch,
     typeFilter,
     persistentLimitEnabled,
@@ -278,6 +258,7 @@ const App = () => {
     pageSize: PAGE_SIZE,
     currentOffset,
     historyLength: history.length,
+    history,
     setHistory,
     setCurrentOffset,
     setHasMore,
@@ -538,15 +519,8 @@ const App = () => {
   useCustomBackground({ customBackground, customBackgroundOpacity, theme });
 
   useClipboardEvents({
-    onUpdated: (updatedItem) => {
-      setHistory(prev => {
-        const withoutItem = prev.filter(item => item.id !== updatedItem.id);
-        return insertHistoryItem(withoutItem, updatedItem);
-      });
-    },
-    onRemoved: (id) => {
-      setHistory(prev => prev.filter(item => item.id !== id));
-    },
+    onUpdated: handleSummaryUpdated,
+    onRemoved: handleRemoved,
     onChanged: () => {
       fetchHistory(true);
     }
@@ -557,36 +531,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    const seededHints = buildQuickPasteHintsById(history, quickPasteModifier);
-    setQuickPasteHintsById(seededHints);
-
-    if (quickPasteModifier === "disabled") {
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    invoke<ClipboardEntry[]>("get_clipboard_history", {
-      limit: 256,
-      offset: 0,
-      contentType: null
-    })
-      .then((items) => {
-        if (!cancelled) {
-          setQuickPasteHintsById(buildQuickPasteHintsById(items, quickPasteModifier));
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to refresh quick paste hints:", error);
-        if (!cancelled) {
-          setQuickPasteHintsById(seededHints);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    setQuickPasteHintsById(buildQuickPasteHintsById(history, quickPasteModifier));
   }, [history, quickPasteModifier]);
 
   useToastListener({ pushToast });
@@ -699,7 +644,7 @@ const App = () => {
   */
 
   const filteredHistory = useFilteredHistory({
-    history,
+    history: hydratedHistory,
     search,
     typeFilter
   });
@@ -762,6 +707,7 @@ const App = () => {
     sensitiveMaskEmailDomain,
     quickPasteHintsById,
     copyToClipboard,
+    prefetchDetails,
     setSelectedIndex,
     setRevealedIds,
     openContent,
@@ -845,9 +791,13 @@ const App = () => {
           handlePinnedReorder={handlePinnedReorder}
           renderItemContent={renderItemContent}
           loadMoreHistory={loadMoreHistory}
+          loadNewerHistory={loadNewerHistory}
+          handleVisibleRange={prefetchVisibleRange}
           handleListScroll={handleListScroll}
           hasMore={effectiveHasMore}
+          hasNewer={hasNewer}
           isLoadingMore={isLoadingMore}
+          firstItemIndex={firstItemIndex}
           showScrollTop={showScrollTopVisible}
           onScrollTop={handleScrollTop}
         />

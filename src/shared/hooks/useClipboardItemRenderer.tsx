@@ -36,6 +36,7 @@ interface UseClipboardItemRendererOptions {
     isPinned?: boolean,
     tags?: string[]
   ) => Promise<void>;
+  prefetchDetails: (ids: number[]) => void;
   setSelectedIndex: Dispatch<SetStateAction<number>>;
   setRevealedIds: Dispatch<SetStateAction<Set<number>>>;
   openContent: (item: ClipboardEntry) => void;
@@ -74,6 +75,7 @@ export const useClipboardItemRenderer = ({
   sensitiveMaskEmailDomain,
   quickPasteHintsById,
   copyToClipboard,
+  prefetchDetails,
   setSelectedIndex,
   setRevealedIds,
   openContent,
@@ -117,8 +119,9 @@ export const useClipboardItemRenderer = ({
           sensitiveMaskEmailDomain={sensitiveMaskEmailDomain}
           quickPasteHint={quickPasteHintsById[item.id]}
           onSelect={() => setSelectedIndex(index)}
+          onNeedDetail={() => prefetchDetails([item.id])}
           onCopy={(withFormat) =>
-            copyToClipboard(item.id, item.content, item.content_type, withFormat, item.is_pinned, item.tags || [])
+            copyToClipboard(item.id, "", item.content_type, withFormat, item.is_pinned, item.tags || [])
           }
           onToggleReveal={(e) => {
             e.stopPropagation();
@@ -193,6 +196,7 @@ export const useClipboardItemRenderer = ({
       sensitiveMaskEmailDomain,
       quickPasteHintsById,
       copyToClipboard,
+      prefetchDetails,
       setSelectedIndex,
       setRevealedIds,
       openContent,

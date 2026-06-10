@@ -494,7 +494,10 @@ fn update_database_with_changes(
                 if item.content_type == "rich_text" {
                     item.content_type = "text".to_string();
                 }
-                let _ = app_handle.emit("clipboard-updated", item.clone());
+                let _ = app_handle.emit(
+                    "clipboard-updated",
+                    crate::domain::models::ClipboardEntrySummary::from_entry(item),
+                );
                 println!(
                     "Session item updated and clipboard-updated event emitted for id: {}",
                     id
@@ -526,7 +529,10 @@ fn update_database_with_changes(
         }
 
         if let Ok(Some(updated_entry)) = state.repo.get_entry_by_id(id) {
-            let _ = app_handle.emit("clipboard-updated", updated_entry);
+            let _ = app_handle.emit(
+                "clipboard-updated",
+                crate::domain::models::ClipboardEntrySummary::from_entry(&updated_entry),
+            );
             println!(
                 "Database updated and clipboard-updated event emitted for id: {}",
                 id

@@ -35,9 +35,13 @@ interface AppMainContentProps {
   handlePinnedReorder: (newOrderIds: number[]) => void;
   renderItemContent: RenderItem;
   loadMoreHistory: () => void;
+  loadNewerHistory: () => void;
+  handleVisibleRange: (startIndex: number, endIndex: number) => void;
   handleListScroll: (offset: number) => void;
   hasMore: boolean;
+  hasNewer: boolean;
   isLoadingMore: boolean;
+  firstItemIndex: number;
   showScrollTop: boolean;
   onScrollTop: () => void;
 }
@@ -99,9 +103,13 @@ const AppMainContent = ({
   handlePinnedReorder,
   renderItemContent,
   loadMoreHistory,
+  loadNewerHistory,
+  handleVisibleRange,
   handleListScroll,
   hasMore,
+  hasNewer,
   isLoadingMore,
+  firstItemIndex,
   showScrollTop,
   onScrollTop
 }: AppMainContentProps) => {
@@ -273,9 +281,13 @@ const AppMainContent = ({
               return el;
             }}
             onLoadMore={loadMoreHistory}
+            onLoadNewer={loadNewerHistory}
+            onRangeChanged={handleVisibleRange}
             onScroll={handleListScroll}
             hasMore={hasMore}
+            hasNewer={hasNewer}
             isLoading={isLoadingMore}
+            firstItemIndex={firstItemIndex}
           />
           {showScrollTop && (
             <button

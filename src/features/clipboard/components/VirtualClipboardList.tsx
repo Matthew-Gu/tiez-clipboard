@@ -39,13 +39,17 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
             items,
             renderItem,
             onLoadMore,
+            onLoadNewer,
+            onRangeChanged,
             hasMore,
+            hasNewer,
             isLoading,
             selectedIndex,
             isKeyboardMode,
             onScroll,
             compactMode,
-            header
+            header,
+            firstItemIndex = 0
         } = props;
 
         const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -53,7 +57,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
         useImperativeHandle(ref, () => ({
             scrollToItem: (index: number) => {
                 virtuosoRef.current?.scrollIntoView({
-                    index,
+                    index: index + firstItemIndex,
                     behavior: 'smooth',
                     align: 'center',
                 });
@@ -67,7 +71,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
             resetAfterIndex: (_index: number) => {
                 // Not needed with Virtuoso as it handles dynamic heights automatically
             }
-        }));
+        }), [firstItemIndex]);
 
         // Keep keyboard selection visible even when the item is only in overscan
         React.useEffect(() => {
@@ -78,7 +82,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
 
             if (!range) {
                 virtuosoRef.current?.scrollToIndex({
-                    index: selectedIndex,
+                    index: selectedIndex + firstItemIndex,
                     behavior: 'auto',
                     align: 'center',
                 });
@@ -87,7 +91,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
 
             if (selectedIndex < range.startIndex + edgeBuffer) {
                 virtuosoRef.current?.scrollToIndex({
-                    index: selectedIndex,
+                    index: selectedIndex + firstItemIndex,
                     behavior: 'auto',
                     align: 'start',
                 });
@@ -96,12 +100,12 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
 
             if (selectedIndex > range.endIndex - edgeBuffer) {
                 virtuosoRef.current?.scrollToIndex({
-                    index: selectedIndex,
+                    index: selectedIndex + firstItemIndex,
                     behavior: 'auto',
                     align: 'end',
                 });
             }
-        }, [selectedIndex, isKeyboardMode]);
+        }, [selectedIndex, isKeyboardMode, firstItemIndex]);
 
 
         // Handle scroll events
@@ -117,17 +121,23 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
         }, [hasMore, isLoading, onLoadMore]);
 
         const handleRangeChanged = useCallback((range: ListRange) => {
-            visibleRangeRef.current = range;
-        }, []);
+            const normalizedRange = {
+                startIndex: Math.max(0, range.startIndex - firstItemIndex),
+                endIndex: Math.max(0, range.endIndex - firstItemIndex)
+            };
+            visibleRangeRef.current = normalizedRange;
+            onRangeChanged?.(normalizedRange.startIndex, normalizedRange.endIndex);
+        }, [firstItemIndex, onRangeChanged]);
 
         // Memoized item renderer for Virtuoso
         const itemContent = useCallback((index: number, item: ClipboardEntry) => {
+            const localIndex = index - firstItemIndex;
             return (
                 <div style={{ paddingBottom: compactMode ? 2 : 4 }}>
-                    {renderItem(item, index, index === 0)}
+                    {renderItem(item, localIndex, localIndex === 0)}
                 </div>
             );
-        }, [renderItem, compactMode]);
+        }, [renderItem, compactMode, firstItemIndex]);
 
         const components = useMemo(() => ({
             Header: ListHeader,
@@ -145,12 +155,16 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
                 <Virtuoso
                     ref={virtuosoRef}
                     data={items}
+                    firstItemIndex={firstItemIndex}
                     itemContent={itemContent}
                     components={components}
                     context={context}
                     style={{ height: '100%' }}
                     onScroll={(e) => handleScroll((e.currentTarget as HTMLElement).scrollTop)}
                     endReached={handleEndReached}
+                    startReached={() => {
+                        if (hasNewer && !isLoading) onLoadNewer?.();
+                    }}
                     rangeChanged={handleRangeChanged}
                     overscan={200} // Pre-render 200px of content for smoother scrolling
                 />
@@ -163,5 +177,3 @@ VirtualClipboardList.displayName = 'VirtualClipboardList';
 
 export { VirtualClipboardList };
 export default VirtualClipboardList;
-
-

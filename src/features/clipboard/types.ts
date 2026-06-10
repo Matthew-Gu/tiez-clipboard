@@ -29,6 +29,7 @@ export interface ClipboardItemProps {
   quickPasteHint?: QuickPasteHint;
 
   onSelect: () => void;
+  onNeedDetail?: () => void;
   onCopy: (withFormat?: boolean) => void;
   onToggleReveal: (e: MouseEvent) => void;
   onOpen: (e: MouseEvent) => void;
@@ -57,13 +58,17 @@ export interface VirtualClipboardListProps {
   items: ClipboardEntry[];
   renderItem: ClipboardRenderItem;
   onLoadMore?: () => void;
+  onLoadNewer?: () => void;
+  onRangeChanged?: (startIndex: number, endIndex: number) => void;
   hasMore: boolean;
+  hasNewer?: boolean;
   isLoading: boolean;
   selectedIndex: number;
   isKeyboardMode: boolean;
   onScroll?: (offset: number) => void;
   compactMode: boolean;
   header?: ReactNode;
+  firstItemIndex?: number;
 }
 
 export interface VirtualClipboardListHandle {

@@ -32,7 +32,7 @@ export const useClipboardActions = ({
         }
 
         await invoke("copy_to_clipboard", {
-          content,
+          content: id !== 0 ? "" : content,
           contentType,
           paste: true,
           id: id,
@@ -64,7 +64,7 @@ export const useClipboardActions = ({
       try {
         await invoke("open_content", {
           id: item.id,
-          content: item.content,
+          content: item.id !== 0 ? "" : item.content,
           contentType: item.content_type
         });
       } catch (err) {
@@ -141,5 +141,4 @@ export const useClipboardActions = ({
     handleUpdateTags
   };
 };
-
 

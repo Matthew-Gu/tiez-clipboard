@@ -1,6 +1,6 @@
 use crate::app_state::{AppDataDir, SessionHistory};
 use crate::database::DbState;
-use crate::domain::models::ClipboardEntry;
+use crate::domain::models::{ClipboardEntry, ClipboardEntryDetail, ClipboardEntrySummary};
 use crate::error::{AppError, AppResult};
 use crate::infrastructure::repository::clipboard_repo::ClipboardRepository;
 use crate::infrastructure::repository::tag_repo::TagRepository;
@@ -8,6 +8,155 @@ use crate::services::clipboard::{
     build_entry_preview, derive_rich_text_content, truncate_html_for_preview,
 };
 use tauri::{AppHandle, Emitter, State};
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ClipboardHistoryPage {
+    pub items: Vec<ClipboardEntrySummary>,
+    pub pinned: Vec<ClipboardEntrySummary>,
+    pub has_older: bool,
+    pub has_newer: bool,
+}
+
+fn cursor_matches(entry: &ClipboardEntry, direction: &str, cursor: Option<(i64, i64)>) -> bool {
+    let Some((timestamp, id)) = cursor else {
+        return true;
+    };
+    if direction == "newer" {
+        entry.timestamp > timestamp || (entry.timestamp == timestamp && entry.id > id)
+    } else {
+        entry.timestamp < timestamp || (entry.timestamp == timestamp && entry.id < id)
+    }
+}
+
+#[tauri::command]
+pub fn get_clipboard_history_page(
+    state: State<'_, DbState>,
+    session: State<'_, SessionHistory>,
+    limit: i32,
+    direction: Option<String>,
+    cursor_timestamp: Option<i64>,
+    cursor_id: Option<i64>,
+    content_type: Option<String>,
+    include_pinned: Option<bool>,
+) -> AppResult<ClipboardHistoryPage> {
+    let direction = direction.unwrap_or_else(|| "older".to_string());
+    let cursor = cursor_timestamp.zip(cursor_id);
+    let requested = limit.clamp(1, 200);
+    let conn = state.conn.lock().unwrap();
+    let mut items = state
+        .repo
+        .get_cursor_page_with_conn(
+            &conn,
+            requested + 1,
+            &direction,
+            cursor,
+            content_type.as_deref(),
+        )
+        .map_err(AppError::from)?;
+    let mut pinned = if include_pinned.unwrap_or(false) {
+        state
+            .repo
+            .get_pinned_with_conn(&conn)
+            .map_err(AppError::from)?
+    } else {
+        Vec::new()
+    };
+    drop(conn);
+
+    let session_items = session.inner().0.lock().unwrap();
+    for item in session_items.iter() {
+        if let Some(filter) = content_type.as_deref() {
+            if item.content_type != filter {
+                continue;
+            }
+        }
+        if item.is_pinned {
+            if include_pinned.unwrap_or(false) {
+                pinned.push(item.clone());
+            }
+        } else if cursor_matches(item, &direction, cursor) {
+            items.push(item.clone());
+        }
+    }
+    drop(session_items);
+
+    if direction == "newer" {
+        items.sort_by(|a, b| a.timestamp.cmp(&b.timestamp).then_with(|| a.id.cmp(&b.id)));
+    } else {
+        items.sort_by(|a, b| b.timestamp.cmp(&a.timestamp).then_with(|| b.id.cmp(&a.id)));
+    }
+    let has_extra = items.len() > requested as usize;
+    items.truncate(requested as usize);
+    if direction == "newer" {
+        items.reverse();
+    }
+
+    pinned.sort_by(|a, b| {
+        b.pinned_order
+            .cmp(&a.pinned_order)
+            .then_with(|| b.timestamp.cmp(&a.timestamp))
+            .then_with(|| b.id.cmp(&a.id))
+    });
+    pinned.dedup_by_key(|entry| entry.id);
+
+    Ok(ClipboardHistoryPage {
+        items: items
+            .iter()
+            .map(ClipboardEntrySummary::from_entry)
+            .collect(),
+        pinned: pinned
+            .iter()
+            .map(ClipboardEntrySummary::from_entry)
+            .collect(),
+        has_older: if direction == "older" {
+            has_extra
+        } else {
+            true
+        },
+        has_newer: if direction == "newer" {
+            has_extra
+        } else {
+            cursor.is_some()
+        },
+    })
+}
+
+#[tauri::command]
+pub fn search_clipboard_history_summaries(
+    state: State<'_, DbState>,
+    session: State<'_, SessionHistory>,
+    search_term: String,
+    limit: i32,
+    tag_only: Option<bool>,
+) -> AppResult<Vec<ClipboardEntrySummary>> {
+    search_clipboard_history(state, session, search_term, limit, tag_only).map(|items| {
+        items
+            .iter()
+            .map(ClipboardEntrySummary::from_entry)
+            .collect()
+    })
+}
+
+#[tauri::command]
+pub fn get_clipboard_entry_detail(
+    state: State<'_, DbState>,
+    session: State<'_, SessionHistory>,
+    id: i64,
+) -> AppResult<ClipboardEntryDetail> {
+    {
+        let session_items = session.inner().0.lock().unwrap();
+        if let Some(item) = session_items.iter().find(|item| item.id == id) {
+            return Ok(ClipboardEntryDetail::from_entry(item));
+        }
+    }
+    state
+        .repo
+        .get_entry_by_id(id)
+        .map_err(AppError::from)?
+        .map(|entry| ClipboardEntryDetail::from_entry(&entry))
+        .ok_or_else(|| AppError::Validation("Entry not found".to_string()))
+}
 
 fn normalize_rich_text_item_content(item: &mut ClipboardEntry) {
     if item.content_type != "rich_text" {
@@ -360,4 +509,39 @@ pub fn update_pinned_order(
 #[tauri::command]
 pub fn get_db_count(state: State<'_, DbState>) -> AppResult<i64> {
     state.repo.get_count().map_err(AppError::from)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::cursor_matches;
+    use crate::domain::models::ClipboardEntry;
+
+    fn entry(timestamp: i64, id: i64) -> ClipboardEntry {
+        ClipboardEntry {
+            id,
+            content_type: "text".to_string(),
+            content: String::new(),
+            html_content: None,
+            source_app: String::new(),
+            source_app_path: None,
+            timestamp,
+            preview: String::new(),
+            is_pinned: false,
+            tags: Vec::new(),
+            use_count: 0,
+            is_external: false,
+            pinned_order: 0,
+            file_preview_exists: true,
+        }
+    }
+
+    #[test]
+    fn cursor_direction_uses_timestamp_and_id_tiebreaker() {
+        let cursor = Some((10, 5));
+        assert!(cursor_matches(&entry(9, 99), "older", cursor));
+        assert!(cursor_matches(&entry(10, 4), "older", cursor));
+        assert!(cursor_matches(&entry(11, 1), "newer", cursor));
+        assert!(cursor_matches(&entry(10, 6), "newer", cursor));
+        assert!(!cursor_matches(&entry(10, 5), "older", cursor));
+    }
 }

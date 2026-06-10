@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
-import type { ClipboardEntry } from "../types";
+import type { ClipboardEntrySummary } from "../types";
 
 interface UseClipboardEventsOptions {
-  onUpdated: (entry: ClipboardEntry) => void;
+  onUpdated: (entry: ClipboardEntrySummary) => void;
   onRemoved: (id: number) => void;
   onChanged?: () => void;
 }
@@ -26,7 +26,7 @@ export const useClipboardEvents = ({ onUpdated, onRemoved, onChanged }: UseClipb
   }, [onChanged]);
 
   useEffect(() => {
-    const unlistenUpdate = listen<ClipboardEntry>("clipboard-updated", (event) => {
+    const unlistenUpdate = listen<ClipboardEntrySummary>("clipboard-updated", (event) => {
       onUpdatedRef.current(event.payload);
     });
     const unlistenRemove = listen<number>("clipboard-removed", (event) => {
@@ -43,5 +43,4 @@ export const useClipboardEvents = ({ onUpdated, onRemoved, onChanged }: UseClipb
     };
   }, []);
 };
-
 

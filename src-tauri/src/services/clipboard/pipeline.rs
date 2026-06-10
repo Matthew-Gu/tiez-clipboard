@@ -11,6 +11,20 @@ use std::sync::atomic::Ordering;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager};
 
+fn merge_duplicate_entry_metadata(entry: &mut ClipboardEntry, existing: &ClipboardEntry) {
+    entry.is_pinned = existing.is_pinned;
+    entry.pinned_order = existing.pinned_order;
+    entry.use_count = existing.use_count + 1;
+
+    let mut merged_tags = existing.tags.clone();
+    for tag in &entry.tags {
+        if !merged_tags.iter().any(|existing_tag| existing_tag == tag) {
+            merged_tags.push(tag.clone());
+        }
+    }
+    entry.tags = merged_tags;
+}
+
 #[derive(Debug, Clone)]
 pub enum ClipboardData {
     Text(String),
@@ -404,6 +418,9 @@ impl PipelineStage for ValidationStage {
                     // This ensures the item is "moved to top" without risking data loss
                     let entry_mut = ctx.entry.as_mut().unwrap();
                     entry_mut.id = id;
+                    if let Ok(Some(existing)) = db_state.repo.get_entry_by_id_with_conn(&conn, id) {
+                        merge_duplicate_entry_metadata(entry_mut, &existing);
+                    }
                 }
             }
 
@@ -493,10 +510,7 @@ impl PipelineStage for PersistenceStage {
                 {
                     let mut session = session_history.0.lock().unwrap();
                     if let Some(existing) = session.iter_mut().find(|i| i.id == reuse_id) {
-                        let preserved_tags = existing.tags.clone();
-                        let preserved_pinned = existing.is_pinned;
-                        let preserved_pinned_order = existing.pinned_order;
-                        let preserved_use_count = existing.use_count;
+                        merge_duplicate_entry_metadata(entry, existing);
 
                         existing.content_type = entry.content_type.clone();
                         existing.content = entry.content.clone();
@@ -507,14 +521,10 @@ impl PipelineStage for PersistenceStage {
                         existing.preview = entry.preview.clone();
                         existing.is_external = entry.is_external;
                         existing.file_preview_exists = entry.file_preview_exists;
-                        existing.is_pinned = preserved_pinned;
-                        existing.pinned_order = preserved_pinned_order;
-                        existing.tags = if entry.tags.is_empty() {
-                            preserved_tags
-                        } else {
-                            entry.tags.clone()
-                        };
-                        existing.use_count = preserved_use_count + 1;
+                        existing.is_pinned = entry.is_pinned;
+                        existing.pinned_order = entry.pinned_order;
+                        existing.tags = entry.tags.clone();
+                        existing.use_count = entry.use_count;
 
                         updated_entry = Some(existing.clone());
                     }
@@ -542,6 +552,59 @@ impl PipelineStage for PersistenceStage {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::merge_duplicate_entry_metadata;
+    use crate::domain::models::ClipboardEntry;
+
+    fn entry(
+        is_pinned: bool,
+        pinned_order: i64,
+        tags: Vec<&str>,
+        use_count: i32,
+    ) -> ClipboardEntry {
+        ClipboardEntry {
+            id: 1,
+            content_type: "text".to_string(),
+            content: "content".to_string(),
+            html_content: None,
+            source_app: "test".to_string(),
+            source_app_path: None,
+            timestamp: 1,
+            preview: "content".to_string(),
+            is_pinned,
+            tags: tags.into_iter().map(str::to_string).collect(),
+            use_count,
+            is_external: false,
+            pinned_order,
+            file_preview_exists: true,
+        }
+    }
+
+    #[test]
+    fn duplicate_metadata_preserves_pin_and_existing_tags() {
+        let existing = entry(true, 7, vec!["work"], 3);
+        let mut incoming = entry(false, 0, vec![], 0);
+
+        merge_duplicate_entry_metadata(&mut incoming, &existing);
+
+        assert!(incoming.is_pinned);
+        assert_eq!(incoming.pinned_order, 7);
+        assert_eq!(incoming.tags, vec!["work"]);
+        assert_eq!(incoming.use_count, 4);
+    }
+
+    #[test]
+    fn duplicate_metadata_merges_new_tags_without_duplicates() {
+        let existing = entry(false, 0, vec!["work", "sensitive"], 0);
+        let mut incoming = entry(false, 0, vec!["sensitive", "new"], 0);
+
+        merge_duplicate_entry_metadata(&mut incoming, &existing);
+
+        assert_eq!(incoming.tags, vec!["work", "sensitive", "new"]);
     }
 }
 
@@ -592,8 +655,9 @@ impl PipelineStage for DistributionStage {
         }
 
         // Notify
-        let _ = ctx
-            .app_handle
-            .emit("clipboard-updated", truncate_entry_for_ui(entry.clone()));
+        let _ = ctx.app_handle.emit(
+            "clipboard-updated",
+            crate::domain::models::ClipboardEntrySummary::from_entry(entry),
+        );
     }
 }

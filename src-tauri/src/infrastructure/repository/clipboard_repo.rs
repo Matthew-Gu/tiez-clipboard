@@ -183,6 +183,121 @@ impl SqliteClipboardRepository {
         }
     }
 
+    pub fn get_cursor_page_with_conn(
+        &self,
+        conn: &Connection,
+        limit: i32,
+        direction: &str,
+        cursor: Option<(i64, i64)>,
+        content_type: Option<&str>,
+    ) -> Result<Vec<ClipboardEntry>, String> {
+        let comparison = if direction == "newer" { ">" } else { "<" };
+        let order = if direction == "newer" { "ASC" } else { "DESC" };
+        let type_clause = if content_type.is_some() {
+            " AND content_type = ?4"
+        } else {
+            ""
+        };
+        let sql = format!(
+            "SELECT id, content_type, content, html_content, source_app, timestamp, preview, is_pinned, tags, use_count, is_external, pinned_order, source_app_path
+             FROM clipboard_history
+             WHERE is_pinned = 0
+               AND (?1 IS NULL OR timestamp {comparison} ?1 OR (timestamp = ?1 AND id {comparison} ?2))
+               {type_clause}
+             ORDER BY timestamp {order}, id {order}
+             LIMIT ?3"
+        );
+
+        let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
+        let cursor_timestamp = cursor.map(|value| value.0);
+        let cursor_id = cursor.map(|value| value.1);
+        let map_row = |row: &rusqlite::Row| {
+            let tags_raw: String = row.get(8).unwrap_or_else(|_| "[]".to_string());
+            let content_raw: String = row.get(2)?;
+            let html_raw: Option<String> = row.get(3).ok();
+            let preview_raw: String = row.get(6)?;
+            Ok(ClipboardEntry {
+                id: row.get(0)?,
+                content_type: row.get(1)?,
+                content: self.maybe_decrypt_text(&content_raw),
+                html_content: html_raw.map(|value| self.maybe_decrypt_text(&value)),
+                source_app: row.get(4)?,
+                timestamp: row.get(5)?,
+                preview: self.maybe_decrypt_text(&preview_raw),
+                is_pinned: false,
+                tags: serde_json::from_str(&tags_raw).unwrap_or_default(),
+                use_count: row.get(9).unwrap_or(0),
+                is_external: row.get::<_, i32>(10).unwrap_or(0) == 1,
+                pinned_order: row.get(11).unwrap_or(0),
+                source_app_path: row.get(12).unwrap_or(None),
+                file_preview_exists: true,
+            })
+        };
+
+        let mut entries = Vec::new();
+        if let Some(content_type) = content_type {
+            let rows = stmt
+                .query_map(
+                    rusqlite::params![cursor_timestamp, cursor_id, limit, content_type],
+                    map_row,
+                )
+                .map_err(|e| e.to_string())?;
+            for row in rows {
+                entries.push(row.map_err(|e| e.to_string())?);
+            }
+        } else {
+            let rows = stmt
+                .query_map(
+                    rusqlite::params![cursor_timestamp, cursor_id, limit],
+                    map_row,
+                )
+                .map_err(|e| e.to_string())?;
+            for row in rows {
+                entries.push(row.map_err(|e| e.to_string())?);
+            }
+        }
+        if direction == "newer" {
+            entries.reverse();
+        }
+        Ok(entries)
+    }
+
+    pub fn get_pinned_with_conn(&self, conn: &Connection) -> Result<Vec<ClipboardEntry>, String> {
+        let mut stmt = conn
+            .prepare(
+                "SELECT id, content_type, content, html_content, source_app, timestamp, preview, is_pinned, tags, use_count, is_external, pinned_order, source_app_path
+                 FROM clipboard_history
+                 WHERE is_pinned = 1
+                 ORDER BY pinned_order DESC, timestamp DESC, id DESC",
+            )
+            .map_err(|e| e.to_string())?;
+        let rows = stmt
+            .query_map([], |row| {
+                let tags_raw: String = row.get(8).unwrap_or_else(|_| "[]".to_string());
+                let content_raw: String = row.get(2)?;
+                let html_raw: Option<String> = row.get(3).ok();
+                let preview_raw: String = row.get(6)?;
+                Ok(ClipboardEntry {
+                    id: row.get(0)?,
+                    content_type: row.get(1)?,
+                    content: self.maybe_decrypt_text(&content_raw),
+                    html_content: html_raw.map(|value| self.maybe_decrypt_text(&value)),
+                    source_app: row.get(4)?,
+                    timestamp: row.get(5)?,
+                    preview: self.maybe_decrypt_text(&preview_raw),
+                    is_pinned: true,
+                    tags: serde_json::from_str(&tags_raw).unwrap_or_default(),
+                    use_count: row.get(9).unwrap_or(0),
+                    is_external: row.get::<_, i32>(10).unwrap_or(0) == 1,
+                    pinned_order: row.get(11).unwrap_or(0),
+                    source_app_path: row.get(12).unwrap_or(None),
+                    file_preview_exists: true,
+                })
+            })
+            .map_err(|e| e.to_string())?;
+        rows.map(|row| row.map_err(|e| e.to_string())).collect()
+    }
+
     fn extract_rich_image_fallback_payload(html: &str) -> Option<String> {
         if let Some(start) = html.rfind(RICH_IMAGE_FALLBACK_PREFIX) {
             let marker_start = start + RICH_IMAGE_FALLBACK_PREFIX.len();

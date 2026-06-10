@@ -677,6 +677,7 @@ const ClipboardItem = ({
     language,
     t,
     onSelect,
+    onNeedDetail,
     onCopy,
     onToggleReveal,
     onOpen,
@@ -1538,6 +1539,7 @@ const ClipboardItem = ({
                 onSelect();
             }}
             onMouseEnter={(e) => {
+                onNeedDetail?.();
                 if (!compactPreviewEnabled) return;
                 compactPreviewLog("mouseenter schedule preview", { itemId: item.id });
                 const requestId = hoverRequestIdRef.current + 1;
@@ -1666,7 +1668,11 @@ const ClipboardItem = ({
                 <div className={`content-preview ${item.content_type === 'rich_text' ? 'rich-text' : ''} ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}>
                 {item.content_type === "image" ? (
                     <div style={{ position: 'relative' }}>
-                        {item.is_external && item.file_preview_exists === false ? (
+                        {!item.content ? (
+                            <div className="image-preview error-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '72px', fontSize: '12px' }}>
+                                {item.preview}
+                            </div>
+                        ) : item.is_external && item.file_preview_exists === false ? (
                             <div className="image-preview error-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '100px', fontSize: '12px' }}>
                                 <ImageOff size={24} style={{ marginBottom: '8px', opacity: 0.5 }} />
                                 <span>{t('image_deleted') || 'Image Deleted'}</span>

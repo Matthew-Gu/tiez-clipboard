@@ -13,4 +13,37 @@ export interface ClipboardEntry {
   is_external?: boolean;
   pinned_order?: number;
   file_preview_exists?: boolean;
+  content_length?: number;
+  detail_loaded?: boolean;
+}
+
+export interface ClipboardEntrySummary {
+  id: number;
+  contentType: string;
+  contentHint?: string;
+  contentLength: number;
+  sourceApp: string;
+  sourceAppPath?: string;
+  timestamp: number;
+  preview: string;
+  isPinned: boolean;
+  tags: string[];
+  useCount?: number;
+  isExternal?: boolean;
+  pinnedOrder?: number;
+  filePreviewExists?: boolean;
+}
+
+export interface ClipboardEntryDetail {
+  id: number;
+  contentType: string;
+  content: string;
+  htmlContent?: string;
+}
+
+export interface ClipboardHistoryPage {
+  items: ClipboardEntrySummary[];
+  pinned: ClipboardEntrySummary[];
+  hasOlder: boolean;
+  hasNewer: boolean;
 }

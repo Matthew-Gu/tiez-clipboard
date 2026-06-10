@@ -152,7 +152,7 @@ export const useKeyboardNavigation = ({
           if (copyToClipboardRef.current) {
             await copyToClipboardRef.current(
               item.id,
-              item.content,
+              "",
               item.content_type,
               isRich
             );
@@ -217,7 +217,7 @@ export const useKeyboardNavigation = ({
         if (!isNavMode) return;
         if (currentIndex >= 0 && currentIndex < history.length) {
           const item = history[currentIndex];
-          copyToClipboard(item.id, item.content, item.content_type, false);
+          copyToClipboard(item.id, "", item.content_type, false);
         }
       } else if (action === "escape") {
         setSearch("");

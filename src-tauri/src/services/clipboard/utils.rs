@@ -1,5 +1,4 @@
 use crate::database::save_image_to_file;
-use crate::domain::models::ClipboardEntry;
 use base64::{engine::general_purpose, Engine as _};
 use regex::Regex;
 use reqwest::header::CONTENT_TYPE;
@@ -941,7 +940,7 @@ pub fn build_entry_preview(
             preview
         }
     } else {
-        collapse_preview_whitespace(&normalize_clipboard_plain_text(content))
+        normalize_plain_text_layout(&normalize_clipboard_plain_text(content))
     };
 
     if preview_text.chars().count() > TEXT_PREVIEW_MAX_CHARS {
@@ -1088,29 +1087,6 @@ pub fn externalize_rich_image_fallback(html: &str, data_dir: &Path) -> String {
     }
 
     html.to_string()
-}
-
-pub fn truncate_entry_for_ui(mut entry: ClipboardEntry) -> ClipboardEntry {
-    if (entry.content_type == "text"
-        || entry.content_type == "code"
-        || entry.content_type == "url"
-        || entry.content_type == "rich_text")
-        && entry.content.chars().count() > 2000
-    {
-        entry.content = format!(
-            "{}... [Truncated for speed]",
-            entry.content.chars().take(2000).collect::<String>()
-        );
-    }
-
-    // Also truncate HTML content up to a certain point for UI preview
-    if let Some(ref html) = entry.html_content {
-        if html.chars().count() > HTML_PREVIEW_MAX_CHARS {
-            entry.html_content = truncate_html_for_preview(html);
-        }
-    }
-
-    entry
 }
 
 pub fn truncate_html_for_preview(html: &str) -> Option<String> {
@@ -1569,6 +1545,36 @@ mod tests {
         let preview = build_entry_preview("text", text, None);
 
         assert_eq!(preview, "ddd");
+    }
+
+    #[test]
+    fn plain_text_preview_preserves_normalized_line_breaks() {
+        let preview = build_entry_preview("text", "first  line\r\nsecond\tline\rthird", None);
+
+        assert_eq!(preview, "first line\nsecond line\nthird");
+    }
+
+    #[test]
+    fn code_and_url_previews_preserve_line_breaks() {
+        assert_eq!(
+            build_entry_preview("code", "const a = 1;\nconst b = 2;", None),
+            "const a = 1;\nconst b = 2;"
+        );
+        assert_eq!(
+            build_entry_preview("url", "https://example.com/a\nhttps://example.com/b", None),
+            "https://example.com/a\nhttps://example.com/b"
+        );
+    }
+
+    #[test]
+    fn rich_text_preview_continues_to_collapse_line_breaks() {
+        let preview = build_entry_preview(
+            "rich_text",
+            "first\nsecond",
+            Some("<p>first</p><p>second</p>"),
+        );
+
+        assert_eq!(preview, "first second");
     }
 
     #[test]
