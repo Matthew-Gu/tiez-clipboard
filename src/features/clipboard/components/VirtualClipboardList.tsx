@@ -49,7 +49,9 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
             onScroll,
             compactMode,
             header,
-            firstItemIndex = 0
+            firstItemIndex = 0,
+            restoreStateFrom,
+            onStateSnapshot
         } = props;
 
         const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -72,6 +74,13 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
                 // Not needed with Virtuoso as it handles dynamic heights automatically
             }
         }), [firstItemIndex]);
+
+        React.useLayoutEffect(() => {
+            return () => {
+                if (!onStateSnapshot) return;
+                virtuosoRef.current?.getState(onStateSnapshot);
+            };
+        }, [onStateSnapshot]);
 
         // Keep keyboard selection visible even when the item is only in overscan
         React.useEffect(() => {
@@ -159,6 +168,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
                     itemContent={itemContent}
                     components={components}
                     context={context}
+                    restoreStateFrom={restoreStateFrom}
                     style={{ height: '100%' }}
                     onScroll={(e) => handleScroll((e.currentTarget as HTMLElement).scrollTop)}
                     endReached={handleEndReached}

@@ -1,5 +1,6 @@
 import type { MouseEvent, ReactNode } from "react";
 import type { DragControls } from "framer-motion";
+import type { StateSnapshot } from "react-virtuoso";
 import type { ClipboardEntry, Locale } from "../../shared/types";
 
 export interface QuickPasteHint {
@@ -69,6 +70,8 @@ export interface VirtualClipboardListProps {
   compactMode: boolean;
   header?: ReactNode;
   firstItemIndex?: number;
+  restoreStateFrom?: StateSnapshot;
+  onStateSnapshot?: (snapshot: StateSnapshot) => void;
 }
 
 export interface VirtualClipboardListHandle {

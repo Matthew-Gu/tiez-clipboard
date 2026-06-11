@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ComponentProps, RefObject, ReactNode } from "react";
 import { motion, Reorder, useDragControls } from "framer-motion";
 import type { DragControls } from "framer-motion";
+import type { StateSnapshot } from "react-virtuoso";
 import { ArrowUp, Clipboard } from "lucide-react";
 import SettingsPanel from "../../settings/components/SettingsPanel";
 import TagManager from "../../tag/components/TagManager";
@@ -118,6 +119,22 @@ const AppMainContent = ({
   );
   const pinnedOrderRef = useRef<number[]>(pinnedItems.map((item) => item.id));
   const [isDraggingPinned, setIsDraggingPinned] = useState(false);
+  const homeListSnapshotRef = useRef<StateSnapshot | null>(null);
+  const homeVisibleRef = useRef(true);
+  const homeVisible = !showSettings && !(showTagManager && tagManagerEnabled);
+  homeVisibleRef.current = homeVisible;
+
+  useEffect(() => {
+    if (homeVisible && filteredHistory.length === 0) {
+      homeListSnapshotRef.current = null;
+    }
+  }, [filteredHistory.length, homeVisible]);
+
+  const handleHomeListSnapshot = useCallback((snapshot: StateSnapshot) => {
+    if (!homeVisibleRef.current) {
+      homeListSnapshotRef.current = snapshot;
+    }
+  }, []);
 
   useEffect(() => {
     if (isDraggingPinned) return;
@@ -288,6 +305,8 @@ const AppMainContent = ({
             hasNewer={hasNewer}
             isLoading={isLoadingMore}
             firstItemIndex={firstItemIndex}
+            restoreStateFrom={homeListSnapshotRef.current ?? undefined}
+            onStateSnapshot={handleHomeListSnapshot}
           />
           {showScrollTop && (
             <button
