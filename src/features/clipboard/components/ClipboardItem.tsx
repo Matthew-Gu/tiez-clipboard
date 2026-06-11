@@ -865,7 +865,6 @@ const ClipboardItem = ({
     const useRichImageFallback = !!richTextPreviewSrc && richTextPreviewSrc === effectiveRichImageFallbackSrc;
     const visibleTagCount = item.tags?.length || 0;
     const hasTagsSection = visibleTagCount > 0 || isEditingTags;
-    const overlayTagsInPreview = !compactMode && !isEditingTags && visibleTagCount > 0;
     const standaloneColorValue = useMemo(
         () => getStandaloneColorValue(item.content_type, item.content),
         [item.content, item.content_type]
@@ -1273,11 +1272,11 @@ const ClipboardItem = ({
         );
     };
 
-    const renderTagsContainer = (overlay = false) => (
+    const renderTagsContainer = () => (
         <div
-            className={`item-tags-container${overlay ? ' overlay' : ''}${isEditingTags ? ' tag-edit-active' : ''}`}
+            className={`item-tags-container${isEditingTags ? ' tag-edit-active' : ''}`}
             style={{
-                marginTop: overlay ? '0' : '2px',
+                marginTop: compactMode ? '2px' : '6px',
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'flex-end',
@@ -1667,7 +1666,7 @@ const ClipboardItem = ({
                     </div>
                 )
             }
-            <div className={`content-preview-shell${overlayTagsInPreview ? ' has-overlay-tags' : ''}`}>
+            <div className="content-preview-shell">
                 <div className={`content-preview ${item.content_type === 'rich_text' ? 'rich-text' : ''} ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}>
                 {item.content_type === "image" ? (
                     <div style={{ position: 'relative' }}>
@@ -1818,11 +1817,10 @@ const ClipboardItem = ({
                         )
                         : item.preview
                 )}
-                {overlayTagsInPreview && renderTagsContainer(true)}
                 </div>
             </div>
 
-            {!overlayTagsInPreview && hasTagsSection && renderTagsContainer()}
+            {hasTagsSection && renderTagsContainer()}
         </motion.div >
     );
 };
