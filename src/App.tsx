@@ -52,6 +52,8 @@ import {
 } from "./features/clipboard/lib/compactPreviewControls";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
 import { BUILTIN_SENSITIVE_TAG_NAMES } from "./shared/lib/sensitiveTags";
+import { saveSetting } from "./shared/ipc/commands";
+import { toAppSettingKey } from "./shared/ipc/contracts";
 
 const QUICK_PASTE_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] as const;
 
@@ -546,7 +548,7 @@ const App = () => {
   });
 
   const saveAppSetting = useCallback(async (type: string, path: string) => {
-    const key = `app.${type}`;
+    const key = toAppSettingKey(type);
     console.log(`[THEME DEBUG] saveAppSetting called: key=${key}, value=${path}`);
     setAppSettings(prev => ({ ...prev, [key]: path }));
 
@@ -560,7 +562,7 @@ const App = () => {
     }
 
     try {
-      await invoke("save_setting", { key, value: path });
+      await saveSetting(toAppSettingKey(type), path);
       console.log(`[THEME DEBUG] saveAppSetting success: key=${key}`);
     } catch (err) {
       console.error("保存设置失败", err);

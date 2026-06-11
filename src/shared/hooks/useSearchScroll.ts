@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
 import type { WheelEvent as ReactWheelEvent } from "react";
+import { APP_SETTING_KEYS } from "../ipc/contracts";
 
 type UseSearchScrollOptions = {
   showSearchBox: boolean;
@@ -56,7 +57,7 @@ export const useSearchScroll = ({
         e.deltaY > 10 &&
         showSearchBox &&
         search.trim() === "" &&
-        appSettings["app.show_search_box"] !== "true"
+        appSettings[APP_SETTING_KEYS.showSearchBox] !== "true"
       ) {
         // See App.tsx note: do not persist setting when hiding temporary search.
         setShowSearchBox(false);

@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import type { MutableRefObject } from "react";
 import type { AppCleanupPolicy } from "../../features/settings/types";
 import type { QuickPasteModifier } from "../../features/app/types";
+import { APP_SETTING_KEYS } from "../ipc/contracts";
 const QUICK_PASTE_MODIFIERS = new Set<QuickPasteModifier>([
   "disabled",
   "ctrl",
@@ -132,9 +133,9 @@ export const useSettingsPostInit = ({
   useEffect(() => {
     if (!settings) return;
 
-    if (settings["app.tag_manager_size"]) {
+    if (settings[APP_SETTING_KEYS.tagManagerSize]) {
       try {
-        const parsed = JSON.parse(settings["app.tag_manager_size"]);
+        const parsed = JSON.parse(settings[APP_SETTING_KEYS.tagManagerSize]);
         if (parsed && typeof parsed.width === "number" && typeof parsed.height === "number") {
           tagManagerSizeRef.current = { width: parsed.width, height: parsed.height };
         }
@@ -144,65 +145,65 @@ export const useSettingsPostInit = ({
     }
 
     // Theme application is centralized in the theme effect below
-    if (settings["app.custom_background"]) setCustomBackground(settings["app.custom_background"]);
-    if (settings["app.custom_background_opacity"]) {
-      setCustomBackgroundOpacity(parseInt(settings["app.custom_background_opacity"]));
+    if (settings[APP_SETTING_KEYS.customBackground]) setCustomBackground(settings[APP_SETTING_KEYS.customBackground]);
+    if (settings[APP_SETTING_KEYS.customBackgroundOpacity]) {
+      setCustomBackgroundOpacity(parseInt(settings[APP_SETTING_KEYS.customBackgroundOpacity]));
     }
-    if (settings["app.surface_opacity"]) {
-      const next = parseInt(settings["app.surface_opacity"]);
+    if (settings[APP_SETTING_KEYS.surfaceOpacity]) {
+      const next = parseInt(settings[APP_SETTING_KEYS.surfaceOpacity]);
       if (Number.isFinite(next)) {
         setSurfaceOpacity(Math.min(100, Math.max(0, next)));
       }
     }
-    if (settings["app.clipboard_item_font_size"]) {
-      const next = parseInt(settings["app.clipboard_item_font_size"]);
+    if (settings[APP_SETTING_KEYS.clipboardItemFontSize]) {
+      const next = parseInt(settings[APP_SETTING_KEYS.clipboardItemFontSize]);
       if (Number.isFinite(next)) setClipboardItemFontSize(next);
     }
-    if (settings["app.clipboard_tag_font_size"]) {
-      const next = parseInt(settings["app.clipboard_tag_font_size"]);
+    if (settings[APP_SETTING_KEYS.clipboardTagFontSize]) {
+      const next = parseInt(settings[APP_SETTING_KEYS.clipboardTagFontSize]);
       if (Number.isFinite(next)) setClipboardTagFontSize(next);
     }
-    if (settings["app.tag_manager_enabled"] !== undefined) {
-      setTagManagerEnabled(settings["app.tag_manager_enabled"] !== "false");
+    if (settings[APP_SETTING_KEYS.tagManagerEnabled] !== undefined) {
+      setTagManagerEnabled(settings[APP_SETTING_KEYS.tagManagerEnabled] !== "false");
     }
     // Fix: explicitly handle both true and false cases for all boolean settings
-    setPersistent(settings["app.persistent"] !== "false");
-    setPersistentLimitEnabled(settings["app.persistent_limit_enabled"] !== "false");
-    if (settings["app.persistent_limit"]) {
-      setPersistentLimit(parseInt(settings["app.persistent_limit"]) || 1000);
+    setPersistent(settings[APP_SETTING_KEYS.persistent] !== "false");
+    setPersistentLimitEnabled(settings[APP_SETTING_KEYS.persistentLimitEnabled] !== "false");
+    if (settings[APP_SETTING_KEYS.persistentLimit]) {
+      setPersistentLimit(parseInt(settings[APP_SETTING_KEYS.persistentLimit]) || 1000);
     }
-    setDeduplicate(settings["app.deduplicate"] !== "false");
-    setCaptureFiles(settings["app.capture_files"] !== "false");
-    setCaptureRichText(settings["app.capture_rich_text"] === "true");
-    setRichTextSnapshotPreview(settings["app.rich_text_snapshot_preview"] === "true");
-    setPrivacyProtection(settings["app.privacy_protection"] !== "false");
-    if (settings["app.privacy_protection_kinds"]) {
-      const list = settings["app.privacy_protection_kinds"]
+    setDeduplicate(settings[APP_SETTING_KEYS.deduplicate] !== "false");
+    setCaptureFiles(settings[APP_SETTING_KEYS.captureFiles] !== "false");
+    setCaptureRichText(settings[APP_SETTING_KEYS.captureRichText] === "true");
+    setRichTextSnapshotPreview(settings[APP_SETTING_KEYS.richTextSnapshotPreview] === "true");
+    setPrivacyProtection(settings[APP_SETTING_KEYS.privacyProtection] !== "false");
+    if (settings[APP_SETTING_KEYS.privacyProtectionKinds]) {
+      const list = settings[APP_SETTING_KEYS.privacyProtectionKinds]
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
       if (list.length > 0) setPrivacyProtectionKinds(list);
     }
-    if (settings["app.privacy_protection_custom_rules"] !== undefined) {
-      setPrivacyProtectionCustomRules(settings["app.privacy_protection_custom_rules"] || "");
+    if (settings[APP_SETTING_KEYS.privacyProtectionCustomRules] !== undefined) {
+      setPrivacyProtectionCustomRules(settings[APP_SETTING_KEYS.privacyProtectionCustomRules] || "");
     }
-    if (settings["app.sensitive_mask_prefix_visible"]) {
-      const next = parseInt(settings["app.sensitive_mask_prefix_visible"]);
+    if (settings[APP_SETTING_KEYS.sensitiveMaskPrefixVisible]) {
+      const next = parseInt(settings[APP_SETTING_KEYS.sensitiveMaskPrefixVisible]);
       if (Number.isFinite(next)) setSensitiveMaskPrefixVisible(Math.min(20, Math.max(0, next)));
     }
-    if (settings["app.sensitive_mask_suffix_visible"]) {
-      const next = parseInt(settings["app.sensitive_mask_suffix_visible"]);
+    if (settings[APP_SETTING_KEYS.sensitiveMaskSuffixVisible]) {
+      const next = parseInt(settings[APP_SETTING_KEYS.sensitiveMaskSuffixVisible]);
       if (Number.isFinite(next)) setSensitiveMaskSuffixVisible(Math.min(20, Math.max(0, next)));
     }
-    if (settings["app.sensitive_mask_email_domain"] !== undefined) {
-      setSensitiveMaskEmailDomain(settings["app.sensitive_mask_email_domain"] === "true");
+    if (settings[APP_SETTING_KEYS.sensitiveMaskEmailDomain] !== undefined) {
+      setSensitiveMaskEmailDomain(settings[APP_SETTING_KEYS.sensitiveMaskEmailDomain] === "true");
     }
-    if (settings["app.cleanup_rules"] !== undefined) {
-      setCleanupRules(settings["app.cleanup_rules"] || "");
+    if (settings[APP_SETTING_KEYS.cleanupRules] !== undefined) {
+      setCleanupRules(settings[APP_SETTING_KEYS.cleanupRules] || "");
     }
-    if (settings["app.app_cleanup_policies"]) {
+    if (settings[APP_SETTING_KEYS.appCleanupPolicies]) {
       try {
-        const parsed = JSON.parse(settings["app.app_cleanup_policies"]);
+        const parsed = JSON.parse(settings[APP_SETTING_KEYS.appCleanupPolicies]);
         if (Array.isArray(parsed)) {
           setAppCleanupPolicies(
             parsed.filter(
@@ -223,36 +224,36 @@ export const useSettingsPostInit = ({
         console.warn("Invalid app cleanup policies:", e);
       }
     }
-    setSilentStart(settings["app.silent_start"] !== "false");
-    setFollowMouse(settings["app.follow_mouse"] === "true");
-    setShowAppBorder(settings["app.show_app_border"] === "true");
-    setRegistryWinVEnabled(settings["app.registry_win_v_enabled"] === "true");
-    setPasteMethod(settings["app.paste_method"] || "simulate");
-    setShowSourceAppIcon(settings["app.show_source_app_icon"] !== "false");
+    setSilentStart(settings[APP_SETTING_KEYS.silentStart] !== "false");
+    setFollowMouse(settings[APP_SETTING_KEYS.followMouse] === "true");
+    setShowAppBorder(settings[APP_SETTING_KEYS.showAppBorder] === "true");
+    setRegistryWinVEnabled(settings[APP_SETTING_KEYS.registryWinVEnabled] === "true");
+    setPasteMethod(settings[APP_SETTING_KEYS.pasteMethod] || "simulate");
+    setShowSourceAppIcon(settings[APP_SETTING_KEYS.showSourceAppIcon] !== "false");
 
 
     // These have false as default, so check for 'true'
-    setDeleteAfterPaste(settings["app.delete_after_paste"] === "true");
-    setMoveToTopAfterPaste(settings["app.move_to_top_after_paste"] !== "false");
-    setHideTrayIcon(settings["app.hide_tray_icon"] === "true");
-    const edgeDockingEnabled = settings["app.edge_docking"] === "true";
+    setDeleteAfterPaste(settings[APP_SETTING_KEYS.deleteAfterPaste] === "true");
+    setMoveToTopAfterPaste(settings[APP_SETTING_KEYS.moveToTopAfterPaste] !== "false");
+    setHideTrayIcon(settings[APP_SETTING_KEYS.hideTrayIcon] === "true");
+    const edgeDockingEnabled = settings[APP_SETTING_KEYS.edgeDocking] === "true";
     setEdgeDocking(edgeDockingEnabled);
 
-    if (settings["app.show_search_box"] === "false") setShowSearchBox(false);
-    setScrollTopButtonEnabled(settings["app.show_scroll_top_button"] !== "false");
-    if (settings["app.arrow_key_selection"] === "false") setArrowKeySelection(false);
+    if (settings[APP_SETTING_KEYS.showSearchBox] === "false") setShowSearchBox(false);
+    setScrollTopButtonEnabled(settings[APP_SETTING_KEYS.showScrollTopButton] !== "false");
+    if (settings[APP_SETTING_KEYS.arrowKeySelection] === "false") setArrowKeySelection(false);
 
-    if (settings["app.sequential_hotkey"]) setSequentialHotkey(settings["app.sequential_hotkey"]);
-    if (settings["app.rich_paste_hotkey"]) setRichPasteHotkey(settings["app.rich_paste_hotkey"]);
-    if (settings["app.search_hotkey"] !== undefined) setSearchHotkey(settings["app.search_hotkey"]);
-    setQuickPasteModifier(normalizeQuickPasteModifier(settings["app.quick_paste_modifier"]));
-    if (settings["app.sequential_mode"] === "true") setSequentialModeState(true);
-    if (settings["app.sound_enabled"] === "true") setSoundEnabled(true);
-    setPasteSoundEnabled(settings["app.sound_paste_enabled"] !== "false");
-    if (settings["app.sound_volume"]) {
-      setSoundVolume(parseFloat(settings["app.sound_volume"]) || 1.0);
+    if (settings[APP_SETTING_KEYS.sequentialHotkey]) setSequentialHotkey(settings[APP_SETTING_KEYS.sequentialHotkey]);
+    if (settings[APP_SETTING_KEYS.richPasteHotkey]) setRichPasteHotkey(settings[APP_SETTING_KEYS.richPasteHotkey]);
+    if (settings[APP_SETTING_KEYS.searchHotkey] !== undefined) setSearchHotkey(settings[APP_SETTING_KEYS.searchHotkey]);
+    setQuickPasteModifier(normalizeQuickPasteModifier(settings[APP_SETTING_KEYS.quickPasteModifier]));
+    if (settings[APP_SETTING_KEYS.sequentialMode] === "true") setSequentialModeState(true);
+    if (settings[APP_SETTING_KEYS.soundEnabled] === "true") setSoundEnabled(true);
+    setPasteSoundEnabled(settings[APP_SETTING_KEYS.soundPasteEnabled] !== "false");
+    if (settings[APP_SETTING_KEYS.soundVolume]) {
+      setSoundVolume(parseFloat(settings[APP_SETTING_KEYS.soundVolume]) || 1.0);
     }
-    if (settings["app.window_pinned"] === "true") {
+    if (settings[APP_SETTING_KEYS.windowPinned] === "true") {
       setIsWindowPinned(true);
       invoke("set_window_pinned", { pinned: true }).catch(console.error);
     }

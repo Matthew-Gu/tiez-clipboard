@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { TAURI_COMMANDS } from "../ipc/contracts";
 
 interface UseSettingsSyncOptions {
   settingsLoaded: boolean;
@@ -28,26 +29,26 @@ export const useSettingsSync = ({
 }: UseSettingsSyncOptions) => {
   useEffect(() => {
     if (settingsLoaded) {
-      invoke("set_deduplication", { enabled: deduplicate });
+      invoke(TAURI_COMMANDS.setDeduplication, { enabled: deduplicate });
       saveAppSetting("deduplicate", String(deduplicate));
     }
   }, [deduplicate, saveAppSetting, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke("set_capture_files", { enabled: captureFiles });
+      invoke(TAURI_COMMANDS.setCaptureFiles, { enabled: captureFiles });
     }
   }, [captureFiles, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke("set_capture_rich_text", { enabled: captureRichText });
+      invoke(TAURI_COMMANDS.setCaptureRichText, { enabled: captureRichText });
     }
   }, [captureRichText, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke("set_persistence", { enabled: persistent });
+      invoke(TAURI_COMMANDS.setPersistence, { enabled: persistent });
     }
   }, [persistent, settingsLoaded]);
 
@@ -58,7 +59,7 @@ export const useSettingsSync = ({
   }, [saveAppSetting, settingsLoaded, soundVolume]);
 
   useEffect(() => {
-    invoke("set_arrow_key_selection", { enabled: arrowKeySelection }).catch(console.error);
+    invoke(TAURI_COMMANDS.setArrowKeySelection, { enabled: arrowKeySelection }).catch(console.error);
     if (!arrowKeySelection) {
       setIsKeyboardMode(false);
       setSelectedIndex(0);

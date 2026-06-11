@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   APP_SETTING_KEYS,
   TAURI_COMMANDS,
-  TAURI_EVENTS
+  TAURI_EVENTS,
+  toAppSettingKey
 } from "./contracts";
 import type {
   ClipboardHistoryPageArgs,
@@ -22,6 +23,7 @@ describe("tauri ipc contracts", () => {
   it("keeps app setting keys fully qualified", () => {
     expect(APP_SETTING_KEYS.theme).toBe("app.theme");
     expect(APP_SETTING_KEYS.soundPasteEnabled).toBe("app.sound_paste_enabled");
+    expect(toAppSettingKey("theme")).toBe("app.theme");
     expect(Object.values(APP_SETTING_KEYS).every((key) => key.startsWith("app."))).toBe(true);
   });
 

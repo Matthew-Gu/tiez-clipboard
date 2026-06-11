@@ -92,7 +92,11 @@ export const APP_SETTING_KEYS = {
 } as const;
 
 export type AppSettingKey = (typeof APP_SETTING_KEYS)[keyof typeof APP_SETTING_KEYS];
+export type AppSettingName = AppSettingKey extends `app.${infer Name}` ? Name : never;
 export type AppSettings = Record<string, string>;
+
+export const toAppSettingKey = (name: string): AppSettingKey =>
+  `app.${name}` as AppSettingKey;
 
 export interface ClipboardHistoryPageArgs extends Record<string, unknown> {
   limit: number;

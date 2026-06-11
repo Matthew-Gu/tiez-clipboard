@@ -1,6 +1,8 @@
 import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { saveSetting } from "../../../../shared/ipc/commands";
+import { APP_SETTING_KEYS } from "../../../../shared/ipc/contracts";
 
 interface LabelWithHintProps {
     label: string;
@@ -165,7 +167,7 @@ const GeneralSettingsGroup = ({
                                 onChange={(e) => {
                                     const enabled = e.target.checked;
                                     setPasteSoundEnabled(enabled);
-                                    invoke("save_setting", { key: 'app.sound_paste_enabled', value: String(enabled) }).catch(console.error);
+                                    saveSetting(APP_SETTING_KEYS.soundPasteEnabled, String(enabled)).catch(console.error);
                                 }}
                             />
                             <div className="toggle"><div className="left" /><div className="right" /></div>

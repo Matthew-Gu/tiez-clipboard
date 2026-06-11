@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { DEFAULT_THEME, normalizeThemeId } from "../config/themes";
 import type { Locale } from "../types";
 import { isTauriRuntime } from "../lib/tauriRuntime";
+import { getSettings } from "../ipc/commands";
+import { APP_SETTING_KEYS, TAURI_EVENTS } from "../ipc/contracts";
 
 interface UseSettingsInitOptions {
   setAppSettings: (settings: Record<string, string>) => void;
@@ -34,7 +35,7 @@ export const useSettingsInit = ({
       settingsEffectCount.current++;
       console.log(`[THEME DEBUG] Settings useEffect run #${settingsEffectCount.current}`);
 
-      invoke<Record<string, string>>("get_settings")
+      getSettings()
         .then((result) => {
           if (disposed) return;
 
@@ -42,32 +43,32 @@ export const useSettingsInit = ({
             `[THEME DEBUG] get_settings response (run #${settingsEffectCount.current}):`,
             result
           );
-          console.log("[THEME DEBUG] app.color_mode from DB:", result["app.color_mode"]);
+          console.log("[THEME DEBUG] app.color_mode from DB:", result[APP_SETTING_KEYS.colorMode]);
 
           setAppSettings(result);
-          if (result["app.hotkey"]) setHotkey(result["app.hotkey"]);
+          if (result[APP_SETTING_KEYS.hotkey]) setHotkey(result[APP_SETTING_KEYS.hotkey]);
 
-          const loadedTheme = normalizeThemeId(result["app.theme"] || DEFAULT_THEME);
-          const loadedColorMode = result["app.color_mode"] || "system";
+          const loadedTheme = normalizeThemeId(result[APP_SETTING_KEYS.theme] || DEFAULT_THEME);
+          const loadedColorMode = result[APP_SETTING_KEYS.colorMode] || "system";
           console.log("[THEME DEBUG] loadedColorMode:", loadedColorMode);
 
           setTheme(loadedTheme);
           setColorMode(loadedColorMode);
-          setCompactMode(result["app.compact_mode"] === "true");
+          setCompactMode(result[APP_SETTING_KEYS.compactMode] === "true");
 
           try {
             localStorage.setItem("tiez_theme", loadedTheme);
             localStorage.setItem("tiez_color_mode", loadedColorMode);
             localStorage.setItem(
               "tiez_compact_mode",
-              result["app.compact_mode"] === "true" ? "true" : "false"
+              result[APP_SETTING_KEYS.compactMode] === "true" ? "true" : "false"
             );
           } catch {
             // Ignore localStorage errors
           }
 
-          if (result["app.language"]) {
-            setLanguage(result["app.language"] as Locale);
+          if (result[APP_SETTING_KEYS.language]) {
+            setLanguage(result[APP_SETTING_KEYS.language] as Locale);
           }
 
           setSettings(result);
@@ -77,7 +78,7 @@ export const useSettingsInit = ({
 
     loadSettings();
 
-    const unlisten = listen("settings-changed", () => {
+    const unlisten = listen(TAURI_EVENTS.settingsChanged, () => {
       loadSettings();
     });
 

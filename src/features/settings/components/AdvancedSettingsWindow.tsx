@@ -4,6 +4,8 @@ import { translations } from "../../../locales";
 import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
 import type { InstalledAppOption } from "../../app/types";
 import type { AppCleanupPolicy } from "../types";
+import { getSettings } from "../../../shared/ipc/commands";
+import { APP_SETTING_KEYS } from "../../../shared/ipc/contracts";
 
 const AdvancedSettingsWindow = () => {
   const [language, setLanguage] = useState<"zh" | "en" | "tw">("zh");
@@ -17,14 +19,15 @@ const AdvancedSettingsWindow = () => {
   }, [language]);
 
   useEffect(() => {
-    invoke<Record<string, string>>("get_settings")
+    getSettings()
       .then((settings) => {
-        setLanguage(settings["app.language"] === "en" || settings["app.language"] === "tw"
-          ? settings["app.language"]
+        const savedLanguage = settings[APP_SETTING_KEYS.language];
+        setLanguage(savedLanguage === "en" || savedLanguage === "tw"
+          ? savedLanguage
           : "zh");
-        setCleanupRules(settings["app.cleanup_rules"] || "");
+        setCleanupRules(settings[APP_SETTING_KEYS.cleanupRules] || "");
         try {
-          setAppCleanupPolicies(JSON.parse(settings["app.app_cleanup_policies"] || "[]"));
+          setAppCleanupPolicies(JSON.parse(settings[APP_SETTING_KEYS.appCleanupPolicies] || "[]"));
         } catch {
           setAppCleanupPolicies([]);
         }

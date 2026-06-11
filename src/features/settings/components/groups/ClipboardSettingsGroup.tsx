@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { saveSetting } from "../../../../shared/ipc/commands";
+import { APP_SETTING_KEYS } from "../../../../shared/ipc/contracts";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { getHotkeyDisplayTokens } from "../../../../shared/lib/hotkeyDisplay";
 import type { QuickPasteModifier } from "../../../app/types";
@@ -382,10 +384,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             onChange={(e) => {
                                 const value = e.target.value as QuickPasteModifier;
                                 props.setQuickPasteModifier(value);
-                                invoke("save_setting", {
-                                    key: "app.quick_paste_modifier",
-                                    value
-                                }).catch(console.error);
+                                saveSetting(APP_SETTING_KEYS.quickPasteModifier, value).catch(console.error);
                             }}
                             style={{
                                 padding: '4px 8px',
@@ -646,7 +645,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                         onChange={(e) => {
                                             const val = Math.min(20, Math.max(0, parseInt(e.target.value) || 0));
                                             props.setSensitiveMaskPrefixVisible(val);
-                                            invoke('save_setting', { key: 'app.sensitive_mask_prefix_visible', value: val.toString() }).catch(console.error);
+                                            saveSetting(APP_SETTING_KEYS.sensitiveMaskPrefixVisible, val.toString()).catch(console.error);
                                         }}
                                     />
                                 </div>
@@ -662,7 +661,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                         onChange={(e) => {
                                             const val = Math.min(20, Math.max(0, parseInt(e.target.value) || 0));
                                             props.setSensitiveMaskSuffixVisible(val);
-                                            invoke('save_setting', { key: 'app.sensitive_mask_suffix_visible', value: val.toString() }).catch(console.error);
+                                            saveSetting(APP_SETTING_KEYS.sensitiveMaskSuffixVisible, val.toString()).catch(console.error);
                                         }}
                                     />
                                 </div>
@@ -678,7 +677,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                             checked={props.sensitiveMaskEmailDomain}
                                             onChange={(e) => {
                                                 props.setSensitiveMaskEmailDomain(e.target.checked);
-                                                invoke('save_setting', { key: 'app.sensitive_mask_email_domain', value: e.target.checked.toString() }).catch(console.error);
+                                                saveSetting(APP_SETTING_KEYS.sensitiveMaskEmailDomain, e.target.checked.toString()).catch(console.error);
                                             }}
                                         />
                                         <span className="slider" />

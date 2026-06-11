@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { applyThemeClasses, normalizeThemeId } from "../config/themes";
+import { TAURI_COMMANDS } from "../ipc/contracts";
 
 interface UseSettingsApplyOptions {
   theme: string;
@@ -77,7 +78,7 @@ export const useSettingsApply = ({
       applySystemMode();
     }
 
-    invoke("set_theme", {
+    invoke(TAURI_COMMANDS.setTheme, {
       theme: normalizedTheme,
       color_mode: colorMode,
     }).catch(console.error);
@@ -91,7 +92,7 @@ export const useSettingsApply = ({
           if (disposed) return;
           const next = event?.payload === "dark" ? "dark" : "light";
           applyExplicitMode(next);
-          invoke("set_theme", {
+          invoke(TAURI_COMMANDS.setTheme, {
             theme: normalizedTheme,
             color_mode: "system",
           }).catch(console.error);
