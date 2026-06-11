@@ -5,7 +5,7 @@
 - 状态：进行中
 - 计划创建时间：2026-06-11
 - 计划基线提交：`b309024a1c936d07dc8bc29b30411c91071bd673`
-- 预计工时：25-38 单人工作日
+- 预计工时：26-40 单人工作日
 - 实际工时：待记录
 - 开始时间：待开始
 - 完成时间：待完成
@@ -36,6 +36,7 @@
 - 保持现有功能、页面表现、Tauri IPC 参数、返回数据处理和数据库行为不变。
 - 使用 `MemoryRouter` 统一主窗口内部导航。
 - 使用 Zustand 管理跨组件 UI 状态和设置状态，降低 `App.tsx` 与 props 透传复杂度。
+- 使用 Less 渐进整理组件样式，保留现有运行时主题能力。
 - 集中管理 Tauri 命令、事件和设置键契约。
 - 渐进拆分高复杂度组件和样式，避免大爆炸式重写。
 - 每个阶段可独立验证、独立提交、独立回滚。
@@ -49,6 +50,7 @@
 - Tauri IPC 前端调用契约的组织方式。
 - 纯函数、重复预览逻辑和大型组件内部职责。
 - 组件样式文件组织。
+- Less 构建接入与组件样式的渐进迁移。
 - 自动化测试和回归清单。
 
 ### 暂时不调整
@@ -93,6 +95,20 @@
 - 不迁移历史分页缓存、详情 LRU、紧凑预览生命周期和包含回调的弹窗状态。
 - Tauri 各窗口拥有独立 JS 上下文，通过 `settings-changed` 事件同步设置。
 
+### Less
+
+- 开发依赖：`less@4.6.4`，仅作为 Vite 样式预处理器使用。
+- 原生方案：继续维护现有原生 CSS、CSS Variables 和手工选择器嵌套。
+- 引入原因：大型组件样式文件层级复杂，使用 Less 嵌套、拆分和复用能力可降低维护成本。
+- 使用边界：优先用于组件样式；不启用 CSS Modules，不引入额外 Less 插件。
+- 主题约束：运行时主题值继续使用 CSS Variables；不得使用 Less 编译期变量替代主题 Token。
+- 迁移方式：按组件域渐进迁移，不进行全量 `.css` 转 `.less`。
+- 暂时保留：`base.css`、`styles/themes/*.css` 和现有主题自动加载方式。
+- 收益：改善大型样式文件结构，减少重复选择器前缀，便于组件样式拆分。
+- 风险：选择器嵌套可能增加优先级，编译结果可能产生视觉差异。
+- 体积与性能：Less 仅在构建期运行，不增加运行时代码；开发依赖安装体积约 2.5 MB，最终 CSS 体积应保持接近迁移前水平。
+- 业务影响：不得改变现有 DOM、类名、主题 Token 和视觉表现。
+
 ## 当前基线
 
 - 前端：React 19、TypeScript、Vite 7。
@@ -128,7 +144,7 @@
 | 5. 设置迁移 | [05-SETTINGS-MIGRATION.md](./05-SETTINGS-MIGRATION.md) | 未开始 | 4-6 天 | 待记录 | 阶段 4 |
 | 6. UI 状态迁移 | [06-UI-STATE-MIGRATION.md](./06-UI-STATE-MIGRATION.md) | 未开始 | 3-5 天 | 待记录 | 阶段 5 |
 | 7. 组件拆分 | [07-COMPONENT-SPLITTING.md](./07-COMPONENT-SPLITTING.md) | 未开始 | 6-9 天 | 待记录 | 阶段 6 |
-| 8. 样式与清理 | [08-STYLES-AND-CLEANUP.md](./08-STYLES-AND-CLEANUP.md) | 未开始 | 3-5 天 | 待记录 | 阶段 7 |
+| 8. Less、样式与清理 | [08-STYLES-AND-CLEANUP.md](./08-STYLES-AND-CLEANUP.md) | 未开始 | 4-7 天 | 待记录 | 阶段 7 |
 | 9. 回归收尾 | [09-REGRESSION-CLOSEOUT.md](./09-REGRESSION-CLOSEOUT.md) | 未开始 | 2-3 天 | 待记录 | 阶段 8 |
 
 ## 推荐提交顺序
@@ -145,9 +161,11 @@
 10. `refactor: migrate shared ui state to zustand`
 11. `refactor: simplify app orchestration`
 12. `refactor: split clipboard and tag components`
-13. `refactor: isolate component styles`
-14. `test: complete refactor regression coverage`
-15. `docs: close stable refactor plan`
+13. `chore: add less preprocessor dependency`
+14. `refactor: migrate component styles to less`
+15. `refactor: isolate component styles`
+16. `test: complete refactor regression coverage`
+17. `docs: close stable refactor plan`
 
 ## 阶段门禁
 
@@ -180,6 +198,7 @@
 | 多窗口状态无法内存共享 | 独立窗口显示过期设置 | 保留 `settings-changed` 事件同步 |
 | 富文本预览逻辑重复且复杂 | 主列表与紧凑预览表现不一致 | 先提取纯函数并补测试，再拆组件 |
 | CSS 全局覆盖较多 | 视觉回归 | 每次仅迁移一个组件并执行主题矩阵检查 |
+| Less 嵌套增加选择器优先级 | 局部样式覆盖关系变化 | 限制嵌套深度，迁移前后比较编译 CSS 与主题矩阵 |
 | 核心桌面行为依赖人工回归 | 自动测试无法覆盖 Windows 行为 | 最终阶段执行安装版和便携版人工检查 |
 
 ## 进度维护规则
@@ -200,3 +219,4 @@
 | 2026-06-11 | 独立高级设置窗口暂时保留 | 避免破坏潜在外部入口，复用同一设置业务层 |
 | 2026-06-11 | 两个已知缺陷在重构前独立修复 | 区分行为修复与结构重构，便于回滚 |
 | 2026-06-11 | 当前未使用依赖暂不删除 | 需要单独确认运行时和历史用途 |
+| 2026-06-11 | 接入 `less@4.6.4`，仅渐进迁移组件样式 | 改善大型组件样式维护，同时保护现有主题运行时能力 |
