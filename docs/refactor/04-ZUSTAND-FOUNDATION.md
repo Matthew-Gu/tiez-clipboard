@@ -16,12 +16,13 @@
 ## 执行清单
 
 - [ ] 单独安装并提交 `zustand@5.0.14`。
-- [ ] 创建 `useSettingsStore` 和 `useUiStore`。
+- [ ] 仅创建 `useSettingsStore` 和 `useUiStore`，不得按组件或页面继续拆分 Store。
 - [ ] 定义初始状态、纯 action 和常用 selector。
 - [ ] 为 Store 初始状态、action 和重置行为补充测试。
 - [ ] 建立设置服务与 Store 同步 hook 的职责边界。
 - [ ] 确认未启用 `persist`、Immer 和 devtools middleware。
 - [ ] 确认 Store 中不保存回调、Promise、窗口对象或预览生命周期对象。
+- [ ] 确认单组件状态、一次性状态和已有稳定 hook 状态不进入 Store。
 - [ ] 记录依赖引入前后的构建产物体积。
 
 ## 状态边界
@@ -41,6 +42,7 @@
 - 历史分页和详情缓存。
 - 紧凑预览窗口生命周期。
 - Toast 与确认弹窗回调。
+- 单组件内部状态和只使用一次的 UI 状态。
 
 ## 验证结果
 
@@ -48,6 +50,7 @@
 - `npm test`：待执行
 - `npx tsc --noEmit`：待执行
 - `npm run build`：待执行
+- 轻量化验收：确认只有两个 Store，且没有迁移非跨组件状态
 
 ## 相关提交
 
@@ -61,4 +64,3 @@
 ## 遗留问题
 
 - 待记录
-
