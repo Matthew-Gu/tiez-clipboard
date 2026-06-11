@@ -10,8 +10,8 @@
 - 开始时间：阶段 1 于 2026-06-11 10:04:50 +08:00 开始
 - 完成时间：待完成
 - 依赖阶段：无
-- 当前阶段：阶段 2 进行中
-- 阻塞项：无
+- 当前阶段：阶段 2 实现完成，自动化门禁通过，待人工验收
+- 阻塞项：阶段 2 桌面端人工回归尚未执行，阶段 3 暂不可开始
 
 ## 验证结果
 
@@ -19,6 +19,8 @@
 - 阶段 1 实施前基线：`npm test` 22 个测试通过；`npx tsc --noEmit` 通过；`cargo test` 68 个测试通过
 - 阶段 1 实施后门禁：`npm test` 26 个测试通过；`npx tsc --noEmit` 通过；`cargo test` 72 个测试通过；`cargo fmt --check` 与 `git diff --check` 通过
 - 阶段 1 人工回归：用户于 2026-06-11 确认验收通过
+- 阶段 2 自动化门禁：`npm test` 29 个测试通过；`npx tsc --noEmit` 与 `git diff --check` 通过；未修改 Rust 源码或依赖
+- 阶段 2 人工回归：未执行
 
 ## 相关提交
 
@@ -33,6 +35,7 @@
 
 - 既有 `password` 标签历史数据不进行重新对齐。
 - 工作区存在阶段外用户修改的 `src-tauri/tauri.conf.json`，阶段二不得修改、暂存或提交。
+- 阶段 2 桌面端人工回归尚未执行。
 
 ## 重构目标
 
@@ -214,7 +217,7 @@
 | --- | --- | --- | ---: | ---: | --- |
 | 0. 文档与基线 | [01-BASELINE-AND-DEFECTS.md](./01-BASELINE-AND-DEFECTS.md) | 已完成 | 1-1.5 天 | 仅完成计划与基线审计 | 无 |
 | 1. 缺陷隔离 | [01-BASELINE-AND-DEFECTS.md](./01-BASELINE-AND-DEFECTS.md) | 已完成 | 1.5-2.5 天 | 本次执行约 0.5 小时，不含人工回归 | 阶段 0 |
-| 2. IPC 契约 | [02-IPC-CONTRACTS.md](./02-IPC-CONTRACTS.md) | 进行中 | 2-3 天 | 待记录 | 阶段 1 |
+| 2. IPC 契约 | [02-IPC-CONTRACTS.md](./02-IPC-CONTRACTS.md) | 实现完成，待人工验收 | 2-3 天 | 本次执行约 0.2 小时，不含人工回归 | 阶段 1 |
 | 3. 路由迁移 | [03-ROUTER-MIGRATION.md](./03-ROUTER-MIGRATION.md) | 未开始 | 2-3 天 | 待记录 | 阶段 2 |
 | 4. Zustand 基础 | [04-ZUSTAND-FOUNDATION.md](./04-ZUSTAND-FOUNDATION.md) | 未开始 | 2-3 天 | 待记录 | 阶段 3 |
 | 5. 设置迁移 | [05-SETTINGS-MIGRATION.md](./05-SETTINGS-MIGRATION.md) | 未开始 | 4-6 天 | 待记录 | 阶段 4 |
