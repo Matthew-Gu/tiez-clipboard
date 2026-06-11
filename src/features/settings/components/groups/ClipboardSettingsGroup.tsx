@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { saveSetting } from "../../../../shared/ipc/commands";
 import { APP_SETTING_KEYS } from "../../../../shared/ipc/contracts";
+import { focusClipboardWindow } from "../../../../shared/lib/focus";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { getHotkeyDisplayTokens } from "../../../../shared/lib/hotkeyDisplay";
 import type { QuickPasteModifier } from "../../../app/types";
@@ -178,7 +179,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                         value={persistentLimitDraft}
                                         onFocus={(e) => {
                                             e.target.select();
-                                            invoke("focus_clipboard_window").catch(console.error);
+                                            focusClipboardWindow().catch(console.error);
                                         }}
                                         onChange={(e) => {
                                             const next = e.target.value;
@@ -609,7 +610,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                 style={{ width: 'calc(100% - 30px)', maxWidth: '100%', minHeight: '80px', padding: '8px', borderRadius: '0', marginLeft: '30px', boxSizing: 'border-box' }}
                                 placeholder={props.t('privacy_protection_custom_rules_placeholder')}
                                 value={props.privacyProtectionCustomRules}
-                                onFocus={() => invoke("focus_clipboard_window").catch(console.error)}
+                                onFocus={() => focusClipboardWindow().catch(console.error)}
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     props.setPrivacyProtectionCustomRules(val);

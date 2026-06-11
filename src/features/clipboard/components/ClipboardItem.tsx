@@ -41,6 +41,8 @@ import { getRichTextSnapshotDataUrl } from "../../../shared/lib/richTextSnapshot
 import { getFileIcon as getSystemFileIcon, peekFileIcon } from "../../../shared/lib/fileIcon";
 import { getSourceAppIcon, peekSourceAppIcon } from "../../../shared/lib/sourceAppIcon";
 import { hasSensitiveTag } from "../../../shared/lib/sensitiveTags";
+import { activateWindowFocus } from "../../../shared/ipc/commands";
+import { TAURI_EVENTS } from "../../../shared/ipc/contracts";
 import { registerCompactPreviewControls } from "../lib/compactPreviewControls";
 
 const COMPACT_PREVIEW_LABEL = "compact-preview";
@@ -386,7 +388,7 @@ const waitForCompactPreviewMounted = async (): Promise<boolean> => {
                 resolve(false);
             }, 1200);
             try {
-                const unlisten = await listen("compact-preview-mounted", () => {
+                const unlisten = await listen(TAURI_EVENTS.compactPreviewMounted, () => {
                     compactPreviewMounted = true;
                     clearTimeout(timeout);
                     unlisten();
@@ -1052,7 +1054,7 @@ const ClipboardItem = ({
                 contentType: item.content_type,
                 hasHtml: !!item.html_content
             });
-            await previewWindow.emit("compact-preview-update", {
+            await previewWindow.emit(TAURI_EVENTS.compactPreviewUpdate, {
                 contentType: item.content_type,
                 content: item.content,
                 preview: item.preview,
@@ -1103,7 +1105,7 @@ const ClipboardItem = ({
                     compactPreviewPendingShow = true;
                     compactPreviewPendingAnchor = anchor;
                     compactPreviewLog("emit compact-preview-update after recreate");
-                    await previewWindow.emit("compact-preview-update", {
+                    await previewWindow.emit(TAURI_EVENTS.compactPreviewUpdate, {
                         contentType: item.content_type,
                         content: item.content,
                         preview: item.preview,
@@ -1331,10 +1333,10 @@ const ClipboardItem = ({
                                 onTagInput(val);
                             }}
                             onMouseDown={() => {
-                                invoke('activate_window_focus').catch(console.error);
+                                activateWindowFocus().catch(console.error);
                             }}
                             onFocus={() => {
-                                invoke('activate_window_focus').catch(console.error);
+                                activateWindowFocus().catch(console.error);
                             }}
                             onChange={(e) => {
                                 const val = e.target.value;

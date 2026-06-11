@@ -52,8 +52,8 @@ import {
 } from "./features/clipboard/lib/compactPreviewControls";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
 import { BUILTIN_SENSITIVE_TAG_NAMES } from "./shared/lib/sensitiveTags";
-import { saveSetting } from "./shared/ipc/commands";
-import { toAppSettingKey } from "./shared/ipc/contracts";
+import { activateWindowFocus, saveSetting } from "./shared/ipc/commands";
+import { TAURI_EVENTS, toAppSettingKey } from "./shared/ipc/contracts";
 
 const QUICK_PASTE_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] as const;
 
@@ -441,12 +441,12 @@ const App = () => {
   useEffect(() => {
     if (!isTauriRuntime()) return;
 
-    const unlisten = listen("focus-search-input", () => {
+    const unlisten = listen(TAURI_EVENTS.focusSearchInput, () => {
       setShowSettings(false);
       setShowTagManager(false);
       setShowSearchBox(true);
       setSearchIsFocused(true);
-      invoke("activate_window_focus")
+      activateWindowFocus()
         .catch(console.error)
         .finally(() => {
           requestAnimationFrame(() => {
@@ -509,7 +509,7 @@ const App = () => {
 
   useEffect(() => {
     if (!isTauriRuntime()) return;
-    const unlisten = listen("force-hide-compact-preview", () => {
+    const unlisten = listen(TAURI_EVENTS.forceHideCompactPreview, () => {
       forceHideCompactPreviewWindow();
     });
     return () => {

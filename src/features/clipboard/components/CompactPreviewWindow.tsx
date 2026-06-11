@@ -21,6 +21,7 @@ import { getConciseTime } from "../../../shared/lib/utils";
 import type { Locale } from "../../../shared/types";
 import { toTauriLocalImageSrc } from "../../../shared/lib/localImageSrc";
 import { getRichTextSnapshotDataUrl } from "../../../shared/lib/richTextSnapshot";
+import { TAURI_EVENTS } from "../../../shared/ipc/contracts";
 
 type PreviewPayload = {
     contentType: string;
@@ -292,7 +293,7 @@ const CompactPreviewWindow = () => {
             }
         })();
         compactPreviewLog("listen compact-preview-update");
-        const unlisten = listen<PreviewPayload>("compact-preview-update", (event) => {
+        const unlisten = listen<PreviewPayload>(TAURI_EVENTS.compactPreviewUpdate, (event) => {
             compactPreviewLog("received compact-preview-update", {
                 contentType: event.payload.contentType,
                 contentLength: event.payload.content?.length ?? 0,
@@ -303,7 +304,7 @@ const CompactPreviewWindow = () => {
             setPayload(event.payload);
             applyTheme(event.payload);
         });
-        emitTo("main", "compact-preview-mounted", true)
+        emitTo("main", TAURI_EVENTS.compactPreviewMounted, true)
             .then(() => compactPreviewLog("emit compact-preview-mounted"))
             .catch((err) => {
                 console.error(err);
@@ -369,7 +370,7 @@ const CompactPreviewWindow = () => {
                     maxHeight
                 });
 
-                emitTo("main", "compact-preview-resize", { width, height }).catch((err) => {
+                emitTo("main", TAURI_EVENTS.compactPreviewResize, { width, height }).catch((err) => {
                     console.error(err);
                     compactPreviewLog("emit compact-preview-resize failed", err);
                 });

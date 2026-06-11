@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 interface UseWindowPinnedListenerOptions {
   onPinnedChange: (pinned: boolean) => void;
@@ -10,7 +11,7 @@ export const useWindowPinnedListener = ({ onPinnedChange }: UseWindowPinnedListe
     let unlisten: (() => void) | undefined;
     (async () => {
       try {
-        unlisten = await listen<boolean>("window-pinned-changed", (event) => {
+        unlisten = await listen<boolean>(TAURI_EVENTS.windowPinnedChanged, (event) => {
           const pinned = event.payload === true;
           onPinnedChange(pinned);
         });

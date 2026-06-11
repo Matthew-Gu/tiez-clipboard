@@ -6,6 +6,7 @@ import type { RefObject } from "react";
 import { matchesHotkey } from "./useHotkeyMatching";
 import { useWindowVisibility } from "./useWindowVisibility";
 import type { ClipboardEntry } from "../types";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 interface UseKeyboardNavigationOptions {
   filteredHistory: ClipboardEntry[];
@@ -180,7 +181,7 @@ export const useKeyboardNavigation = ({
   }, [searchInputRef, setIsKeyboardMode, setSelectedIndex]);
 
   useEffect(() => {
-    const unlisten = listen<string>("navigation-action", async (event) => {
+    const unlisten = listen<string>(TAURI_EVENTS.navigationAction, async (event) => {
       try {
         const isVisible = await getCurrentWindow().isVisible();
         if (!isVisible) return;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 export const useTagColors = () => {
   const [tagColors, setTagColors] = useState<Record<string, string>>({});
@@ -13,7 +14,7 @@ export const useTagColors = () => {
     };
 
     fetchTagColors();
-    const unlistenColors = listen("tag-colors-updated", fetchTagColors);
+    const unlistenColors = listen(TAURI_EVENTS.tagColorsUpdated, fetchTagColors);
 
     return () => {
       unlistenColors.then((f) => f());

@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 type HotkeyMode = "main" | "sequential" | "rich" | "search";
 
@@ -213,14 +214,14 @@ export const useHotkeyConfig = ({
     }).catch(console.error);
 
     if (isRecording || isRecordingSequential || isRecordingRich || isRecordingSearch) {
-      const unlisten = listen<string>("hotkey-recorded", (event) => {
+      const unlisten = listen<string>(TAURI_EVENTS.hotkeyRecorded, (event) => {
         if (isRecording) updateHotkey(event.payload);
         if (isRecordingSequential) updateSequentialHotkey(event.payload);
         if (isRecordingRich) updateRichPasteHotkey(event.payload);
         if (isRecordingSearch) updateSearchHotkey(event.payload);
       });
 
-      const unlistenCancel = listen("recording-cancelled", () => {
+      const unlistenCancel = listen(TAURI_EVENTS.recordingCancelled, () => {
         setIsRecording(false);
         setIsRecordingSequential(false);
         setIsRecordingRich(false);

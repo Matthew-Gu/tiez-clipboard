@@ -8,10 +8,12 @@ import {
 import { getTagColor } from "../../../shared/lib/utils";
 import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
 import {
+    activateWindowFocus,
     copyToClipboard as invokeCopyToClipboard,
     deleteClipboardEntry,
     openContent
 } from "../../../shared/ipc/commands";
+import { TAURI_EVENTS } from "../../../shared/ipc/contracts";
 import type { ClipboardEntry } from "../../../shared/types";
 
 interface TagManagerProps {
@@ -78,9 +80,9 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                 fetchTags();
                 if (selectedTagRef.current) loadTagItems(selectedTagRef.current);
             };
-            unlisteners.push(await listen('clipboard-changed', handleUpdate));
-            unlisteners.push(await listen('clipboard-updated', handleUpdate));
-            unlisteners.push(await listen('clipboard-removed', handleUpdate));
+            unlisteners.push(await listen(TAURI_EVENTS.clipboardChanged, handleUpdate));
+            unlisteners.push(await listen(TAURI_EVENTS.clipboardUpdated, handleUpdate));
+            unlisteners.push(await listen(TAURI_EVENTS.clipboardRemoved, handleUpdate));
         };
         setupListeners();
         return () => unlisteners.forEach(f => f());
@@ -216,7 +218,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
         setIsDeleting(true);
         try {
             await invoke('delete_tag_from_all', { tagName });
-            await emit('clipboard-changed'); // Notify App.tsx to refresh
+            await emit(TAURI_EVENTS.clipboardChanged); // Notify App.tsx to refresh
             await fetchTags();
         } catch (err) { console.error(err); }
         finally {
@@ -285,7 +287,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                 ["--tm-sidebar-width" as any]: isCollapsed ? '48px' : `${sidebarWidth}px`,
                 ["--tm-sidebar-height" as any]: `${sidebarHeight}px`
             } as any}
-            onMouseDown={() => invoke('activate_window_focus').catch(console.error)}
+            onMouseDown={() => activateWindowFocus().catch(console.error)}
         >
             {/* Sidebar with CRUD support */}
             {/* Sidebar with Unified Search & Create */}
@@ -313,8 +315,8 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                         <input
                             placeholder={t('find_or_create')}
                             value={tagSearch}
-                            onMouseDown={() => invoke('activate_window_focus').catch(console.error)}
-                            onFocus={() => invoke('activate_window_focus').catch(console.error)}
+                            onMouseDown={() => activateWindowFocus().catch(console.error)}
+                            onFocus={() => activateWindowFocus().catch(console.error)}
                             onChange={e => setTagSearch(e.target.value)}
                             onKeyDown={async (e) => {
                                 if (e.key === 'Enter' && tagSearch.trim()) {
@@ -369,7 +371,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                         const newColor = e.target.value;
                                         setTagColors(prev => ({ ...prev, [tag.name]: newColor }));
                                         await invoke('set_tag_color', { name: tag.name, color: newColor });
-                                        await emit('tag-colors-updated');
+                                        await emit(TAURI_EVENTS.tagColorsUpdated);
                                     }}
                                 />
                             </div>
@@ -377,8 +379,8 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                 <input
                                     className="inline-tag-edit"
                                     value={newTagName}
-                                    onMouseDown={() => invoke('activate_window_focus').catch(console.error)}
-                                    onFocus={() => invoke('activate_window_focus').catch(console.error)}
+                                    onMouseDown={() => activateWindowFocus().catch(console.error)}
+                                    onFocus={() => activateWindowFocus().catch(console.error)}
                                     onChange={(e) => setNewTagName(e.target.value)}
                                     autoFocus
                                     onKeyDown={async (e) => {
@@ -707,12 +709,12 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                         setIsManageMode(false);
                                         setSelectedItemIds(new Set());
                                         if (selectedTag) await loadTagItems(selectedTag);
-                                        emit('clipboard-changed');
+                                        emit(TAURI_EVENTS.clipboardChanged);
                                     } catch (err) { console.error(err); }
                                 } else if (itemDeleteConfirmation.id) {
                                     await deleteClipboardEntry(itemDeleteConfirmation.id);
                                     loadTagItems(selectedTag!);
-                                    emit('clipboard-changed');
+                                    emit(TAURI_EVENTS.clipboardChanged);
                                 }
                                 setItemDeleteConfirmation({ show: false, id: null });
                             }}>

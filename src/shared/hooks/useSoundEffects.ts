@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 interface UseSoundEffectsOptions {
   soundEnabled: boolean;
@@ -91,7 +92,7 @@ export const useSoundEffects = ({
       osc.stop(tEnd + 0.01);
     };
 
-    const unlisten = listen<string>("play-sound", (event) => {
+    const unlisten = listen<string>(TAURI_EVENTS.playSound, (event) => {
       if (!soundEnabled) return;
 
       const type = event.payload;

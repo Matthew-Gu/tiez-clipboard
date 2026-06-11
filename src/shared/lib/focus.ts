@@ -1,11 +1,14 @@
-import { invoke } from "@tauri-apps/api/core";
+import {
+  focusClipboardWindowCommand,
+  restoreLastFocusCommand
+} from "../ipc/commands";
 
 export async function focusClipboardWindow(): Promise<void> {
-  await invoke("focus_clipboard_window");
+  await focusClipboardWindowCommand();
 }
 
 export async function restoreLastFocus(): Promise<void> {
-  await invoke("restore_last_focus");
+  await restoreLastFocusCommand();
 }
 
 export async function focusWindowImmediately(): Promise<void> {

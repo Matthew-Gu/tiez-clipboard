@@ -26,6 +26,7 @@ export const TAURI_EVENTS = {
   clipboardRemoved: "clipboard-removed",
   clipboardUpdated: "clipboard-updated",
   compactPreviewMounted: "compact-preview-mounted",
+  compactPreviewResize: "compact-preview-resize",
   compactPreviewUpdate: "compact-preview-update",
   focusSearchInput: "focus-search-input",
   forceHideCompactPreview: "force-hide-compact-preview",

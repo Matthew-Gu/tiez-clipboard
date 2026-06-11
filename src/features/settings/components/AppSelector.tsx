@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { focusClipboardWindow } from "../../../shared/lib/focus";
 import Select from "react-select";
 import type { SingleValue } from "react-select";
 import type { InstalledAppOption } from "../../app/types";
@@ -118,7 +119,7 @@ const AppSelector = ({ type, installedApps, onSelect, theme, t, colorMode }: { t
         <Select
             options={options}
             isLoading={loading}
-            onFocus={() => invoke("focus_clipboard_window").catch(console.error)}
+            onFocus={() => focusClipboardWindow().catch(console.error)}
             placeholder={loading ? t('searching_apps') : t('search_apps_placeholder')}
             menuPortalTarget={document.body}
             menuPosition="fixed"

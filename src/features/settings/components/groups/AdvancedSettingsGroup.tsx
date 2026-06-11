@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { focusClipboardWindow } from "../../../../shared/lib/focus";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import type { InstalledAppOption } from "../../../app/types";
@@ -83,7 +84,7 @@ const serializeRules = (rules: EditableRule[]): string =>
 const focusEditorWindow = () => {
     getCurrentWindow()
         .setFocus()
-        .catch(() => invoke("focus_clipboard_window").catch(console.error));
+        .catch(() => focusClipboardWindow().catch(console.error));
 };
 
 const AdvancedSettingsGroup = ({

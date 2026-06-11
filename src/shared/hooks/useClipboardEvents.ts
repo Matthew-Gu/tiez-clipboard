@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
 import type { ClipboardEntrySummary } from "../types";
+import { TAURI_EVENTS } from "../ipc/contracts";
 
 interface UseClipboardEventsOptions {
   onUpdated: (entry: ClipboardEntrySummary) => void;
@@ -26,13 +27,13 @@ export const useClipboardEvents = ({ onUpdated, onRemoved, onChanged }: UseClipb
   }, [onChanged]);
 
   useEffect(() => {
-    const unlistenUpdate = listen<ClipboardEntrySummary>("clipboard-updated", (event) => {
+    const unlistenUpdate = listen<ClipboardEntrySummary>(TAURI_EVENTS.clipboardUpdated, (event) => {
       onUpdatedRef.current(event.payload);
     });
-    const unlistenRemove = listen<number>("clipboard-removed", (event) => {
+    const unlistenRemove = listen<number>(TAURI_EVENTS.clipboardRemoved, (event) => {
       onRemovedRef.current(event.payload);
     });
-    const unlistenChanged = listen("clipboard-changed", () => {
+    const unlistenChanged = listen(TAURI_EVENTS.clipboardChanged, () => {
       onChangedRef.current?.();
     });
 
@@ -43,4 +44,3 @@ export const useClipboardEvents = ({ onUpdated, onRemoved, onChanged }: UseClipb
     };
   }, []);
 };
-

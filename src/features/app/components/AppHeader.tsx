@@ -11,6 +11,7 @@ import {
   X
 } from "lucide-react";
 import { invoke } from "@tauri-apps/api/core";
+import { activateWindowFocus } from "../../../shared/ipc/commands";
 import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
 
 interface AppHeaderProps {
@@ -171,11 +172,11 @@ const AppHeader = ({
                     setSearch(e.target.value);
                   }}
                   onMouseDown={() => {
-                    invoke("activate_window_focus").catch(console.error);
+                    activateWindowFocus().catch(console.error);
                   }}
                   onClick={() => { setShowTagFilter(true); setEditingTagsId(null); }}
                   onFocus={() => {
-                    invoke("activate_window_focus").catch(console.error);
+                    activateWindowFocus().catch(console.error);
                     setShowTagFilter(true);
                     setSearchIsFocused(true);
                     setEditingTagsId(null);

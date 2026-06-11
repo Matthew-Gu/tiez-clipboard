@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { TAURI_COMMANDS } from "../ipc/contracts";
 
 interface UseNavigationSyncOptions {
   showSettings: boolean;
@@ -14,7 +15,7 @@ export const useNavigationSync = ({
   useEffect(() => {
     const shouldDisableNavigation = showSettings || showTagManager;
     if (shouldDisableNavigation) {
-      invoke("set_navigation_enabled", { enabled: false }).catch(console.error);
+      invoke(TAURI_COMMANDS.setNavigationEnabled, { enabled: false }).catch(console.error);
       return;
     }
 
@@ -22,10 +23,10 @@ export const useNavigationSync = ({
     getCurrentWindow()
       .isVisible()
       .then((visible) => {
-        invoke("set_navigation_enabled", { enabled: visible }).catch(console.error);
+        invoke(TAURI_COMMANDS.setNavigationEnabled, { enabled: visible }).catch(console.error);
       })
       .catch(() => {
-        invoke("set_navigation_enabled", { enabled: false }).catch(console.error);
+        invoke(TAURI_COMMANDS.setNavigationEnabled, { enabled: false }).catch(console.error);
       });
   }, [showSettings, showTagManager]);
 };
