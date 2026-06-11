@@ -14,6 +14,8 @@ import {
   summaryToEntry,
   touchDetailLru
 } from "../lib/historyWindow";
+import { TAURI_COMMANDS } from "../ipc/contracts";
+import type { ClipboardHistoryPageArgs } from "../ipc/contracts";
 
 const DETAIL_LIMIT = 48;
 
@@ -86,7 +88,7 @@ export const useHistoryFetch = ({
     const loaded = await Promise.all(
       uniqueIds.map(async (id) => {
         try {
-          return await invoke<ClipboardEntryDetail>("get_clipboard_entry_detail", { id });
+          return await invoke<ClipboardEntryDetail>(TAURI_COMMANDS.getClipboardEntryDetail, { id });
         } catch (error) {
           console.error("Failed to load clipboard detail", id, error);
           return null;
@@ -145,14 +147,14 @@ export const useHistoryFetch = ({
       cursor: ClipboardEntry | undefined,
       includePinned: boolean
     ) =>
-      invoke<ClipboardHistoryPage>("get_clipboard_history_page", {
+      invoke<ClipboardHistoryPage>(TAURI_COMMANDS.getClipboardHistoryPage, {
         limit: pageSize,
         direction,
         cursorTimestamp: cursor?.timestamp,
         cursorId: cursor?.id,
         contentType: typeFilter || undefined,
         includePinned
-      }),
+      } satisfies ClipboardHistoryPageArgs),
     [pageSize, typeFilter]
   );
 
@@ -169,7 +171,7 @@ export const useHistoryFetch = ({
             tagOnly = true;
           }
           const summaries = await invoke<ClipboardEntrySummary[]>(
-            "search_clipboard_history_summaries",
+            TAURI_COMMANDS.searchClipboardHistorySummaries,
             { searchTerm: term, limit: 200, tagOnly }
           );
           if (seq !== fetchSeqRef.current) return;

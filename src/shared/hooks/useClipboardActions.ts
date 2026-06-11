@@ -4,6 +4,12 @@ import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import type { ClipboardEntry } from "../types";
 import type { VirtualClipboardListHandle } from "../../features/clipboard/types";
+import {
+  copyToClipboard as invokeCopyToClipboard,
+  deleteClipboardEntry,
+  openContent as invokeOpenContent
+} from "../ipc/commands";
+import { TAURI_COMMANDS } from "../ipc/contracts";
 
 interface UseClipboardActionsOptions {
   t: (key: string) => string;
@@ -31,7 +37,7 @@ export const useClipboardActions = ({
           document.activeElement.blur();
         }
 
-        await invoke("copy_to_clipboard", {
+        await invokeCopyToClipboard({
           content: id !== 0 ? "" : content,
           contentType,
           paste: true,
@@ -62,7 +68,7 @@ export const useClipboardActions = ({
   const openContent = useCallback(
     async (item: ClipboardEntry) => {
       try {
-        await invoke("open_content", {
+        await invokeOpenContent({
           id: item.id,
           content: item.id !== 0 ? "" : item.content,
           contentType: item.content_type
@@ -79,7 +85,7 @@ export const useClipboardActions = ({
     async (e: ReactMouseEvent, id: number) => {
       e.stopPropagation();
       try {
-        await invoke("delete_clipboard_entry", { id });
+        await deleteClipboardEntry(id);
         setHistory((prev) => prev.filter((item) => item.id !== id));
       } catch (err) {
         const errorMsg = "删除失败: " + (err?.toString() || "");
@@ -93,7 +99,7 @@ export const useClipboardActions = ({
     async (e: ReactMouseEvent, id: number, currentPinned: boolean) => {
       e.stopPropagation();
       try {
-        const newId = await invoke<number>("toggle_clipboard_pin", { id, isPinned: !currentPinned });
+        const newId = await invoke<number>(TAURI_COMMANDS.toggleClipboardPin, { id, isPinned: !currentPinned });
         setHistory((prev) =>
           prev
             .map((item) =>
@@ -116,7 +122,7 @@ export const useClipboardActions = ({
   const handleUpdateTags = useCallback(
     async (id: number, newTags: string[]) => {
       try {
-        const newId = await invoke<number>("update_tags", { id, tags: newTags });
+        const newId = await invoke<number>(TAURI_COMMANDS.updateTags, { id, tags: newTags });
         setHistory((prev) =>
           prev.map((item) => (item.id === id ? { ...item, id: newId, tags: newTags } : item))
         );
@@ -141,4 +147,3 @@ export const useClipboardActions = ({
     handleUpdateTags
   };
 };
-

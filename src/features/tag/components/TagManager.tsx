@@ -7,6 +7,11 @@ import {
 } from 'lucide-react';
 import { getTagColor } from "../../../shared/lib/utils";
 import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
+import {
+    copyToClipboard as invokeCopyToClipboard,
+    deleteClipboardEntry,
+    openContent
+} from "../../../shared/ipc/commands";
 import type { ClipboardEntry } from "../../../shared/types";
 
 interface TagManagerProps {
@@ -247,7 +252,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
 
     const copyToClipboard = async (id: number, content: string, type: string) => {
         try {
-            await invoke('copy_to_clipboard', { content, contentType: type, paste: true, id, deleteAfterUse: false });
+            await invokeCopyToClipboard({ content, contentType: type, paste: true, id, deleteAfterUse: false });
         } catch (err) { console.error(err); }
     };
 
@@ -501,7 +506,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                                 const selectedItems = tagItems.filter(item => selectedItemIds.has(item.id));
                                                 if (selectedItems.length > 0) {
                                                     const combinedContent = selectedItems.map(item => item.content).join('\n');
-                                                    await invoke('copy_to_clipboard', {
+                                                    await invokeCopyToClipboard({
                                                         content: combinedContent,
                                                         contentType: 'text',
                                                         paste: true,
@@ -590,7 +595,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                                         className="card-action-btn"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            invoke('open_content', {
+                                                            openContent({
                                                                 id: item.id,
                                                                 content: item.content,
                                                                 contentType: item.content_type
@@ -697,7 +702,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                     // Bulk delete
                                     try {
                                         for (const id of Array.from(selectedItemIds)) {
-                                            await invoke('delete_clipboard_entry', { id });
+                                            await deleteClipboardEntry(id);
                                         }
                                         setIsManageMode(false);
                                         setSelectedItemIds(new Set());
@@ -705,7 +710,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                         emit('clipboard-changed');
                                     } catch (err) { console.error(err); }
                                 } else if (itemDeleteConfirmation.id) {
-                                    await invoke('delete_clipboard_entry', { id: itemDeleteConfirmation.id });
+                                    await deleteClipboardEntry(itemDeleteConfirmation.id);
                                     loadTagItems(selectedTag!);
                                     emit('clipboard-changed');
                                 }
