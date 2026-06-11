@@ -42,6 +42,7 @@ pub fn run_migrations(conn: &Connection) -> Result<()> {
         CREATE INDEX IF NOT EXISTS idx_entry_tags_entry ON entry_tags (entry_id);
         INSERT OR IGNORE INTO saved_tags (name) VALUES ('sensitive');
         INSERT OR IGNORE INTO saved_tags (name) VALUES ('密码');
+        INSERT OR IGNORE INTO saved_tags (name) VALUES ('password');
         ",
     )
 }

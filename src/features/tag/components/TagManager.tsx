@@ -6,6 +6,7 @@ import {
     Clock, MousePointer2, ChevronLeft, Plus, Search, ExternalLink, CheckSquare, Copy
 } from 'lucide-react';
 import { getTagColor } from "../../../shared/lib/utils";
+import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
 import type { ClipboardEntry } from "../../../shared/types";
 
 interface TagManagerProps {
@@ -190,7 +191,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
         const trimmed = newTagName.trim();
         if (!trimmed || trimmed === oldName) { setEditingTag(null); return; }
 
-        if (oldName === 'sensitive' || oldName === '密码') {
+        if (isSensitiveTag(oldName)) {
             setEditingTag(null);
             return;
         }
@@ -206,7 +207,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
     };
 
     const handleDeleteTag = async (tagName: string) => {
-        if (tagName === 'sensitive' || tagName === '密码') return;
+        if (isSensitiveTag(tagName)) return;
         setIsDeleting(true);
         try {
             await invoke('delete_tag_from_all', { tagName });
@@ -389,7 +390,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                 <>
                                     <span className="tag-name">{tag.name}</span>
                                     <div className="tag-hover-actions">
-                                        {(tag.name !== 'sensitive' && tag.name !== '密码') && (
+                                        {!isSensitiveTag(tag.name) && (
                                             <span title="重命名" onClick={(e) => {
                                                 e.stopPropagation();
                                                 setEditingTag(tag.name);
@@ -402,7 +403,7 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                                                 <Edit2 size={12} />
                                             </span>
                                         )}
-                                        {(tag.name !== 'sensitive' && tag.name !== '密码') && (
+                                        {!isSensitiveTag(tag.name) && (
                                             <span title="删除" onClick={(e) => {
                                                 e.stopPropagation();
                                                 e.preventDefault();

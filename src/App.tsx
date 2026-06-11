@@ -43,8 +43,6 @@ import { useOverlays } from "./shared/hooks/useOverlays";
 import type { ClipboardEntry } from "./shared/types";
 import type { QuickPasteHint, VirtualClipboardListHandle } from "./features/clipboard/types";
 
-/** Must match privacy blur checks in `useClipboardItemRenderer` / `ClipboardItem`. */
-const BUILTIN_SENSITIVE_TAG_NAMES = ["sensitive", "密码", "password"] as const;
 import type { QuickPasteModifier } from "./features/app/types";
 import {
   forceHideCompactPreviewWindow,
@@ -53,6 +51,7 @@ import {
   warmupCompactPreviewWindow
 } from "./features/clipboard/lib/compactPreviewControls";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
+import { BUILTIN_SENSITIVE_TAG_NAMES } from "./shared/lib/sensitiveTags";
 
 const QUICK_PASTE_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"] as const;
 

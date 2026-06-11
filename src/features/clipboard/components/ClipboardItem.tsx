@@ -40,6 +40,7 @@ import { toTauriLocalImageSrc } from "../../../shared/lib/localImageSrc";
 import { getRichTextSnapshotDataUrl } from "../../../shared/lib/richTextSnapshot";
 import { getFileIcon as getSystemFileIcon, peekFileIcon } from "../../../shared/lib/fileIcon";
 import { getSourceAppIcon, peekSourceAppIcon } from "../../../shared/lib/sourceAppIcon";
+import { hasSensitiveTag } from "../../../shared/lib/sensitiveTags";
 import { registerCompactPreviewControls } from "../lib/compactPreviewControls";
 
 const COMPACT_PREVIEW_LABEL = "compact-preview";
@@ -1609,7 +1610,7 @@ const ClipboardItem = ({
 
                 <div className="item-meta-right">
                     <div className="item-actions">
-                        {(item.tags?.includes('sensitive') || item.tags?.includes('密码') || item.tags?.includes('password')) && (
+                        {hasSensitiveTag(item.tags) && (
                             <button
                                 className={`btn-icon ${isRevealed ? "active" : ""}`}
                                 onClick={onToggleReveal}
