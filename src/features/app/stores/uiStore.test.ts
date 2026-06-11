@@ -55,6 +55,5 @@ describe("ui store", () => {
     expect(state).not.toHaveProperty("history");
     expect(state).not.toHaveProperty("currentOffset");
     expect(state).not.toHaveProperty("confirmDialog");
-    expect(state).not.toHaveProperty("compactPreviewWindow");
   });
 });

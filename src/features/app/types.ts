@@ -115,8 +115,6 @@ export interface AppState {
   showSourceAppIcon: boolean;
   setShowSourceAppIcon: StateSetter<boolean>;
 
-  compactMode: boolean;
-  setCompactMode: StateSetter<boolean>;
   clipboardItemFontSize: number;
   setClipboardItemFontSize: StateSetter<number>;
   clipboardTagFontSize: number;

@@ -46,12 +46,6 @@ import type { QuickPasteHint, VirtualClipboardListHandle } from "./features/clip
 
 import type { QuickPasteModifier } from "./features/app/types";
 import { getMainRouteState, MAIN_ROUTES } from "./features/app/routes";
-import {
-  forceHideCompactPreviewWindow,
-  isCompactPreviewWindowSupported,
-  isCompactPreviewWarmupSupported,
-  warmupCompactPreviewWindow
-} from "./features/clipboard/lib/compactPreviewControls";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
 import { BUILTIN_SENSITIVE_TAG_NAMES } from "./shared/lib/sensitiveTags";
 import { activateWindowFocus, saveSetting } from "./shared/ipc/commands";
@@ -184,8 +178,6 @@ const App = () => {
     showSourceAppIcon,
     setShowSourceAppIcon,
 
-    compactMode,
-    setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
     clipboardTagFontSize,
@@ -388,7 +380,6 @@ const App = () => {
     setHotkey,
     setTheme,
     setColorMode,
-    setCompactMode,
     setLanguage
   });
 
@@ -492,32 +483,12 @@ const App = () => {
     theme,
     colorMode,
 
-    compactMode,
     settingsLoaded,
     clipboardItemFontSize,
     clipboardTagFontSize,
     surfaceOpacity,
     showAppBorder
   });
-
-  // Pre-warm compact preview window after startup.
-  useEffect(() => {
-    if (!compactMode || !isCompactPreviewWindowSupported() || !isCompactPreviewWarmupSupported()) return;
-    const timer = setTimeout(() => {
-      warmupCompactPreviewWindow();
-    }, 2000); // 2s delay: avoids impacting app startup performance
-    return () => clearTimeout(timer);
-  }, [compactMode]);
-
-  useEffect(() => {
-    if (!isTauriRuntime()) return;
-    const unlisten = listen(TAURI_EVENTS.forceHideCompactPreview, () => {
-      forceHideCompactPreviewWindow();
-    });
-    return () => {
-      unlisten.then((off) => off());
-    };
-  }, []);
 
   useCustomBackground({ customBackground, customBackgroundOpacity, theme });
 
@@ -558,7 +529,6 @@ const App = () => {
     try {
       if (type === 'theme') localStorage.setItem('tiez_theme', path);
       if (type === 'color_mode') localStorage.setItem('tiez_color_mode', path);
-      if (type === 'compact_mode') localStorage.setItem('tiez_compact_mode', path);
     } catch (e) {
       // Ignore localStorage errors
     }
@@ -703,7 +673,6 @@ const App = () => {
     language,
     t,
     showSourceAppIcon,
-    compactMode,
     richTextSnapshotPreview,
     sensitiveMaskPrefixVisible,
     sensitiveMaskSuffixVisible,
@@ -789,7 +758,6 @@ const App = () => {
           search={search}
           pinnedItems={pinnedItems}
           unpinnedItems={unpinnedItems}
-          compactMode={compactMode}
           selectedIndex={selectedIndex}
           isKeyboardMode={isKeyboardMode}
           virtualListRef={virtualListRef}

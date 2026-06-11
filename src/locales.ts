@@ -149,8 +149,6 @@ export const translations = {
         mode_system: "跟随系统",
         mode_light: "浅色",
         mode_dark: "深色",
-        compact_mode: "紧凑模式",
-        compact_mode_hint: "开启后剪贴板列表显示更密集，可容纳更多条目，鼠标悬停可预览",
 
         tag_manager_enabled: "标签管理页开关",
         tag_manager_enabled_hint: "关闭后隐藏标签管理入口",
@@ -491,8 +489,6 @@ export const translations = {
         mode_system: "System",
         mode_light: "Light",
         mode_dark: "Dark",
-        compact_mode: "Compact Mode",
-        compact_mode_hint: "When enabled, clipboard list displays more densely with more entries visible. Hover to preview.",
 
         tag_manager_enabled: "Tag manager",
         tag_manager_enabled_hint: "Hide the tag manager entry when disabled.",
@@ -817,8 +813,6 @@ export const translations = {
         mode_system: "跟隨系統",
         mode_light: "淺色",
         mode_dark: "深色",
-        compact_mode: "緊湊模式",
-        compact_mode_hint: "啟用後剪貼簿列表顯示更密集，可容納更多條目，滑鼠懸停可預覽",
 
         tag_manager_enabled: "標籤管理頁開關",
         tag_manager_enabled_hint: "關閉後隱藏標籤管理入口",

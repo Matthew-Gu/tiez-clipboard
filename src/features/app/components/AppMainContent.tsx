@@ -29,7 +29,6 @@ interface AppMainContentProps {
   search: string;
   pinnedItems: ClipboardEntry[];
   unpinnedItems: ClipboardEntry[];
-  compactMode: boolean;
   selectedIndex: number;
   isKeyboardMode: boolean;
   virtualListRef: RefObject<VirtualClipboardListHandle | null>;
@@ -52,7 +51,6 @@ const SortableItem = ({
   index,
   renderItem,
   isFirst,
-  compactMode,
   onDragStart,
   onDragEnd
 }: {
@@ -60,7 +58,6 @@ const SortableItem = ({
   index: number;
   renderItem: RenderItem;
   isFirst?: boolean;
-  compactMode: boolean;
   onDragStart?: () => void;
   onDragEnd?: () => void;
 }) => {
@@ -79,7 +76,7 @@ const SortableItem = ({
         paddingTop: isFirst ? "4px" : undefined
       }}
     >
-      <div style={{ paddingBottom: compactMode ? "2px" : "4px" }}>
+      <div style={{ paddingBottom: "4px" }}>
         {renderItem(item, index, controls, true)}
       </div>
     </Reorder.Item>
@@ -97,7 +94,6 @@ const AppMainContent = ({
   search,
   pinnedItems,
   unpinnedItems,
-  compactMode,
   selectedIndex,
   isKeyboardMode,
   virtualListRef,
@@ -259,7 +255,6 @@ const AppMainContent = ({
           <VirtualClipboardList
             ref={virtualListRef}
             items={unpinnedItems}
-            compactMode={compactMode}
             selectedIndex={selectedIndex - pinnedItems.length}
             isKeyboardMode={isKeyboardMode}
             header={
@@ -278,7 +273,6 @@ const AppMainContent = ({
                       index={index}
                       renderItem={renderItemContent}
                       isFirst={index === 0}
-                      compactMode={compactMode}
                       onDragStart={handlePinnedDragStart}
                       onDragEnd={handlePinnedDragEnd}
                     />

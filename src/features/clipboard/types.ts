@@ -67,7 +67,6 @@ export interface VirtualClipboardListProps {
   selectedIndex: number;
   isKeyboardMode: boolean;
   onScroll?: (offset: number) => void;
-  compactMode: boolean;
   header?: ReactNode;
   firstItemIndex?: number;
   restoreStateFrom?: StateSnapshot;

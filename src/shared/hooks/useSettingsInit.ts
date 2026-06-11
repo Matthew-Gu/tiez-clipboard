@@ -11,7 +11,6 @@ interface UseSettingsInitOptions {
   setHotkey: (val: string) => void;
   setTheme: (val: string) => void;
   setColorMode: (val: string) => void;
-  setCompactMode: (val: boolean) => void;
   setLanguage: (val: Locale) => void;
 }
 
@@ -20,7 +19,6 @@ export const useSettingsInit = ({
   setHotkey,
   setTheme,
   setColorMode,
-  setCompactMode,
   setLanguage
 }: UseSettingsInitOptions) => {
   const [settings, setSettings] = useState<Record<string, string> | null>(null);
@@ -54,15 +52,9 @@ export const useSettingsInit = ({
 
           setTheme(loadedTheme);
           setColorMode(loadedColorMode);
-          setCompactMode(result[APP_SETTING_KEYS.compactMode] === "true");
-
           try {
             localStorage.setItem("tiez_theme", loadedTheme);
             localStorage.setItem("tiez_color_mode", loadedColorMode);
-            localStorage.setItem(
-              "tiez_compact_mode",
-              result[APP_SETTING_KEYS.compactMode] === "true" ? "true" : "false"
-            );
           } catch {
             // Ignore localStorage errors
           }
@@ -86,7 +78,7 @@ export const useSettingsInit = ({
       disposed = true;
       unlisten.then((off) => off());
     };
-  }, [setAppSettings, setHotkey, setTheme, setColorMode, setCompactMode, setLanguage]);
+  }, [setAppSettings, setHotkey, setTheme, setColorMode, setLanguage]);
 
   return settings;
 };

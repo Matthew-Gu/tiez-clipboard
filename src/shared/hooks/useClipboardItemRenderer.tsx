@@ -23,7 +23,6 @@ interface UseClipboardItemRendererOptions {
   language: Locale;
   t: (key: string) => string;
   showSourceAppIcon: boolean;
-  compactMode: boolean;
   richTextSnapshotPreview: boolean;
   sensitiveMaskPrefixVisible: number;
   sensitiveMaskSuffixVisible: number;
@@ -69,7 +68,6 @@ export const useClipboardItemRenderer = ({
   language,
   t,
   showSourceAppIcon,
-  compactMode,
   richTextSnapshotPreview,
   sensitiveMaskPrefixVisible,
   sensitiveMaskSuffixVisible,
@@ -111,7 +109,6 @@ export const useClipboardItemRenderer = ({
           language={language}
           t={t}
           showSourceAppIcon={showSourceAppIcon}
-          compactMode={compactMode}
           richTextSnapshotPreview={richTextSnapshotPreview}
           sensitiveMaskPrefixVisible={sensitiveMaskPrefixVisible}
           sensitiveMaskSuffixVisible={sensitiveMaskSuffixVisible}
@@ -188,7 +185,6 @@ export const useClipboardItemRenderer = ({
       language,
       t,
       showSourceAppIcon,
-      compactMode,
       richTextSnapshotPreview,
       sensitiveMaskPrefixVisible,
       sensitiveMaskSuffixVisible,

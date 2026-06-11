@@ -47,7 +47,6 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
             selectedIndex,
             isKeyboardMode,
             onScroll,
-            compactMode,
             header,
             firstItemIndex = 0,
             restoreStateFrom,
@@ -142,11 +141,11 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
         const itemContent = useCallback((index: number, item: ClipboardEntry) => {
             const localIndex = index - firstItemIndex;
             return (
-                <div style={{ paddingBottom: compactMode ? 2 : 4 }}>
+                <div style={{ paddingBottom: 4 }}>
                     {renderItem(item, localIndex, localIndex === 0)}
                 </div>
             );
-        }, [renderItem, compactMode, firstItemIndex]);
+        }, [renderItem, firstItemIndex]);
 
         const components = useMemo(() => ({
             Header: ListHeader,

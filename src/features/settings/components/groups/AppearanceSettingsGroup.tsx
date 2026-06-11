@@ -30,8 +30,6 @@ interface AppearanceSettingsGroupProps {
     showSourceAppIcon: boolean;
     setShowSourceAppIcon: (val: boolean) => void;
 
-    compactMode: boolean;
-    setCompactMode: (val: boolean) => void;
     clipboardItemFontSize: number;
     setClipboardItemFontSize: (val: number) => void;
     clipboardTagFontSize: number;
@@ -73,8 +71,6 @@ const AppearanceSettingsGroup = ({
     showSourceAppIcon,
     setShowSourceAppIcon,
 
-    compactMode,
-    setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
     clipboardTagFontSize,
@@ -187,27 +183,6 @@ const AppearanceSettingsGroup = ({
                                 const val = e.target.checked;
                                 setShowSourceAppIcon(val);
                                 saveAppSetting('show_source_app_icon', String(val));
-                            }}
-                        />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
-                    </label>
-                </div>
-
-                <div className="setting-item">
-                    <LabelWithHint
-                        label={t('compact_mode') || 'Compact Mode'}
-                        hint={t('compact_mode_hint') || 'When enabled, clipboard list displays more densely with more entries visible. Hover to preview.'}
-                        hintKey="compact_mode"
-                    />
-                    <label className="switch">
-                        <input
-                            className="cb"
-                            type="checkbox"
-                            checked={compactMode}
-                            onChange={(e) => {
-                                const val = e.target.checked;
-                                setCompactMode(val);
-                                saveAppSetting('compact_mode', String(val));
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>

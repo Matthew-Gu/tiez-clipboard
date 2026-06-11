@@ -8,7 +8,6 @@ interface UseSettingsApplyOptions {
   theme: string;
   colorMode: string;
 
-  compactMode: boolean;
   settingsLoaded: boolean;
   clipboardItemFontSize: number;
   clipboardTagFontSize: number;
@@ -20,7 +19,6 @@ export const useSettingsApply = ({
   theme,
   colorMode,
 
-  compactMode,
   settingsLoaded,
   clipboardItemFontSize,
   clipboardTagFontSize,
@@ -63,12 +61,6 @@ export const useSettingsApply = ({
     };
 
     applyThemeClasses(normalizedTheme, root, body);
-
-    if (compactMode) {
-      body.classList.add("compact-mode");
-    } else {
-      body.classList.remove("compact-mode");
-    }
 
     if (colorMode === "light") {
       applyExplicitMode("light");
@@ -123,7 +115,7 @@ export const useSettingsApply = ({
       if (unlisten) unlisten();
       if (cleanupMedia) cleanupMedia();
     };
-  }, [theme, colorMode, settingsLoaded, compactMode]);
+  }, [theme, colorMode, settingsLoaded]);
 
   useEffect(() => {
     if (!settingsLoaded) return;

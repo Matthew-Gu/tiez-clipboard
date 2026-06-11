@@ -243,13 +243,3 @@ body.windows-10.dark-mode.theme-acrylic #root::before,
 body.windows-10:not(.light-mode).theme-acrylic #root::before {
   display: none !important;
 }
-
-body.compact-preview.theme-acrylic #root,
-body.theme-acrylic.compact-preview #root,
-body.dark-mode.compact-preview.theme-acrylic #root {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}

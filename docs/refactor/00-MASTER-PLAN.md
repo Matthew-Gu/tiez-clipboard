@@ -106,7 +106,7 @@
 
 - 依赖：`react-router-dom@7.17.0`。
 - 主窗口使用 `MemoryRouter`。
-- 多窗口入口继续由 `?window=compact-preview` 和 `?window=advanced-settings` 识别。
+- 独立高级设置窗口入口继续由 `?window=advanced-settings` 识别。
 - 主窗口固定路由：
 
 | 路径 | 页面 |
@@ -196,7 +196,7 @@
 | --- | --- | --- |
 | 过大文件 | `clipboard/utils.rs`、`TagManager.tsx`、`ClipboardItem.tsx` 等 | 最大文件 2,486 行；25 个文件超过 500 行 |
 | 重复逻辑 | IPC、页面导航、设置同步、窗口聚焦 | 前端存在 77 处 `invoke`、16 处 `listen`，页面导航状态分散在约 11 个模块 |
-| 样式冲突 | `tag-manager.css`、`settings.css`、`compact-mode.css` | CSS 中约 858 处 `!important`，全局覆盖风险较高 |
+| 样式冲突 | `tag-manager.css`、`settings.css` | CSS 中存在较多 `!important`，全局覆盖风险较高 |
 | 调用链复杂 | `App.tsx`、设置 hooks、剪贴板预览与紧凑窗口 | 状态、事件和窗口生命周期跨多个模块传递 |
 | 无用代码 | 当前未确认 | 只记录候选，后续确认后才能删除 |
 

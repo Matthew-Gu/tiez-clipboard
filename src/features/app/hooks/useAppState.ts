@@ -76,7 +76,6 @@ export const useAppState = (): AppState => {
   const [colorMode, setColorMode] = useState("system");
   const [showSourceAppIcon, setShowSourceAppIcon] = useState(true);
 
-  const [compactMode, setCompactMode] = useState(false);
   const [clipboardItemFontSize, setClipboardItemFontSize] = useState(13);
   const [clipboardTagFontSize, setClipboardTagFontSize] = useState(10);
   const [showHotkeyHint, setShowHotkeyHint] = useState(false);
@@ -207,8 +206,6 @@ export const useAppState = (): AppState => {
     showSourceAppIcon,
     setShowSourceAppIcon,
 
-    compactMode,
-    setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
     clipboardTagFontSize,

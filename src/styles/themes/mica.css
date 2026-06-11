@@ -201,11 +201,3 @@ body.dark-mode.theme-mica {
   --panel-border: 1px solid rgba(255, 255, 255, 0.08);
   --menu-border: 1px solid rgba(255, 255, 255, 0.08);
 }
-
-body.compact-preview.theme-mica #root,
-body.theme-mica.compact-preview #root,
-body.dark-mode.compact-preview.theme-mica #root {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}

@@ -45,7 +45,6 @@ export interface SettingsState {
   theme: string;
   colorMode: string;
   showSourceAppIcon: boolean;
-  compactMode: boolean;
   clipboardItemFontSize: number;
   clipboardTagFontSize: number;
   language: Locale;
@@ -102,7 +101,6 @@ interface SettingsActions {
   setTheme: SettingsSetter<string>;
   setColorMode: SettingsSetter<string>;
   setShowSourceAppIcon: SettingsSetter<boolean>;
-  setCompactMode: SettingsSetter<boolean>;
   setClipboardItemFontSize: SettingsSetter<number>;
   setClipboardTagFontSize: SettingsSetter<number>;
   setLanguage: SettingsSetter<Locale>;
@@ -162,7 +160,6 @@ export const createSettingsInitialState = (): SettingsState => ({
   theme: DEFAULT_THEME,
   colorMode: "system",
   showSourceAppIcon: true,
-  compactMode: false,
   clipboardItemFontSize: 13,
   clipboardTagFontSize: 10,
   language: "zh",
@@ -223,7 +220,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setTheme: (value) => set((state) => ({ theme: resolveUpdate(value, state.theme) })),
   setColorMode: (value) => set((state) => ({ colorMode: resolveUpdate(value, state.colorMode) })),
   setShowSourceAppIcon: (value) => set((state) => ({ showSourceAppIcon: resolveUpdate(value, state.showSourceAppIcon) })),
-  setCompactMode: (value) => set((state) => ({ compactMode: resolveUpdate(value, state.compactMode) })),
   setClipboardItemFontSize: (value) => set((state) => ({ clipboardItemFontSize: resolveUpdate(value, state.clipboardItemFontSize) })),
   setClipboardTagFontSize: (value) => set((state) => ({ clipboardTagFontSize: resolveUpdate(value, state.clipboardTagFontSize) })),
   setLanguage: (value) => set((state) => ({ language: resolveUpdate(value, state.language) })),
