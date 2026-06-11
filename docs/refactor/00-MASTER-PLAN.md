@@ -139,19 +139,65 @@
 - 体积与性能：Less 仅在构建期运行，不增加运行时代码；开发依赖安装体积约 2.5 MB，最终 CSS 体积应保持接近迁移前水平。
 - 业务影响：不得改变现有 DOM、类名、主题 Token 和视觉表现。
 
-## 当前基线
+## 重构前基线数据
 
-- 前端：React 19、TypeScript、Vite 7。
-- 桌面端：Tauri 2、Rust、SQLite，仅支持 Windows 10/11。
-- 前端源码：约 108 个 TS/TSX/CSS 文件，21,525 行。
-- Rust 源码：约 45 个文件，16,589 行。
-- 前端 Tauri 调用：约 77 处 `invoke`、25 处 `listen`。
-- 高复杂度前端文件：
-  - `TagManager.tsx`：约 2,005 行。
-  - `ClipboardItem.tsx`：约 1,852 行。
-  - `App.tsx`：约 823 行。
-  - `ClipboardSettingsGroup.tsx`：约 746 行。
-- 样式风险：约 858 处 `!important`，大型样式集中在设置、标签管理和紧凑模式。
+### 统计说明
+
+- 统计时间：2026-06-11
+- 基线提交：`1b601b6187c1525f895dea9c7517e5e855d6b3c5`
+- 统计范围：`src/**/*.{ts,tsx,css}`、`src-tauri/src/**/*.rs`
+- 排除范围：测试运行结果、资源文件、文档、配置、`node_modules`、`dist`、`build`、`coverage`、`.git` 等非源码内容
+- 统计方式：使用 PowerShell 递归读取指定扩展名文件，按 UTF-8 文件实际行数统计；重构后必须使用相同范围和规则复算
+- 过大文件定义：分别统计超过 300 行和超过 500 行的源码文件
+- 明显重复逻辑定义：人工确认的重复逻辑簇数量，不按每次重复调用单独计数
+
+### 核心指标
+
+| 指标 | 重构前 | 说明 |
+| --- | ---: | --- |
+| 源码总行数 | 38,214 | 前端 21,562 行，Rust 16,652 行 |
+| 源码文件数 | 155 | 前端 110 个，Rust 45 个 |
+| 超过 300 行文件 | 35 | 反映职责过重文件数量 |
+| 超过 500 行文件 | 25 | 反映高优先级拆分对象 |
+| 依赖数量 | 27 | `dependencies` 17 项，`devDependencies` 10 项 |
+| 明显重复逻辑数量 | 4 个逻辑簇 | IPC 调用、页面导航状态、设置同步、窗口聚焦调用 |
+
+### 主要目录代码量
+
+| 目录 | 文件数 | 行数 | 说明 |
+| --- | ---: | ---: | --- |
+| `src/features` | 23 | 8,534 | 前端业务组件和页面逻辑 |
+| `src/shared` | 54 | 4,937 | 共享 hooks、工具和类型 |
+| `src/styles` | 28 | 6,231 | 全局、组件和主题样式 |
+| `src` 根目录 | 5 | 1,860 | 应用入口、编排和本地化 |
+| `src-tauri/src/app` | 14 | 4,710 | Rust 命令和应用编排 |
+| `src-tauri/src/infrastructure` | 12 | 4,171 | 仓储、Windows API 和加密 |
+| `src-tauri/src/services` | 10 | 6,770 | 剪贴板及后台服务 |
+| Rust 其他源码 | 9 | 1,001 | 领域模型和根级状态 |
+
+补充前端结构指标：
+
+- Components：20 个文件，8,263 行。
+- Hooks：34 个文件，3,102 行。
+- Shared lib/config/types：19 个文件，1,813 行。
+- 当前没有独立 `store` 目录。
+
+### 当前主要问题
+
+| 类型 | 位置 | 说明 |
+| --- | --- | --- |
+| 过大文件 | `clipboard/utils.rs`、`TagManager.tsx`、`ClipboardItem.tsx` 等 | 最大文件 2,486 行；25 个文件超过 500 行 |
+| 重复逻辑 | IPC、页面导航、设置同步、窗口聚焦 | 前端存在 77 处 `invoke`、16 处 `listen`，页面导航状态分散在约 11 个模块 |
+| 样式冲突 | `tag-manager.css`、`settings.css`、`compact-mode.css` | CSS 中约 858 处 `!important`，全局覆盖风险较高 |
+| 调用链复杂 | `App.tsx`、设置 hooks、剪贴板预览与紧凑窗口 | 状态、事件和窗口生命周期跨多个模块传递 |
+| 无用代码 | 当前未确认 | 只记录候选，后续确认后才能删除 |
+
+明显重复逻辑簇固定记录为：
+
+1. Tauri `invoke/listen` 字符串和调用处理散落。
+2. `showSettings/showTagManager/settingsSubpage` 页面状态与判断分散。
+3. 设置加载、应用、同步和保存逻辑分散。
+4. `activate_window_focus/focus_clipboard_window` 聚焦调用在多个组件重复。
 
 ### 已执行的基线验证
 
