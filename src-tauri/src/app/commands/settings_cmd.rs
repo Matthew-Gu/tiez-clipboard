@@ -16,6 +16,90 @@ fn normalize_quick_paste_modifier(value: &str) -> &'static str {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
+enum RuntimeSettingUpdate {
+    ArrowKeySelection(bool),
+    SequentialMode(bool),
+    SoundEnabled(bool),
+    Persistent(bool),
+    CaptureFiles(bool),
+    CaptureRichText(bool),
+    SilentStart(bool),
+    DeleteAfterPaste(bool),
+    PrivacyProtection(bool),
+    EdgeDocking(bool),
+    FollowMouse(bool),
+    HideTrayIcon(bool),
+    QuickPasteModifier(String),
+}
+
+fn runtime_setting_update(key: &str, value: &str) -> Option<RuntimeSettingUpdate> {
+    match key {
+        "app.arrow_key_selection" => Some(RuntimeSettingUpdate::ArrowKeySelection(value == "true")),
+        "app.sequential_mode" => Some(RuntimeSettingUpdate::SequentialMode(value == "true")),
+        "app.sound_enabled" => Some(RuntimeSettingUpdate::SoundEnabled(value == "true")),
+        "app.persistent" => Some(RuntimeSettingUpdate::Persistent(value != "false")),
+        "app.capture_files" => Some(RuntimeSettingUpdate::CaptureFiles(value != "false")),
+        "app.capture_rich_text" => Some(RuntimeSettingUpdate::CaptureRichText(value == "true")),
+        "app.silent_start" => Some(RuntimeSettingUpdate::SilentStart(value != "false")),
+        "app.delete_after_paste" => Some(RuntimeSettingUpdate::DeleteAfterPaste(value == "true")),
+        "app.privacy_protection" => Some(RuntimeSettingUpdate::PrivacyProtection(value == "true")),
+        "app.edge_docking" => Some(RuntimeSettingUpdate::EdgeDocking(value == "true")),
+        "app.follow_mouse" => Some(RuntimeSettingUpdate::FollowMouse(value != "false")),
+        "app.hide_tray_icon" => Some(RuntimeSettingUpdate::HideTrayIcon(value == "true")),
+        "app.quick_paste_modifier" => Some(RuntimeSettingUpdate::QuickPasteModifier(
+            normalize_quick_paste_modifier(value).to_string(),
+        )),
+        _ => None,
+    }
+}
+
+fn apply_runtime_setting_update(settings_state: &SettingsState, update: RuntimeSettingUpdate) {
+    match update {
+        RuntimeSettingUpdate::ArrowKeySelection(enabled) => settings_state
+            .arrow_key_selection
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::SequentialMode(enabled) => settings_state
+            .sequential_mode
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::SoundEnabled(enabled) => settings_state
+            .sound_enabled
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::Persistent(enabled) => {
+            settings_state.persistent.store(enabled, Ordering::Relaxed)
+        }
+        RuntimeSettingUpdate::CaptureFiles(enabled) => settings_state
+            .capture_files
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::CaptureRichText(enabled) => settings_state
+            .capture_rich_text
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::SilentStart(enabled) => settings_state
+            .silent_start
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::DeleteAfterPaste(enabled) => settings_state
+            .delete_after_paste
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::PrivacyProtection(enabled) => settings_state
+            .privacy_protection
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::EdgeDocking(enabled) => settings_state
+            .edge_docking
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::FollowMouse(enabled) => settings_state
+            .follow_mouse
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::HideTrayIcon(enabled) => settings_state
+            .hide_tray_icon
+            .store(enabled, Ordering::Relaxed),
+        RuntimeSettingUpdate::QuickPasteModifier(value) => {
+            if let Ok(mut guard) = settings_state.quick_paste_modifier.lock() {
+                *guard = value;
+            }
+        }
+    }
+}
+
 #[tauri::command]
 pub fn set_sequential_mode(
     app_handle: AppHandle,
@@ -104,85 +188,55 @@ pub fn save_setting(
     key: String,
     mut value: String,
 ) -> AppResult<()> {
-    match key.as_str() {
-        "app.arrow_key_selection" => {
-            settings_state
-                .arrow_key_selection
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.sequential_mode" => {
-            settings_state
-                .sequential_mode
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.sound_enabled" => {
-            settings_state
-                .sound_enabled
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.sound_paste_enabled" => {
-            settings_state
-                .delete_after_paste
-                .store(value != "false", Ordering::Relaxed);
-        }
-        "app.persistent" => {
-            settings_state
-                .persistent
-                .store(value != "false", Ordering::Relaxed);
-        }
-        "app.capture_files" => {
-            settings_state
-                .capture_files
-                .store(value != "false", Ordering::Relaxed);
-        }
-        "app.capture_rich_text" => {
-            settings_state
-                .capture_rich_text
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.silent_start" => {
-            settings_state
-                .silent_start
-                .store(value != "false", Ordering::Relaxed);
-        }
-        "app.delete_after_paste" => {
-            settings_state
-                .delete_after_paste
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.privacy_protection" => {
-            settings_state
-                .privacy_protection
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.edge_docking" => {
-            settings_state
-                .edge_docking
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.follow_mouse" => {
-            settings_state
-                .follow_mouse
-                .store(value != "false", Ordering::Relaxed);
-        }
-        "app.hide_tray_icon" => {
-            settings_state
-                .hide_tray_icon
-                .store(value == "true", Ordering::Relaxed);
-        }
-        "app.quick_paste_modifier" => {
-            value = normalize_quick_paste_modifier(&value).to_string();
-            if let Ok(mut guard) = settings_state.quick_paste_modifier.lock() {
-                *guard = value.clone();
-            }
-        }
-        _ => {}
+    if key == "app.quick_paste_modifier" {
+        value = normalize_quick_paste_modifier(&value).to_string();
+    }
+    if let Some(update) = runtime_setting_update(&key, &value) {
+        apply_runtime_setting_update(&settings_state, update);
     }
 
     db_state
         .settings_repo
         .set(&key, &value)
         .map_err(AppError::from)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{runtime_setting_update, RuntimeSettingUpdate};
+
+    #[test]
+    fn delete_after_paste_updates_only_its_runtime_state() {
+        assert_eq!(
+            runtime_setting_update("app.delete_after_paste", "true"),
+            Some(RuntimeSettingUpdate::DeleteAfterPaste(true))
+        );
+        assert_eq!(
+            runtime_setting_update("app.delete_after_paste", "false"),
+            Some(RuntimeSettingUpdate::DeleteAfterPaste(false))
+        );
+    }
+
+    #[test]
+    fn sound_enabled_updates_the_runtime_sound_switch() {
+        assert_eq!(
+            runtime_setting_update("app.sound_enabled", "true"),
+            Some(RuntimeSettingUpdate::SoundEnabled(true))
+        );
+        assert_eq!(
+            runtime_setting_update("app.sound_enabled", "false"),
+            Some(RuntimeSettingUpdate::SoundEnabled(false))
+        );
+    }
+
+    #[test]
+    fn paste_sound_and_unknown_settings_do_not_update_runtime_state() {
+        assert_eq!(
+            runtime_setting_update("app.sound_paste_enabled", "true"),
+            None
+        );
+        assert_eq!(runtime_setting_update("app.unknown", "true"), None);
+    }
 }
 
 #[tauri::command]
