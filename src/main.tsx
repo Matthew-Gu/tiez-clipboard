@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 import CompactPreviewWindow from "./features/clipboard/components/CompactPreviewWindow";
 import AdvancedSettingsWindow from "./features/settings/components/AdvancedSettingsWindow";
@@ -17,6 +18,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       ? <CompactPreviewWindow />
       : isAdvancedSettingsWindow
         ? <AdvancedSettingsWindow />
-        : <App />}
+        : (
+          <MemoryRouter>
+            <App />
+          </MemoryRouter>
+        )}
   </React.StrictMode>,
 );

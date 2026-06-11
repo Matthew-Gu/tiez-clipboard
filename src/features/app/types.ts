@@ -10,12 +10,6 @@ export type QuickPasteModifier = "disabled" | "ctrl" | "alt" | "shift" | "win";
 export type SettingsSubpage = "home" | "advanced";
 
 export interface AppState {
-  showSettings: boolean;
-  setShowSettings: StateSetter<boolean>;
-  settingsSubpage: SettingsSubpage;
-  setSettingsSubpage: StateSetter<SettingsSubpage>;
-  showTagManager: boolean;
-  setShowTagManager: StateSetter<boolean>;
   tagManagerEnabled: boolean;
   setTagManagerEnabled: StateSetter<boolean>;
   collapsedGroups: Record<string, boolean>;

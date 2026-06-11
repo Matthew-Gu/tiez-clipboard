@@ -1,5 +1,5 @@
 import type { SettingsPanelProps } from "../components/SettingsPanel";
-import type { AppState } from "../../app/types";
+import type { AppState, SettingsSubpage } from "../../app/types";
 
 interface UseSettingsPanelPropsOptions {
   t: (key: string) => string;
@@ -12,6 +12,8 @@ interface UseSettingsPanelPropsOptions {
   saveAppSetting: (key: string, val: string) => void;
   handleResetSettings: () => void;
   toggleGroup: (group: string) => void;
+  settingsSubpage: SettingsSubpage;
+  openAdvancedSettings: () => void;
   state: AppState;
 }
 

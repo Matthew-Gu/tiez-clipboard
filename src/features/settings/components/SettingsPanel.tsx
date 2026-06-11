@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import type { ComponentType, ReactNode } from "react";
 import { ChevronRight, HelpCircle } from "lucide-react";
-import type { AppState } from "../../app/types";
+import type { AppState, SettingsSubpage } from "../../app/types";
 import GeneralSettingsGroup from "./groups/GeneralSettingsGroup";
 import ClipboardSettingsGroup from "./groups/ClipboardSettingsGroup";
 import AppearanceSettingsGroup from "./groups/AppearanceSettingsGroup";
@@ -28,6 +28,8 @@ interface SettingsPanelActions {
   saveAppSetting: (key: string, val: string) => void;
   handleResetSettings: () => void;
   toggleGroup: (group: string) => void;
+  settingsSubpage: SettingsSubpage;
+  openAdvancedSettings: () => void;
 }
 
 export type SettingsPanelProps = AppState & SettingsPanelActions;
@@ -118,7 +120,7 @@ const SettingsPanel = (props: SettingsPanelProps) => {
         <button
           type="button"
           className="group-header settings-nav-card"
-          onClick={() => props.setSettingsSubpage("advanced")}
+          onClick={props.openAdvancedSettings}
         >
           <div style={{ minWidth: 0, textAlign: "left" }}>
             <h3 style={{ margin: 0 }}>{props.t("advanced_settings")}</h3>

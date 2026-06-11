@@ -5,15 +5,11 @@ import type {
   AppState,
   DefaultAppsMap,
   InstalledAppOption,
-  QuickPasteModifier,
-  SettingsSubpage
+  QuickPasteModifier
 } from "../types";
 import type { AppCleanupPolicy } from "../../settings/types";
 
 export const useAppState = (): AppState => {
-  const [showSettings, setShowSettings] = useState(false);
-  const [settingsSubpage, setSettingsSubpage] = useState<SettingsSubpage>("home");
-  const [showTagManager, setShowTagManager] = useState(false);
   const [tagManagerEnabled, setTagManagerEnabled] = useState(true);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({
     general: true,
@@ -106,12 +102,6 @@ export const useAppState = (): AppState => {
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   return {
-    showSettings,
-    setShowSettings,
-    settingsSubpage,
-    setSettingsSubpage,
-    showTagManager,
-    setShowTagManager,
     tagManagerEnabled,
     setTagManagerEnabled,
     collapsedGroups,

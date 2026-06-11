@@ -17,9 +17,9 @@ import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
 interface AppHeaderProps {
   t: (key: string) => string;
   showSettings: boolean;
-  setShowSettings: (val: boolean) => void;
   showTagManager: boolean;
-  setShowTagManager: (val: boolean) => void;
+  onOpenSettings: () => void;
+  onOpenTagManager: () => void;
   tagManagerEnabled: boolean;
   isWindowPinned: boolean;
   setIsWindowPinned: (val: boolean) => void;
@@ -46,9 +46,9 @@ interface AppHeaderProps {
 const AppHeader = ({
   t,
   showSettings,
-  setShowSettings,
   showTagManager,
-  setShowTagManager,
+  onOpenSettings,
+  onOpenTagManager,
   tagManagerEnabled,
   isWindowPinned,
   setIsWindowPinned,
@@ -123,11 +123,11 @@ const AppHeader = ({
               <Trash2 size={16} />
             </button>
             {tagManagerEnabled && (
-              <button className="btn-icon" title={t('tag_manager') || '标签管理'} onClick={() => setShowTagManager(true)}>
+              <button className="btn-icon" title={t('tag_manager') || '标签管理'} onClick={onOpenTagManager}>
                 <Tag size={16} />
               </button>
             )}
-            <button className="btn-icon" title={t('settings')} onClick={() => setShowSettings(true)}>
+            <button className="btn-icon" title={t('settings')} onClick={onOpenSettings}>
               <SettingsIcon size={16} />
             </button>
           </>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useCallback, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { useLocation, useNavigate } from "react-router-dom";
 import ToastContainer from "./shared/components/ToastContainer";
 import ConfirmDialog from "./shared/components/ConfirmDialog";
 
@@ -44,6 +45,7 @@ import type { ClipboardEntry } from "./shared/types";
 import type { QuickPasteHint, VirtualClipboardListHandle } from "./features/clipboard/types";
 
 import type { QuickPasteModifier } from "./features/app/types";
+import { getMainRouteState, MAIN_ROUTES } from "./features/app/routes";
 import {
   forceHideCompactPreviewWindow,
   isCompactPreviewWindowSupported,
@@ -83,14 +85,12 @@ const buildQuickPasteHintsById = (
 };
 
 const App = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isKnownRoute, showSettings, settingsSubpage, showTagManager } =
+    getMainRouteState(location.pathname);
   const appState = useAppState();
   const {
-    showSettings,
-    setShowSettings,
-    settingsSubpage,
-    setSettingsSubpage,
-    showTagManager,
-    setShowTagManager,
     tagManagerEnabled,
     setTagManagerEnabled,
     setCollapsedGroups,
@@ -286,24 +286,28 @@ const App = () => {
 
   const handleHeaderBack = useCallback(() => {
     if (effectiveShowTagManager) {
-      setShowTagManager(false);
+      navigate(MAIN_ROUTES.home);
       return;
     }
     if (showSettings) {
       if (settingsSubpage !== "home") {
-        setSettingsSubpage("home");
+        navigate(MAIN_ROUTES.settings);
         return;
       }
-      setShowSettings(false);
+      navigate(MAIN_ROUTES.home);
     }
   }, [
     effectiveShowTagManager,
-    setShowSettings,
-    setSettingsSubpage,
-    setShowTagManager,
+    navigate,
     settingsSubpage,
     showSettings
   ]);
+
+  useEffect(() => {
+    if (!isKnownRoute) {
+      navigate(MAIN_ROUTES.home, { replace: true });
+    }
+  }, [isKnownRoute, navigate]);
 
   const handleListScroll = useCallback((offset: number) => {
     handleSearchScroll(offset);
@@ -442,8 +446,7 @@ const App = () => {
     if (!isTauriRuntime()) return;
 
     const unlisten = listen(TAURI_EVENTS.focusSearchInput, () => {
-      setShowSettings(false);
-      setShowTagManager(false);
+      navigate(MAIN_ROUTES.home);
       setShowSearchBox(true);
       setSearchIsFocused(true);
       activateWindowFocus()
@@ -459,8 +462,7 @@ const App = () => {
       unlisten.then((off) => off());
     };
   }, [
-    setShowSettings,
-    setShowTagManager,
+    navigate,
     setShowSearchBox,
     setSearchIsFocused,
     searchInputRef
@@ -468,9 +470,9 @@ const App = () => {
 
   useEffect(() => {
     if (!tagManagerEnabled && showTagManager) {
-      setShowTagManager(false);
+      navigate(MAIN_ROUTES.home, { replace: true });
     }
-  }, [tagManagerEnabled, showTagManager, setShowTagManager]);
+  }, [navigate, tagManagerEnabled, showTagManager]);
 
   useAppBootstrap({
     setDataPath,
@@ -537,7 +539,7 @@ const App = () => {
 
   useToastListener({ pushToast });
 
-  useSettingsPanelReset({ showSettings, setCollapsedGroups, setSettingsSubpage });
+  useSettingsPanelReset({ showSettings, setCollapsedGroups });
 
   useTagManagerRefresh({
     showTagManager: effectiveShowTagManager,
@@ -730,6 +732,8 @@ const App = () => {
     saveAppSetting,
     handleResetSettings,
     toggleGroup,
+    settingsSubpage,
+    openAdvancedSettings: () => navigate(MAIN_ROUTES.advancedSettings),
     state: appState
   });
 
@@ -740,9 +744,9 @@ const App = () => {
       <AppHeader
         t={t}
         showSettings={showSettings}
-        setShowSettings={setShowSettings}
         showTagManager={effectiveShowTagManager}
-        setShowTagManager={setShowTagManager}
+        onOpenSettings={() => navigate(MAIN_ROUTES.settings)}
+        onOpenTagManager={() => navigate(MAIN_ROUTES.tags)}
         tagManagerEnabled={tagManagerEnabled}
         isWindowPinned={isWindowPinned}
         setIsWindowPinned={setIsWindowPinned}
