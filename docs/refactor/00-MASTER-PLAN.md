@@ -10,7 +10,7 @@
 - 开始时间：阶段 1 于 2026-06-11 10:04:50 +08:00 开始
 - 完成时间：待完成
 - 依赖阶段：无
-- 当前阶段：阶段 5 设置状态迁移实现完成，待人工验收
+- 当前阶段：阶段 6 跨组件 UI 状态迁移进行中
 - 阻塞项：无
 
 ## 验证结果
@@ -27,6 +27,8 @@
 - 阶段 4 实施前构建：`npm run build` 通过；主 JS 801.00 kB，gzip 247.29 kB
 - 阶段 4 自动化门禁：`npm test` 42 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；Store 未接入生产代码，构建体积不变
 - 阶段 3 首页缓存补充自动化门禁：`npm test` 42 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；主 JS 801.39 kB，gzip 247.42 kB
+- 阶段 5 自动化门禁：`npm test` 48 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；主 JS 778.61 kB，gzip 240.77 kB
+- 阶段 5 人工回归：用户于 2026-06-12 确认验收通过
 
 ## 相关提交
 
@@ -40,7 +42,6 @@
 ## 遗留问题
 
 - 既有 `password` 标签历史数据不进行重新对齐。
-- 阶段 3 首页缓存补充的桌面端人工回归尚未执行。
 
 ## 重构目标
 
@@ -225,8 +226,8 @@
 | 2. IPC 契约 | [02-IPC-CONTRACTS.md](./02-IPC-CONTRACTS.md) | 已完成 | 2-3 天 | 本次执行约 0.2 小时，不含人工回归 | 阶段 1 |
 | 3. 路由迁移 | [03-ROUTER-MIGRATION.md](./03-ROUTER-MIGRATION.md) | 已完成 | 2-3 天 | 本次执行约 0.1 小时，不含人工回归 | 阶段 2 |
 | 4. Zustand 基础 | [04-ZUSTAND-FOUNDATION.md](./04-ZUSTAND-FOUNDATION.md) | 已完成 | 2-3 天 | 本次执行约 0.1 小时 | 阶段 3 |
-| 5. 设置迁移 | [05-SETTINGS-MIGRATION.md](./05-SETTINGS-MIGRATION.md) | 实现完成，待人工验收 | 4-6 天 | 本次执行约 0.2 小时，不含人工回归 | 阶段 4 |
-| 6. UI 状态迁移 | [06-UI-STATE-MIGRATION.md](./06-UI-STATE-MIGRATION.md) | 未开始 | 3-5 天 | 待记录 | 阶段 5 |
+| 5. 设置迁移 | [05-SETTINGS-MIGRATION.md](./05-SETTINGS-MIGRATION.md) | 已完成 | 4-6 天 | 本次执行约 0.2 小时，不含人工回归 | 阶段 4 |
+| 6. UI 状态迁移 | [06-UI-STATE-MIGRATION.md](./06-UI-STATE-MIGRATION.md) | 进行中 | 3-5 天 | 待记录 | 阶段 5 |
 | 7. 组件拆分 | [07-COMPONENT-SPLITTING.md](./07-COMPONENT-SPLITTING.md) | 未开始 | 6-9 天 | 待记录 | 阶段 6 |
 | 8. Less、样式与清理 | [08-STYLES-AND-CLEANUP.md](./08-STYLES-AND-CLEANUP.md) | 未开始 | 4-7 天 | 待记录 | 阶段 7 |
 | 9. 回归收尾 | [09-REGRESSION-CLOSEOUT.md](./09-REGRESSION-CLOSEOUT.md) | 未开始 | 2-3 天 | 待记录 | 阶段 8 |
@@ -318,3 +319,4 @@
 | 2026-06-11 | 轻量化原则作为阶段 2 及后续工作的全局默认约束 | 提升工程化程度时同步降低理解成本和维护负担 |
 | 2026-06-11 | React Router、Zustand、Less 保留为三项已批准例外 | 已确认能够针对现有导航、状态和大型样式问题进行有限治理 |
 | 2026-06-12 | 首页列表缓存补充与紧凑模式移除人工复验通过，启动阶段 5 | 阶段 5 阻塞已解除 |
+| 2026-06-12 | 阶段 5 设置状态迁移人工验收通过，启动阶段 6 | 设置状态迁移已满足阶段门禁 |
