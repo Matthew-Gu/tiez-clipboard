@@ -147,7 +147,6 @@ pub async fn add_manual_item(
         id: 0,
         content_type,
         content,
-        html_content: None,
         source_app: "Manual".to_string(),
         source_app_path: None,
         timestamp: chrono::Utc::now().timestamp_millis(),

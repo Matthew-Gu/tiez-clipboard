@@ -100,8 +100,6 @@ const App = () => {
     setIsRecording,
     isRecordingSequential,
     setIsRecordingSequential,
-    isRecordingRich,
-    setIsRecordingRich,
     isRecordingSearch,
     setIsRecordingSearch,
     isLoadingMore,
@@ -139,8 +137,6 @@ const App = () => {
     setHotkey,
     sequentialHotkey,
     setSequentialHotkey,
-    richPasteHotkey,
-    setRichPasteHotkey,
     searchHotkey,
     setSearchHotkey,
     quickPasteModifier,
@@ -152,8 +148,6 @@ const App = () => {
     sensitiveMaskSuffixVisible,
     sensitiveMaskEmailDomain,
     captureFiles,
-    captureRichText,
-    richTextSnapshotPreview,
     showAppBorder,
     theme,
     colorMode,
@@ -296,7 +290,7 @@ const App = () => {
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      if (isRecording || isRecordingSequential || isRecordingRich || isRecordingSearch) return;
+      if (isRecording || isRecordingSequential || isRecordingSearch) return;
       if (!hotkey || hotkey === t('not_set')) return;
 
       const activeEl = document.activeElement as HTMLElement | null;
@@ -320,7 +314,7 @@ const App = () => {
 
     window.addEventListener('keydown', handleKeydown, true);
     return () => window.removeEventListener('keydown', handleKeydown, true);
-  }, [hotkey, isRecording, isRecordingSequential, isRecordingRich, isRecordingSearch, t]);
+  }, [hotkey, isRecording, isRecordingSequential, isRecordingSearch, t]);
 
 
   const { toasts, pushToast, confirmDialog, openConfirm, closeConfirm } = useOverlays();
@@ -448,7 +442,6 @@ const App = () => {
     deduplicate,
     saveAppSetting,
     captureFiles,
-    captureRichText,
     persistent,
     arrowKeySelection,
     soundVolume,
@@ -460,7 +453,6 @@ const App = () => {
     checkHotkeyConflict,
     updateHotkey,
     updateSequentialHotkey,
-    updateRichPasteHotkey,
     updateSearchHotkey
   } =
     useHotkeyConfig({
@@ -468,8 +460,6 @@ const App = () => {
       setHotkey,
       sequentialHotkey,
       setSequentialHotkey,
-      richPasteHotkey,
-      setRichPasteHotkey,
       searchHotkey,
       setSearchHotkey,
       sequentialMode,
@@ -477,8 +467,6 @@ const App = () => {
       setIsRecording,
       isRecordingSequential,
       setIsRecordingSequential,
-      isRecordingRich,
-      setIsRecordingRich,
       isRecordingSearch,
       setIsRecordingSearch,
       saveAppSetting,
@@ -554,7 +542,6 @@ const App = () => {
     showTagManager: effectiveShowTagManager,
     editingTagsId,
     arrowKeySelection,
-    richPasteHotkey,
     searchInputRef,
     copyToClipboard,
     setSearch
@@ -570,7 +557,6 @@ const App = () => {
     language,
     t,
     showSourceAppIcon,
-    richTextSnapshotPreview,
     sensitiveMaskPrefixVisible,
     sensitiveMaskSuffixVisible,
     sensitiveMaskEmailDomain,
@@ -589,7 +575,6 @@ const App = () => {
     checkHotkeyConflict,
     updateHotkey,
     updateSequentialHotkey,
-    updateRichPasteHotkey,
     updateSearchHotkey,
     saveAppSetting,
     handleResetSettings,

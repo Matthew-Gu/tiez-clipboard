@@ -42,7 +42,7 @@ fn run_alignment(app_handle: AppHandle) {
         };
 
         let sql = format!(
-            "SELECT ch.id, ch.timestamp, ch.content, ch.preview, ch.html_content,
+            "SELECT ch.id, ch.timestamp, ch.content, ch.preview,
                     EXISTS (
                         SELECT 1 FROM entry_tags se
                         WHERE se.entry_id = ch.id
@@ -55,7 +55,7 @@ fn run_alignment(app_handle: AppHandle) {
             sensitive_tags_sql
         );
 
-        let mut batch: Vec<(i64, i64, String, String, Option<String>, bool)> = Vec::new();
+        let mut batch: Vec<(i64, i64, String, String, bool)> = Vec::new();
         {
             let mut stmt = match conn_guard.prepare(&sql) {
                 Ok(s) => s,
@@ -67,9 +67,8 @@ fn run_alignment(app_handle: AppHandle) {
                 let ts: i64 = row.get(1)?;
                 let content: String = row.get(2)?;
                 let preview: String = row.get(3)?;
-                let html: Option<String> = row.get(4)?;
-                let is_sensitive: i32 = row.get(5)?;
-                Ok((id, ts, content, preview, html, is_sensitive == 1))
+                let is_sensitive: i32 = row.get(4)?;
+                Ok((id, ts, content, preview, is_sensitive == 1))
             }) {
                 Ok(r) => r,
                 Err(_) => break,
@@ -86,24 +85,18 @@ fn run_alignment(app_handle: AppHandle) {
             break;
         }
 
-        for (id, _ts, content, preview, html, is_sensitive) in batch.iter() {
+        for (id, _ts, content, preview, is_sensitive) in batch.iter() {
             let content_encrypted = content.starts_with(ENCRYPT_PREFIX);
             let preview_encrypted = preview.starts_with(ENCRYPT_PREFIX);
-            let html_encrypted = html
-                .as_ref()
-                .map(|h| h.starts_with(ENCRYPT_PREFIX))
-                .unwrap_or(false);
 
-            if *is_sensitive
-                && (!content_encrypted || !preview_encrypted || (html.is_some() && !html_encrypted))
-            {
+            if *is_sensitive && (!content_encrypted || !preview_encrypted) {
                 let _ = db_state.repo.encrypt_entry_with_conn(&conn_guard, *id);
-            } else if !*is_sensitive && (content_encrypted || preview_encrypted || html_encrypted) {
+            } else if !*is_sensitive && (content_encrypted || preview_encrypted) {
                 let _ = db_state.repo.decrypt_entry_with_conn(&conn_guard, *id);
             }
         }
 
-        if let Some((id, ts, _, _, _, _)) = batch.last() {
+        if let Some((id, ts, _, _, _)) = batch.last() {
             cursor_ts = *ts;
             cursor_id = *id;
         } else {

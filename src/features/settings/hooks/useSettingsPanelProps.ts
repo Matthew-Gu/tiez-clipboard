@@ -4,10 +4,9 @@ import type { AppState, SettingsSubpage } from "../../app/types";
 interface UseSettingsPanelPropsOptions {
   t: (key: string) => string;
   hotkeyParts: string[];
-  checkHotkeyConflict: (newHotkey: string, mode: "main" | "sequential" | "rich" | "search") => boolean;
+  checkHotkeyConflict: (newHotkey: string, mode: "main" | "sequential" | "search") => boolean;
   updateHotkey: (key: string) => void;
   updateSequentialHotkey: (key: string) => void;
-  updateRichPasteHotkey: (key: string) => void;
   updateSearchHotkey: (key: string) => void;
   saveAppSetting: (key: string, val: string) => void;
   handleResetSettings: () => void;
@@ -27,8 +26,6 @@ export const useSettingsPanelProps = ({
   setIsRecording: state.setIsRecording,
   isRecordingSequential: state.isRecordingSequential,
   setIsRecordingSequential: state.setIsRecordingSequential,
-  isRecordingRich: state.isRecordingRich,
-  setIsRecordingRich: state.setIsRecordingRich,
   isRecordingSearch: state.isRecordingSearch,
   setIsRecordingSearch: state.setIsRecordingSearch,
   ...actions

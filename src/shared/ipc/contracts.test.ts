@@ -42,7 +42,6 @@ describe("tauri ipc contracts", () => {
       paste: true,
       id: 1,
       deleteAfterUse: false,
-      pasteWithFormat: false,
       moveToTop: true
     } satisfies CopyToClipboardArgs;
     const openArgs = {
@@ -65,7 +64,6 @@ describe("tauri ipc contracts", () => {
       "paste",
       "id",
       "deleteAfterUse",
-      "pasteWithFormat",
       "moveToTop"
     ]);
     expect(Object.keys(openArgs)).toEqual(["id", "content", "contentType"]);

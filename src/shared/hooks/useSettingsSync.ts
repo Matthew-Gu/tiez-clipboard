@@ -8,7 +8,6 @@ interface UseSettingsSyncOptions {
   deduplicate: boolean;
   saveAppSetting: (type: string, value: string) => void;
   captureFiles: boolean;
-  captureRichText: boolean;
   persistent: boolean;
   soundVolume: number;
   arrowKeySelection: boolean;
@@ -21,7 +20,6 @@ export const useSettingsSync = ({
   deduplicate,
   saveAppSetting,
   captureFiles,
-  captureRichText,
   persistent,
   soundVolume,
   arrowKeySelection,
@@ -43,15 +41,6 @@ export const useSettingsSync = ({
       ).catch(console.error);
     }
   }, [captureFiles, settingsLoaded]);
-
-  useEffect(() => {
-    if (settingsLoaded) {
-      runSettingWrite(
-        () => invoke(TAURI_COMMANDS.setCaptureRichText, { enabled: captureRichText }),
-        notifySettingsChanged
-      ).catch(console.error);
-    }
-  }, [captureRichText, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {

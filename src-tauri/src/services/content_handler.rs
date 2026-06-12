@@ -19,20 +19,11 @@ pub async fn open_content(
     mut content: String,
     content_type: String,
 ) -> Result<(), AppError> {
-    let mut html_content: Option<String> = None;
-
     // 0. Resolve full content if ID is provided and content is placeholder/truncated
     if id != 0 {
         if id > 0 {
             // Fetch from Database
-            if content_type == "rich_text" {
-                if let Ok(Some((full_content, _, html))) =
-                    state.repo.get_entry_content_with_html(id)
-                {
-                    content = full_content;
-                    html_content = html;
-                }
-            } else if let Ok(Some(full_content)) = state.repo.get_entry_content(id) {
+            if let Ok(Some(full_content)) = state.repo.get_entry_content(id) {
                 content = full_content;
             }
         } else {
@@ -41,7 +32,6 @@ pub async fn open_content(
             let session_items = session.0.lock().unwrap();
             if let Some(item) = session_items.iter().find(|i| i.id == id) {
                 content = item.content.clone();
-                html_content = item.html_content.clone();
             }
         }
     }
@@ -71,13 +61,7 @@ pub async fn open_content(
 
     // Create temp file if needed
     if !use_direct_path {
-        temp_path = create_temp_file(
-            &content,
-            &content_type,
-            html_content.as_deref(),
-            &filename,
-            temp_path,
-        )?;
+        temp_path = create_temp_file(&content, &content_type, &filename, temp_path)?;
     }
 
     let path_str = temp_path.to_str().unwrap().to_string();
@@ -94,7 +78,7 @@ pub async fn open_content(
     .await?;
 
     // Start background watcher ONLY if we created a temp file
-    if !use_direct_path && content_type != "rich_text" {
+    if !use_direct_path {
         start_file_watcher(app_handle, file_path_clone, content_type, id);
     }
 
@@ -210,7 +194,6 @@ fn get_existing_file_path(content: &str) -> Option<std::path::PathBuf> {
 fn create_temp_file(
     content: &str,
     content_type: &str,
-    html_content: Option<&str>,
     filename: &str,
     mut temp_path: std::path::PathBuf,
 ) -> Result<std::path::PathBuf, AppError> {
@@ -236,21 +219,6 @@ fn create_temp_file(
                 // For other images, use image crate to ensure standard peak format
                 let img = image::load_from_memory(&bytes).map_err(AppError::from)?;
                 img.save(&temp_path).map_err(AppError::from)?;
-            }
-        }
-        "rich_text" => {
-            if let Some(html) = html_content.filter(|value| !value.trim().is_empty()) {
-                temp_path.push(format!("{}.html", filename));
-                let mut file = std::fs::File::create(&temp_path).map_err(AppError::from)?;
-                use std::io::Write;
-                file.write_all(html.as_bytes())
-                    .map_err(|e| AppError::IO(e.to_string()))?;
-            } else {
-                temp_path.push(format!("{}.txt", filename));
-                let mut file = std::fs::File::create(&temp_path).map_err(AppError::from)?;
-                use std::io::Write;
-                file.write_all(content.as_bytes())
-                    .map_err(|e| AppError::IO(e.to_string()))?;
             }
         }
         _ => {
@@ -490,10 +458,6 @@ fn update_database_with_changes(
             if let Some(item) = history.iter_mut().find(|i| i.id == id) {
                 item.content = new_content.to_string();
                 item.preview = preview.to_string();
-                item.html_content = None;
-                if item.content_type == "rich_text" {
-                    item.content_type = "text".to_string();
-                }
                 let _ = app_handle.emit(
                     "clipboard-updated",
                     crate::domain::models::ClipboardEntrySummary::from_entry(item),
@@ -521,10 +485,6 @@ fn update_database_with_changes(
             if let Some(item) = history.iter_mut().find(|i| i.id == id) {
                 item.content = new_content.to_string();
                 item.preview = preview.to_string();
-                item.html_content = None;
-                if item.content_type == "rich_text" {
-                    item.content_type = "text".to_string();
-                }
             }
         }
 

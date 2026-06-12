@@ -22,7 +22,6 @@ export interface SettingsState {
   dataPath: string;
   hotkey: string;
   sequentialHotkey: string;
-  richPasteHotkey: string;
   searchHotkey: string;
   quickPasteModifier: QuickPasteModifier;
   sequentialMode: boolean;
@@ -37,8 +36,6 @@ export interface SettingsState {
   cleanupRules: string;
   appCleanupPolicies: AppCleanupPolicy[];
   captureFiles: boolean;
-  captureRichText: boolean;
-  richTextSnapshotPreview: boolean;
   silentStart: boolean;
   followMouse: boolean;
   showAppBorder: boolean;
@@ -78,7 +75,6 @@ interface SettingsActions {
   setDataPath: SettingsSetter<string>;
   setHotkey: SettingsSetter<string>;
   setSequentialHotkey: SettingsSetter<string>;
-  setRichPasteHotkey: SettingsSetter<string>;
   setSearchHotkey: SettingsSetter<string>;
   setQuickPasteModifier: SettingsSetter<QuickPasteModifier>;
   setSequentialModeState: SettingsSetter<boolean>;
@@ -93,8 +89,6 @@ interface SettingsActions {
   setCleanupRules: SettingsSetter<string>;
   setAppCleanupPolicies: SettingsSetter<AppCleanupPolicy[]>;
   setCaptureFiles: SettingsSetter<boolean>;
-  setCaptureRichText: SettingsSetter<boolean>;
-  setRichTextSnapshotPreview: SettingsSetter<boolean>;
   setSilentStart: SettingsSetter<boolean>;
   setFollowMouse: SettingsSetter<boolean>;
   setShowAppBorder: SettingsSetter<boolean>;
@@ -138,7 +132,6 @@ export const createSettingsInitialState = (): SettingsState => ({
   dataPath: "",
   hotkey: "Alt+C",
   sequentialHotkey: "Alt+V",
-  richPasteHotkey: "Alt+Shift+V",
   searchHotkey: "Alt+F",
   quickPasteModifier: "disabled",
   sequentialMode: false,
@@ -153,8 +146,6 @@ export const createSettingsInitialState = (): SettingsState => ({
   cleanupRules: "",
   appCleanupPolicies: [],
   captureFiles: true,
-  captureRichText: false,
-  richTextSnapshotPreview: true,
   silentStart: true,
   followMouse: false,
   showAppBorder: false,
@@ -198,7 +189,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setDataPath: (value) => set((state) => ({ dataPath: resolveUpdate(value, state.dataPath) })),
   setHotkey: (value) => set((state) => ({ hotkey: resolveUpdate(value, state.hotkey) })),
   setSequentialHotkey: (value) => set((state) => ({ sequentialHotkey: resolveUpdate(value, state.sequentialHotkey) })),
-  setRichPasteHotkey: (value) => set((state) => ({ richPasteHotkey: resolveUpdate(value, state.richPasteHotkey) })),
   setSearchHotkey: (value) => set((state) => ({ searchHotkey: resolveUpdate(value, state.searchHotkey) })),
   setQuickPasteModifier: (value) => set((state) => ({ quickPasteModifier: resolveUpdate(value, state.quickPasteModifier) })),
   setSequentialModeState: (value) => set((state) => ({ sequentialMode: resolveUpdate(value, state.sequentialMode) })),
@@ -213,8 +203,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setCleanupRules: (value) => set((state) => ({ cleanupRules: resolveUpdate(value, state.cleanupRules) })),
   setAppCleanupPolicies: (value) => set((state) => ({ appCleanupPolicies: resolveUpdate(value, state.appCleanupPolicies) })),
   setCaptureFiles: (value) => set((state) => ({ captureFiles: resolveUpdate(value, state.captureFiles) })),
-  setCaptureRichText: (value) => set((state) => ({ captureRichText: resolveUpdate(value, state.captureRichText) })),
-  setRichTextSnapshotPreview: (value) => set((state) => ({ richTextSnapshotPreview: resolveUpdate(value, state.richTextSnapshotPreview) })),
   setSilentStart: (value) => set((state) => ({ silentStart: resolveUpdate(value, state.silentStart) })),
   setFollowMouse: (value) => set((state) => ({ followMouse: resolveUpdate(value, state.followMouse) })),
   setShowAppBorder: (value) => set((state) => ({ showAppBorder: resolveUpdate(value, state.showAppBorder) })),

@@ -5,8 +5,6 @@ pub struct ClipboardEntry {
     pub id: i64,
     pub content_type: String, // 'text', 'image', 'code', 'file', 'video'
     pub content: String,
-    #[serde(default)]
-    pub html_content: Option<String>,
     pub source_app: String,
     #[serde(default)]
     pub source_app_path: Option<String>,
@@ -79,7 +77,6 @@ pub struct ClipboardEntryDetail {
     pub id: i64,
     pub content_type: String,
     pub content: String,
-    pub html_content: Option<String>,
 }
 
 impl ClipboardEntryDetail {
@@ -88,7 +85,6 @@ impl ClipboardEntryDetail {
             id: entry.id,
             content_type: entry.content_type.clone(),
             content: entry.content.clone(),
-            html_content: entry.html_content.clone(),
         }
     }
 }
@@ -106,7 +102,6 @@ mod tests {
             id: 1,
             content_type: "image".to_string(),
             content: content.to_string(),
-            html_content: None,
             source_app: "test".to_string(),
             source_app_path: None,
             timestamp: 1,

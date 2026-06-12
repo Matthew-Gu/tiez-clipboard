@@ -23,7 +23,6 @@ enum RuntimeSettingUpdate {
     SoundEnabled(bool),
     Persistent(bool),
     CaptureFiles(bool),
-    CaptureRichText(bool),
     SilentStart(bool),
     DeleteAfterPaste(bool),
     PrivacyProtection(bool),
@@ -40,7 +39,6 @@ fn runtime_setting_update(key: &str, value: &str) -> Option<RuntimeSettingUpdate
         "app.sound_enabled" => Some(RuntimeSettingUpdate::SoundEnabled(value == "true")),
         "app.persistent" => Some(RuntimeSettingUpdate::Persistent(value != "false")),
         "app.capture_files" => Some(RuntimeSettingUpdate::CaptureFiles(value != "false")),
-        "app.capture_rich_text" => Some(RuntimeSettingUpdate::CaptureRichText(value == "true")),
         "app.silent_start" => Some(RuntimeSettingUpdate::SilentStart(value != "false")),
         "app.delete_after_paste" => Some(RuntimeSettingUpdate::DeleteAfterPaste(value == "true")),
         "app.privacy_protection" => Some(RuntimeSettingUpdate::PrivacyProtection(value == "true")),
@@ -70,9 +68,6 @@ fn apply_runtime_setting_update(settings_state: &SettingsState, update: RuntimeS
         }
         RuntimeSettingUpdate::CaptureFiles(enabled) => settings_state
             .capture_files
-            .store(enabled, Ordering::Relaxed),
-        RuntimeSettingUpdate::CaptureRichText(enabled) => settings_state
-            .capture_rich_text
             .store(enabled, Ordering::Relaxed),
         RuntimeSettingUpdate::SilentStart(enabled) => settings_state
             .silent_start
@@ -128,24 +123,6 @@ pub fn set_sequential_hotkey(
     db_state
         .settings_repo
         .set("app.sequential_hotkey", &hotkey)
-        .map_err(AppError::from)?;
-    crate::app::commands::hotkey_cmd::sync_registered_hotkeys(&app_handle)
-}
-
-#[tauri::command]
-pub fn set_rich_paste_hotkey(
-    app_handle: AppHandle,
-    state: State<'_, SettingsState>,
-    hotkey: String,
-) -> AppResult<()> {
-    if let Ok(mut guard) = state.rich_paste_hotkey.lock() {
-        *guard = hotkey.clone();
-    }
-
-    let db_state = app_handle.state::<DbState>();
-    db_state
-        .settings_repo
-        .set("app.rich_paste_hotkey", &hotkey)
         .map_err(AppError::from)?;
     crate::app::commands::hotkey_cmd::sync_registered_hotkeys(&app_handle)
 }
@@ -316,19 +293,6 @@ pub fn set_capture_files(
 }
 
 #[tauri::command]
-pub fn set_capture_rich_text(
-    state: State<'_, crate::app_state::SettingsState>,
-    db_state: State<'_, DbState>,
-    enabled: bool,
-) -> AppResult<()> {
-    state.capture_rich_text.store(enabled, Ordering::Relaxed);
-    db_state
-        .settings_repo
-        .set("app.capture_rich_text", &enabled.to_string())
-        .map_err(AppError::from)
-}
-
-#[tauri::command]
 pub fn set_silent_start(
     state: State<'_, crate::app_state::SettingsState>,
     db_state: State<'_, DbState>,
@@ -472,11 +436,6 @@ pub fn reset_settings(
         .get("app.sequential_hotkey")
         .unwrap_or(Some("Alt+V".to_string()))
         .unwrap_or("Alt+V".to_string());
-    let rich_hotkey = state
-        .settings_repo
-        .get("app.rich_paste_hotkey")
-        .unwrap_or(Some("Ctrl+Shift+Z".to_string()))
-        .unwrap_or("Ctrl+Shift+Z".to_string());
     let search_hotkey = state
         .settings_repo
         .get("app.search_hotkey")
@@ -498,10 +457,6 @@ pub fn reset_settings(
     {
         let mut guard = settings_state.sequential_paste_hotkey.lock().unwrap();
         *guard = seq_hotkey.clone();
-    }
-    {
-        let mut guard = settings_state.rich_paste_hotkey.lock().unwrap();
-        *guard = rich_hotkey.clone();
     }
     {
         let mut guard = settings_state.search_hotkey.lock().unwrap();

@@ -121,7 +121,6 @@ export const useHistoryFetch = ({
           ...item,
           content_type: detail.contentType,
           content: detail.content,
-          html_content: detail.htmlContent,
           detail_loaded: true
         };
       }),

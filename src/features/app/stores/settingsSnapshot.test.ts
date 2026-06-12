@@ -11,8 +11,6 @@ describe("parseSettingsSnapshot", () => {
       colorMode: "system",
       language: "zh",
       persistent: true,
-      captureRichText: false,
-      richTextSnapshotPreview: false,
       showSearchBox: true,
       arrowKeySelection: true,
       quickPasteModifier: "disabled"

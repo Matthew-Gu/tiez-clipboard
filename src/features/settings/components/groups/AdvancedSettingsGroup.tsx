@@ -35,7 +35,7 @@ interface SourceTarget {
     rawRules: string;
 }
 
-const DEFAULT_POLICY_CONTENT_TYPES = ["text", "code", "url", "rich_text", "image", "file", "video"];
+const DEFAULT_POLICY_CONTENT_TYPES = ["text", "code", "url", "image", "file", "video"];
 
 const createPolicyId = () =>
     `policy_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;

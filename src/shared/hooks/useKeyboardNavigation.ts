@@ -3,7 +3,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { RefObject } from "react";
-import { matchesHotkey } from "./useHotkeyMatching";
 import { useWindowVisibility } from "./useWindowVisibility";
 import type { ClipboardEntry } from "../types";
 import { TAURI_EVENTS } from "../ipc/contracts";
@@ -18,9 +17,8 @@ interface UseKeyboardNavigationOptions {
   showTagManager: boolean;
   editingTagsId: number | null;
   arrowKeySelection: boolean;
-  richPasteHotkey: string;
   searchInputRef: RefObject<HTMLInputElement | null>;
-  copyToClipboard: (id: number, content: string, contentType: string, pasteWithFormat?: boolean) => Promise<void>;
+  copyToClipboard: (id: number, content: string, contentType: string) => Promise<void>;
   setSearch: (val: string) => void;
 }
 
@@ -34,7 +32,6 @@ export const useKeyboardNavigation = ({
   showTagManager,
   editingTagsId,
   arrowKeySelection,
-  richPasteHotkey,
   searchInputRef,
   copyToClipboard,
   setSearch
@@ -48,7 +45,6 @@ export const useKeyboardNavigation = ({
   const editingTagsIdRef = useRef(editingTagsId);
   const arrowKeySelectionRef = useRef(arrowKeySelection);
   const copyToClipboardRef = useRef(copyToClipboard);
-  const richPasteHotkeyRef = useRef(richPasteHotkey);
 
   useEffect(() => { filteredHistoryRef.current = filteredHistory; }, [filteredHistory]);
   useEffect(() => { selectedIndexRef.current = selectedIndex; }, [selectedIndex]);
@@ -58,7 +54,6 @@ export const useKeyboardNavigation = ({
   useEffect(() => { editingTagsIdRef.current = editingTagsId; }, [editingTagsId]);
   useEffect(() => { arrowKeySelectionRef.current = arrowKeySelection; }, [arrowKeySelection]);
   useEffect(() => { copyToClipboardRef.current = copyToClipboard; }, [copyToClipboard]);
-  useEffect(() => { richPasteHotkeyRef.current = richPasteHotkey; }, [richPasteHotkey]);
   useEffect(() => {
     invoke("set_navigation_mode", { active: isKeyboardMode }).catch(console.error);
   }, [isKeyboardMode]);
@@ -133,10 +128,8 @@ export const useKeyboardNavigation = ({
         return;
       }
 
-      const matchesRichHotkey = matchesHotkey(e, richPasteHotkeyRef.current);
       const shouldHandleEnter = e.key === "Enter" && isKeyboardModeRef.current;
-      if (shouldHandleEnter || matchesRichHotkey) {
-        const isRich = matchesRichHotkey;
+      if (shouldHandleEnter) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -154,8 +147,7 @@ export const useKeyboardNavigation = ({
             await copyToClipboardRef.current(
               item.id,
               "",
-              item.content_type,
-              isRich
+              item.content_type
             );
           }
 
@@ -218,7 +210,7 @@ export const useKeyboardNavigation = ({
         if (!isNavMode) return;
         if (currentIndex >= 0 && currentIndex < history.length) {
           const item = history[currentIndex];
-          copyToClipboard(item.id, "", item.content_type, false);
+          copyToClipboard(item.id, "", item.content_type);
         }
       } else if (action === "escape") {
         setSearch("");

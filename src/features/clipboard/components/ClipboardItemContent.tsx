@@ -1,5 +1,4 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
-import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import {
     Cpu,
     File,
@@ -12,7 +11,6 @@ import {
     Music,
     Video
 } from "lucide-react";
-import HtmlContent from "../../../shared/components/HtmlContent";
 import { toTauriLocalImageSrc } from "../../../shared/lib/localImageSrc";
 import type { ClipboardEntry } from "../../../shared/types";
 
@@ -23,21 +21,8 @@ interface ClipboardItemContentProps {
     sensitivePreview: string;
     filePaths: string[];
     fileIcon: string | null;
-    richTextPreviewSrc: string | null;
-    richTextCleanHtml: string;
-    effectiveRichTextSnapshotSrc: string | null;
-    useSnapshotPreviewImage: boolean;
-    useRichImageFallback: boolean;
     standaloneColorValue: string | null;
-    richSnapshotImgRef: MutableRefObject<HTMLImageElement | null>;
-    richSnapshotFallbackTimerRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
-    setSnapshotFailed: Dispatch<SetStateAction<boolean>>;
-    setRichImageFallbackFailed: Dispatch<SetStateAction<boolean>>;
 }
-
-const richPreviewFailureLog = (stage: string, detail?: Record<string, unknown>) => {
-    console.warn("[RichTextPreview][MainList]", stage, detail || {});
-};
 
 const seekVideoPreviewFrame = (video: HTMLVideoElement | null) => {
     if (!video) return;
@@ -168,22 +153,11 @@ const ClipboardItemContent = ({
     sensitivePreview,
     filePaths,
     fileIcon,
-    richTextPreviewSrc,
-    richTextCleanHtml,
-    effectiveRichTextSnapshotSrc,
-    useSnapshotPreviewImage,
-    useRichImageFallback,
-    standaloneColorValue,
-    richSnapshotImgRef,
-    richSnapshotFallbackTimerRef,
-    setSnapshotFailed,
-    setRichImageFallbackFailed
+    standaloneColorValue
 }: ClipboardItemContentProps) => {
-    const richTextSnapshotDisplayMaxHeight = 64;
-
     return (
         <div className="content-preview-shell">
-            <div className={`content-preview ${item.content_type === 'rich_text' ? 'rich-text' : ''} ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}>
+            <div className={`content-preview ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}>
                 {item.content_type === "image" ? (
                     <div style={{ position: 'relative' }}>
                         {!item.content ? (
@@ -235,71 +209,6 @@ const ClipboardItemContent = ({
                     </div>
                 ) : item.content_type === "file" ? (
                     <FileContent item={item} t={t} filePaths={filePaths} fileIcon={fileIcon} />
-                ) : item.content_type === "rich_text" && item.html_content && !isSensitiveHidden ? (
-                    richTextPreviewSrc ? (
-                        <img
-                            ref={richSnapshotImgRef}
-                            src={richTextPreviewSrc}
-                            alt="rich text preview"
-                            onLoad={() => {
-                                if (useSnapshotPreviewImage && richSnapshotFallbackTimerRef.current) {
-                                    clearTimeout(richSnapshotFallbackTimerRef.current);
-                                    richSnapshotFallbackTimerRef.current = null;
-                                }
-                            }}
-                            onError={() => {
-                                if (useRichImageFallback) {
-                                    richPreviewFailureLog("fallback image load error -> switch to snapshot", {
-                                        itemId: item.id,
-                                        srcLength: (richTextPreviewSrc || "").length,
-                                        srcSample: (richTextPreviewSrc || "").slice(0, 140)
-                                    });
-                                    setRichImageFallbackFailed(true);
-                                    return;
-                                }
-                                if (richSnapshotFallbackTimerRef.current) {
-                                    clearTimeout(richSnapshotFallbackTimerRef.current);
-                                    richSnapshotFallbackTimerRef.current = null;
-                                }
-                                if (effectiveRichTextSnapshotSrc) {
-                                    richPreviewFailureLog("snapshot image load error -> fallback to html", {
-                                        itemId: item.id,
-                                        srcLength: (richTextPreviewSrc || "").length,
-                                        srcSample: (richTextPreviewSrc || "").slice(0, 140)
-                                    });
-                                    setSnapshotFailed(true);
-                                }
-                            }}
-                            style={{
-                                width: 'auto',
-                                maxWidth: '100%',
-                                maxHeight: `${richTextSnapshotDisplayMaxHeight}px`,
-                                display: 'block',
-                                marginRight: 'auto',
-                                pointerEvents: 'none',
-                                borderRadius: '4px',
-                                maskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)'
-                            }}
-                        />
-                    ) : (
-                        <HtmlContent
-                            className="rich-text-preview"
-                            htmlContent={richTextCleanHtml || item.html_content}
-                            fallbackText={item.preview}
-                            preview={true}
-                            style={{
-                                maxHeight: `${richTextSnapshotDisplayMaxHeight}px`,
-                                overflow: 'hidden',
-                                fontSize: 'var(--clipboard-item-font-size)',
-                                lineHeight: '1.4',
-                                position: 'relative',
-                                pointerEvents: 'none',
-                                maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
-                                WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
-                            }}
-                        />
-                    )
                 ) : standaloneColorValue && !isSensitiveHidden ? (
                     <div className="color-code-preview">
                         <span className="color-code-swatch" style={{ background: standaloneColorValue }} aria-hidden="true" />

@@ -19,7 +19,6 @@ interface UseClipboardItemRendererOptions {
   language: Locale;
   t: (key: string) => string;
   showSourceAppIcon: boolean;
-  richTextSnapshotPreview: boolean;
   sensitiveMaskPrefixVisible: number;
   sensitiveMaskSuffixVisible: number;
   sensitiveMaskEmailDomain: boolean;
@@ -27,10 +26,7 @@ interface UseClipboardItemRendererOptions {
   copyToClipboard: (
     id: number,
     content: string,
-    contentType: string,
-    pasteWithFormat?: boolean,
-    isPinned?: boolean,
-    tags?: string[]
+    contentType: string
   ) => Promise<void>;
   prefetchDetails: (ids: number[]) => void;
   openContent: (item: ClipboardEntry) => void;
@@ -55,7 +51,6 @@ export const useClipboardItemRenderer = ({
   language,
   t,
   showSourceAppIcon,
-  richTextSnapshotPreview,
   sensitiveMaskPrefixVisible,
   sensitiveMaskSuffixVisible,
   sensitiveMaskEmailDomain,
@@ -101,15 +96,14 @@ export const useClipboardItemRenderer = ({
           language={language}
           t={t}
           showSourceAppIcon={showSourceAppIcon}
-          richTextSnapshotPreview={richTextSnapshotPreview}
           sensitiveMaskPrefixVisible={sensitiveMaskPrefixVisible}
           sensitiveMaskSuffixVisible={sensitiveMaskSuffixVisible}
           sensitiveMaskEmailDomain={sensitiveMaskEmailDomain}
           quickPasteHint={quickPasteHintsById[item.id]}
           onSelect={() => setSelectedIndex(index)}
           onNeedDetail={() => prefetchDetails([item.id])}
-          onCopy={(withFormat) =>
-            copyToClipboard(item.id, "", item.content_type, withFormat, item.is_pinned, item.tags || [])
+          onCopy={() =>
+            copyToClipboard(item.id, "", item.content_type)
           }
           onToggleReveal={(e) => {
             e.stopPropagation();
@@ -177,7 +171,6 @@ export const useClipboardItemRenderer = ({
       language,
       t,
       showSourceAppIcon,
-      richTextSnapshotPreview,
       sensitiveMaskPrefixVisible,
       sensitiveMaskSuffixVisible,
       sensitiveMaskEmailDomain,

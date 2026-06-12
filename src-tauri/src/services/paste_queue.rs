@@ -97,35 +97,18 @@ pub async fn paste_next_step(app_handle: tauri::AppHandle) {
         // 2. Get Content (DB Lock acquired here, safe because Queue lock is released)
         let content_opt = if id < 0 {
             let s = session.inner().0.lock().unwrap();
-            s.iter().find(|i| i.id == id).map(|i| {
-                (
-                    i.content.clone(),
-                    i.content_type.clone(),
-                    i.html_content.clone(),
-                )
-            })
+            s.iter()
+                .find(|i| i.id == id)
+                .map(|i| (i.content.clone(), i.content_type.clone()))
         } else {
-            db_state
-                .repo
-                .get_entry_content_with_html(id)
-                .unwrap_or(None)
+            db_state.repo.get_entry_content_full(id).unwrap_or(None)
         };
 
-        if let Some((content, c_type, html_content)) = content_opt {
-            crate::services::clipboard_ops::remember_recent_paste(
-                &app_handle,
-                &content,
-                &c_type,
-                html_content.as_deref(),
-            );
+        if let Some((content, c_type)) = content_opt {
+            crate::services::clipboard_ops::remember_recent_paste(&app_handle, &content, &c_type);
 
-            if let Err(err) = crate::services::clipboard_ops::prepare_clipboard_payload(
-                &content,
-                &c_type,
-                html_content.as_deref(),
-                c_type == "rich_text" && html_content.as_deref().is_some(),
-            )
-            .await
+            if let Err(err) =
+                crate::services::clipboard_ops::prepare_clipboard_payload(&content, &c_type).await
             {
                 eprintln!(
                     "[ERROR] Failed to prepare clipboard payload for sequential paste: {err}"

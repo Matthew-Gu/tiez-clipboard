@@ -167,7 +167,6 @@ pub struct StartupSettings {
     pub theme: String,
     pub persistent: bool,
     pub capture_files: bool,
-    pub capture_rich_text: bool,
     pub deduplicate: bool,
     pub silent_start: bool,
     pub delete_after_paste: bool,
@@ -178,7 +177,6 @@ pub struct StartupSettings {
     pub app_cleanup_policies: String,
     pub sequential_mode: bool,
     pub sequential_hotkey: String,
-    pub rich_paste_hotkey: String,
     pub search_hotkey: String,
     pub quick_paste_modifier: String,
     pub sound_enabled: bool,
@@ -208,11 +206,6 @@ fn load_settings(repo: &impl SettingsRepository) -> StartupSettings {
             .unwrap_or(Some("true".to_string()))
             .map(|v| v == "true")
             .unwrap_or(true),
-        capture_rich_text: repo
-            .get("app.capture_rich_text")
-            .unwrap_or(Some("false".to_string()))
-            .map(|v| v == "true")
-            .unwrap_or(false),
         deduplicate: repo
             .get("app.deduplicate")
             .unwrap_or(Some("true".to_string()))
@@ -258,10 +251,6 @@ fn load_settings(repo: &impl SettingsRepository) -> StartupSettings {
             .get("app.sequential_hotkey")
             .unwrap_or(Some("Alt+V".to_string()))
             .unwrap_or("Alt+V".to_string()),
-        rich_paste_hotkey: repo
-            .get("app.rich_paste_hotkey")
-            .unwrap_or(Some("Ctrl+Shift+Z".to_string()))
-            .unwrap_or("Ctrl+Shift+Z".to_string()),
         search_hotkey: repo
             .get("app.search_hotkey")
             .unwrap_or(Some("Alt+F".to_string()))
@@ -338,7 +327,6 @@ fn setup_state(
         persistent: AtomicBool::new(s.persistent),
         theme: std::sync::Mutex::new(s.theme.clone()),
         capture_files: AtomicBool::new(s.capture_files),
-        capture_rich_text: AtomicBool::new(s.capture_rich_text),
         silent_start: AtomicBool::new(s.silent_start),
         delete_after_paste: AtomicBool::new(s.delete_after_paste),
         privacy_protection: AtomicBool::new(s.privacy_protection),
@@ -358,7 +346,6 @@ fn setup_state(
         app_cleanup_policies: std::sync::Mutex::new(s.app_cleanup_policies.clone()),
         sequential_mode: AtomicBool::new(s.sequential_mode),
         sequential_paste_hotkey: std::sync::Mutex::new(s.sequential_hotkey.clone()),
-        rich_paste_hotkey: std::sync::Mutex::new(s.rich_paste_hotkey.clone()),
         search_hotkey: std::sync::Mutex::new(s.search_hotkey.clone()),
         quick_paste_modifier: std::sync::Mutex::new(s.quick_paste_modifier.clone()),
         sound_enabled: AtomicBool::new(s.sound_enabled),
@@ -1058,15 +1045,6 @@ pub fn handle_global_shortcut(app: &AppHandle, shortcut: &tauri_plugin_global_sh
                     }
                 });
             }
-        }
-    }
-
-    if let Ok(rich_s) = {
-        let val = settings.rich_paste_hotkey.lock().unwrap().clone();
-        val.replace("Win", "Super").parse::<Shortcut>()
-    } {
-        if shortcut == &rich_s {
-            crate::services::clipboard_ops::paste_latest_rich(app.clone());
         }
     }
 

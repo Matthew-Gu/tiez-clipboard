@@ -22,7 +22,6 @@ export interface ClipboardItemProps {
   language: Locale;
   t: (key: string) => string;
   tagColors?: Record<string, string>;
-  richTextSnapshotPreview?: boolean;
   showSourceAppIcon?: boolean;
   sensitiveMaskPrefixVisible?: number;
   sensitiveMaskSuffixVisible?: number;
@@ -31,7 +30,7 @@ export interface ClipboardItemProps {
 
   onSelect: () => void;
   onNeedDetail?: () => void;
-  onCopy: (withFormat?: boolean) => void;
+  onCopy: () => void;
   onToggleReveal: (e: MouseEvent) => void;
   onOpen: (e: MouseEvent) => void;
   onTogglePin: (e: MouseEvent) => void;

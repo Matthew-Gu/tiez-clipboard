@@ -2,23 +2,19 @@ import { useRef, useEffect, useState, useMemo, memo } from "react";
 import { motion } from "framer-motion";
 import type { ClipboardItemProps } from "../types";
 import { formatSensitivePreview } from "../../../shared/lib/utils";
-import { getRichTextSnapshotDataUrl } from "../../../shared/lib/richTextSnapshot";
 import { getFileIcon as getSystemFileIcon, peekFileIcon } from "../../../shared/lib/fileIcon";
 import { getSourceAppIcon, peekSourceAppIcon } from "../../../shared/lib/sourceAppIcon";
-import {
-    extractRichImageFallback,
-    getStandaloneColorValue,
-    isAnimatedGifSrc,
-    isSpreadsheetLikeSource,
-    resolveRichImageSrc,
-    richHtmlLooksTabular
-} from "../lib/clipboardDisplay";
 import ClipboardItemContent from "./ClipboardItemContent";
 import ClipboardItemMeta from "./ClipboardItemMeta";
 import ClipboardItemTags from "./ClipboardItemTags";
 
-const richPreviewFailureLog = (stage: string, detail?: Record<string, unknown>) => {
-    console.warn("[RichTextPreview][MainList]", stage, detail || {});
+const STANDALONE_COLOR_RE = /^(#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})|(?:rgb|hsl)a?\(\s*[^)]+\s*\))$/i;
+
+const getStandaloneColorValue = (contentType: string, content: string): string | null => {
+    if (contentType !== "text" && contentType !== "code") return null;
+    const normalized = content.trim();
+    if (!normalized || normalized.includes("\n")) return null;
+    return STANDALONE_COLOR_RE.test(normalized) ? normalized : null;
 };
 
 const ClipboardItem = ({
@@ -46,7 +42,6 @@ const ClipboardItem = ({
     onTagEditCancel,
     onTagDelete,
     tagColors,
-    richTextSnapshotPreview = false,
     showSourceAppIcon = true,
     sensitiveMaskPrefixVisible = 3,
     sensitiveMaskSuffixVisible = 3,
@@ -58,8 +53,6 @@ const ClipboardItem = ({
     disableLayout
 }: ClipboardItemProps & { className?: string }) => {
     const itemRef = useRef<HTMLDivElement | null>(null);
-    const [snapshotFailed, setSnapshotFailed] = useState(false);
-    const [richImageFallbackFailed, setRichImageFallbackFailed] = useState(false);
     const [sourceAppIcon, setSourceAppIcon] = useState<string | null>(() => peekSourceAppIcon(item.source_app_path) ?? null);
     const filePaths = useMemo(
         () => item.content_type === "file" ? item.content.split('\n').filter((p) => p.trim()) : [],
@@ -67,18 +60,6 @@ const ClipboardItem = ({
     );
     const singleFilePath = filePaths.length === 1 ? filePaths[0] : null;
     const [fileIcon, setFileIcon] = useState<string | null>(() => peekFileIcon(singleFilePath) ?? null);
-    const richSnapshotImgRef = useRef<HTMLImageElement | null>(null);
-    const richSnapshotFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const richTextFallback = item.content_type === "rich_text" && item.html_content
-        ? (() => {
-            const { cleanHtml, imagePayload } = extractRichImageFallback(item.html_content);
-            return {
-                cleanHtml: cleanHtml || item.html_content,
-                imagePayload,
-                imageSrc: resolveRichImageSrc(imagePayload)
-            };
-        })()
-        : null;
     useEffect(() => {
         if (!isEditingTags || !onTagEditCancel) return;
 
@@ -125,57 +106,6 @@ const ClipboardItem = ({
             sensitiveMaskEmailDomain
         ]
     );
-    const richTextCleanHtml = richTextFallback?.cleanHtml || item.html_content || "";
-    const richTextSnapshotRenderMaxHeight = 200;
-    const spreadsheetLikeRichSource = item.content_type === "rich_text"
-        && !!item.html_content
-        && isSpreadsheetLikeSource(item.source_app, item.source_app_path);
-    const richTextHasAnimatedImageFallback = isAnimatedGifSrc(
-        richTextFallback?.imagePayload || richTextFallback?.imageSrc || null
-    );
-    const preferHtmlRichPreview = item.content_type === "rich_text"
-        && !!item.html_content
-        && !richTextHasAnimatedImageFallback
-        && !richHtmlLooksTabular(richTextCleanHtml)
-        && !spreadsheetLikeRichSource;
-    const preferGeneratedRichPreview = item.content_type === "rich_text"
-        && !!item.html_content
-        && !preferHtmlRichPreview
-        && (
-            !!richTextSnapshotPreview
-            || richHtmlLooksTabular(richTextCleanHtml)
-            || spreadsheetLikeRichSource
-        );
-    const richTextSnapshotSrc = useMemo(() => {
-        if (!preferGeneratedRichPreview) return null;
-        if (item.content_type !== "rich_text" || !item.html_content) return null;
-        if (!richTextCleanHtml) return null;
-        return getRichTextSnapshotDataUrl(richTextCleanHtml, {
-            width: 560,
-            // Keep source snapshot height bounded so list-item preview does not over-shrink text.
-            maxHeight: richTextSnapshotRenderMaxHeight
-        });
-    }, [
-        preferGeneratedRichPreview,
-        item.content_type,
-        item.html_content,
-        richTextCleanHtml,
-        richTextSnapshotRenderMaxHeight
-    ]);
-    const effectiveRichTextSnapshotSrc = !snapshotFailed ? richTextSnapshotSrc : null;
-    const effectiveRichImageFallbackSrc = !richImageFallbackFailed
-        ? (richTextFallback?.imageSrc || null)
-        : null;
-    const preferImageFallbackForTabular = (
-        richHtmlLooksTabular(richTextCleanHtml) || spreadsheetLikeRichSource
-    ) && !!effectiveRichImageFallbackSrc;
-    const richTextPreviewSrc = richTextHasAnimatedImageFallback
-        ? (effectiveRichImageFallbackSrc || effectiveRichTextSnapshotSrc)
-        : preferImageFallbackForTabular
-            ? (effectiveRichImageFallbackSrc || effectiveRichTextSnapshotSrc)
-            : (effectiveRichTextSnapshotSrc || null);
-    const useSnapshotPreviewImage = !!richTextPreviewSrc && richTextPreviewSrc === effectiveRichTextSnapshotSrc;
-    const useRichImageFallback = !!richTextPreviewSrc && richTextPreviewSrc === effectiveRichImageFallbackSrc;
     const visibleTagCount = item.tags?.length || 0;
     const hasTagsSection = visibleTagCount > 0 || isEditingTags;
     const standaloneColorValue = useMemo(
@@ -250,41 +180,6 @@ const ClipboardItem = ({
         };
     }, [item.content_type, item.file_preview_exists, singleFilePath]);
 
-    useEffect(() => {
-        setSnapshotFailed(false);
-        setRichImageFallbackFailed(false);
-    }, [item.id, item.html_content, richTextSnapshotPreview]);
-
-    useEffect(() => {
-        if (richSnapshotFallbackTimerRef.current) {
-            clearTimeout(richSnapshotFallbackTimerRef.current);
-            richSnapshotFallbackTimerRef.current = null;
-        }
-        if (!useSnapshotPreviewImage) return;
-
-        // Safety net: some WebView failures do not reliably fire <img onError>.
-        richSnapshotFallbackTimerRef.current = setTimeout(() => {
-            const img = richSnapshotImgRef.current;
-            if (!img || !img.complete || img.naturalWidth <= 0 || img.naturalHeight <= 0) {
-                richPreviewFailureLog("snapshot image timeout -> fallback to html", {
-                    itemId: item.id,
-                    hasImageElement: !!img,
-                    complete: img?.complete ?? false,
-                    naturalWidth: img?.naturalWidth ?? 0,
-                    naturalHeight: img?.naturalHeight ?? 0
-                });
-                setSnapshotFailed(true);
-            }
-        }, 700);
-
-        return () => {
-            if (richSnapshotFallbackTimerRef.current) {
-                clearTimeout(richSnapshotFallbackTimerRef.current);
-                richSnapshotFallbackTimerRef.current = null;
-            }
-        };
-    }, [useSnapshotPreviewImage, effectiveRichTextSnapshotSrc, item.id]);
-
     return (
         <motion.div
             ref={itemRef}
@@ -321,7 +216,7 @@ const ClipboardItem = ({
                 }
                 // Preserve the original input focus until the paste keystroke is dispatched.
                 e.preventDefault();
-                onCopy(false); // Plain text by default
+                onCopy();
                 onSelect();
             }}
             onClick={(e) => {
@@ -353,7 +248,7 @@ const ClipboardItem = ({
                 if (target.closest('a')) {
                     e.stopPropagation();
                 }
-                onCopy(true); // Formatted text for right-click
+                onCopy();
 
                 onSelect();
             }}
@@ -384,16 +279,7 @@ const ClipboardItem = ({
                 sensitivePreview={sensitivePreview}
                 filePaths={filePaths}
                 fileIcon={fileIcon}
-                richTextPreviewSrc={richTextPreviewSrc}
-                richTextCleanHtml={richTextCleanHtml}
-                effectiveRichTextSnapshotSrc={effectiveRichTextSnapshotSrc}
-                useSnapshotPreviewImage={useSnapshotPreviewImage}
-                useRichImageFallback={useRichImageFallback}
                 standaloneColorValue={standaloneColorValue}
-                richSnapshotImgRef={richSnapshotImgRef}
-                richSnapshotFallbackTimerRef={richSnapshotFallbackTimerRef}
-                setSnapshotFailed={setSnapshotFailed}
-                setRichImageFallbackFailed={setRichImageFallbackFailed}
             />
 
             {hasTagsSection && (
@@ -424,7 +310,6 @@ export default memo(ClipboardItem, (prevProps, nextProps) => {
         prevProps.item.timestamp === nextProps.item.timestamp &&
         prevProps.item.content === nextProps.item.content &&
         prevProps.item.preview === nextProps.item.preview &&
-        prevProps.item.html_content === nextProps.item.html_content &&
         prevProps.item.source_app === nextProps.item.source_app &&
         prevProps.item.source_app_path === nextProps.item.source_app_path &&
         prevProps.item.is_pinned === nextProps.item.is_pinned &&
@@ -433,7 +318,6 @@ export default memo(ClipboardItem, (prevProps, nextProps) => {
         prevProps.item.tags === nextProps.item.tags &&
         prevProps.isRevealed === nextProps.isRevealed &&
         prevProps.isEditingTags === nextProps.isEditingTags &&
-        prevProps.richTextSnapshotPreview === nextProps.richTextSnapshotPreview &&
         prevProps.showSourceAppIcon === nextProps.showSourceAppIcon &&
         prevProps.quickPasteHint?.slot === nextProps.quickPasteHint?.slot &&
         prevProps.quickPasteHint?.combo === nextProps.quickPasteHint?.combo &&

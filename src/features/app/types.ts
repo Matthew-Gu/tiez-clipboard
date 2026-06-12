@@ -17,8 +17,6 @@ export interface AppState {
   setIsRecording: StateSetter<boolean>;
   isRecordingSequential: boolean;
   setIsRecordingSequential: StateSetter<boolean>;
-  isRecordingRich: boolean;
-  setIsRecordingRich: StateSetter<boolean>;
   isRecordingSearch: boolean;
   setIsRecordingSearch: StateSetter<boolean>;
   isLoadingMore: boolean;

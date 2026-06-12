@@ -30,9 +30,6 @@ pub mod windows_api {
         pub unsafe fn set_clipboard_files(_paths: Vec<String>) -> Result<(), String> {
             Ok(())
         }
-        pub unsafe fn set_clipboard_text_and_html(_text: &str, _: &str) -> Result<(), String> {
-            Ok(())
-        }
         pub fn set_clipboard_image_with_formats(_data: ImageData) -> Result<(), String> {
             Ok(())
         }

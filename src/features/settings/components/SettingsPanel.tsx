@@ -22,10 +22,9 @@ interface LabelWithHintProps {
 interface SettingsPanelActions {
   t: (key: string) => string;
   hotkeyParts: string[];
-  checkHotkeyConflict: (newHotkey: string, mode: "main" | "sequential" | "rich" | "search") => boolean;
+  checkHotkeyConflict: (newHotkey: string, mode: "main" | "sequential" | "search") => boolean;
   updateHotkey: (key: string) => void;
   updateSequentialHotkey: (key: string) => void;
-  updateRichPasteHotkey: (key: string) => void;
   updateSearchHotkey: (key: string) => void;
   saveAppSetting: (key: string, val: string) => void;
   handleResetSettings: () => void;
@@ -42,8 +41,6 @@ export type SettingsPanelProps = Pick<
   | "setIsRecording"
   | "isRecordingSequential"
   | "setIsRecordingSequential"
-  | "isRecordingRich"
-  | "setIsRecordingRich"
   | "isRecordingSearch"
   | "setIsRecordingSearch"
 > & SettingsPanelActions;

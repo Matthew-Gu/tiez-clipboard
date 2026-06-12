@@ -4,9 +4,7 @@ use crate::domain::models::{ClipboardEntry, ClipboardEntryDetail, ClipboardEntry
 use crate::error::{AppError, AppResult};
 use crate::infrastructure::repository::clipboard_repo::ClipboardRepository;
 use crate::infrastructure::repository::tag_repo::TagRepository;
-use crate::services::clipboard::{
-    build_entry_preview, derive_rich_text_content, truncate_html_for_preview,
-};
+use crate::services::clipboard::build_entry_preview;
 use tauri::{AppHandle, Emitter, State};
 
 #[derive(serde::Serialize)]
@@ -158,17 +156,6 @@ pub fn get_clipboard_entry_detail(
         .ok_or_else(|| AppError::Validation("Entry not found".to_string()))
 }
 
-fn normalize_rich_text_item_content(item: &mut ClipboardEntry) {
-    if item.content_type != "rich_text" {
-        return;
-    }
-
-    let normalized = derive_rich_text_content(&item.content, item.html_content.as_deref());
-    if !normalized.trim().is_empty() {
-        item.content = normalized;
-    }
-}
-
 #[tauri::command]
 pub fn get_clipboard_history(
     state: State<'_, DbState>,
@@ -215,12 +202,9 @@ pub fn get_clipboard_history(
 
     // 5. Truncate content for UI performance
     for item in &mut history {
-        normalize_rich_text_item_content(item);
-
         if (item.content_type == "text"
             || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text")
+            || item.content_type == "url")
             && item.content.chars().count() > 2000
         {
             item.content = format!(
@@ -229,22 +213,9 @@ pub fn get_clipboard_history(
             );
         }
 
-        if let Some(ref html) = item.html_content {
-            if html.chars().count() > 5000 {
-                item.html_content = truncate_html_for_preview(html);
-            }
-        }
-
-        if item.content_type == "text"
-            || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text"
+        if item.content_type == "text" || item.content_type == "code" || item.content_type == "url"
         {
-            item.preview = build_entry_preview(
-                &item.content_type,
-                &item.content,
-                item.html_content.as_deref(),
-            );
+            item.preview = build_entry_preview(&item.content_type, &item.content, None);
         }
     }
 
@@ -286,12 +257,9 @@ pub fn search_clipboard_history(
     }
 
     for item in &mut history {
-        normalize_rich_text_item_content(item);
-
         if (item.content_type == "text"
             || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text")
+            || item.content_type == "url")
             && item.content.chars().count() > 2000
         {
             item.content = format!(
@@ -300,22 +268,9 @@ pub fn search_clipboard_history(
             );
         }
 
-        if let Some(ref html) = item.html_content {
-            if html.chars().count() > 5000 {
-                item.html_content = truncate_html_for_preview(html);
-            }
-        }
-
-        if item.content_type == "text"
-            || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text"
+        if item.content_type == "text" || item.content_type == "code" || item.content_type == "url"
         {
-            item.preview = build_entry_preview(
-                &item.content_type,
-                &item.content,
-                item.html_content.as_deref(),
-            );
+            item.preview = build_entry_preview(&item.content_type, &item.content, None);
         }
     }
 
@@ -368,12 +323,9 @@ pub fn get_tag_items(state: State<'_, DbState>, tag: String) -> AppResult<Vec<Cl
         .map_err(AppError::from)?;
 
     for item in &mut history {
-        normalize_rich_text_item_content(item);
-
         if (item.content_type == "text"
             || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text")
+            || item.content_type == "url")
             && item.content.chars().count() > 50000
         {
             item.content = format!(
@@ -382,16 +334,9 @@ pub fn get_tag_items(state: State<'_, DbState>, tag: String) -> AppResult<Vec<Cl
             );
         }
 
-        if item.content_type == "text"
-            || item.content_type == "code"
-            || item.content_type == "url"
-            || item.content_type == "rich_text"
+        if item.content_type == "text" || item.content_type == "code" || item.content_type == "url"
         {
-            item.preview = build_entry_preview(
-                &item.content_type,
-                &item.content,
-                item.html_content.as_deref(),
-            );
+            item.preview = build_entry_preview(&item.content_type, &item.content, None);
         }
     }
 
@@ -464,28 +409,11 @@ pub fn get_clipboard_content(
     {
         let session_items = session.inner().0.lock().unwrap();
         if let Some(item) = session_items.iter().find(|i| i.id == id) {
-            if item.content_type == "rich_text" {
-                let normalized =
-                    derive_rich_text_content(&item.content, item.html_content.as_deref());
-                if !normalized.trim().is_empty() {
-                    return Ok(normalized);
-                }
-            }
             return Ok(item.content.clone());
         }
     }
 
-    if let Some((content, content_type, html_content)) = state
-        .repo
-        .get_entry_content_with_html(id)
-        .map_err(AppError::from)?
-    {
-        if content_type == "rich_text" {
-            let normalized = derive_rich_text_content(&content, html_content.as_deref());
-            if !normalized.trim().is_empty() {
-                return Ok(normalized);
-            }
-        }
+    if let Some(content) = state.repo.get_entry_content(id).map_err(AppError::from)? {
         return Ok(content);
     }
 
@@ -521,7 +449,6 @@ mod tests {
             id,
             content_type: "text".to_string(),
             content: String::new(),
-            html_content: None,
             source_app: String::new(),
             source_app_path: None,
             timestamp,

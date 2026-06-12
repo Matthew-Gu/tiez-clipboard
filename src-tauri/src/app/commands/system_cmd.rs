@@ -497,22 +497,20 @@ fn rewrite_attachment_paths_in_db(
     let conn = Connection::open(db_path).map_err(AppError::from)?;
 
     let mut stmt = conn
-        .prepare("SELECT id, content, html_content FROM clipboard_history WHERE is_external = 1 OR html_content IS NOT NULL")
+        .prepare("SELECT id, content FROM clipboard_history WHERE is_external = 1")
         .map_err(AppError::from)?;
 
     let rows = stmt
         .query_map([], |row| {
             let id: i64 = row.get(0)?;
             let content: String = row.get(1)?;
-            let html_content: Option<String> = row.get(2)?;
-            Ok((id, content, html_content))
+            Ok((id, content))
         })
         .map_err(AppError::from)?;
 
     for row in rows {
-        let (id, content_raw, html_raw) = row.map_err(AppError::from)?;
+        let (id, content_raw) = row.map_err(AppError::from)?;
         let mut content_new: Option<String> = None;
-        let mut html_new: Option<String> = None;
 
         if let Some(updated) = rewrite_content_path(
             &content_raw,
@@ -524,27 +522,11 @@ fn rewrite_attachment_paths_in_db(
             content_new = Some(updated);
         }
 
-        if let Some(html) = html_raw.as_ref() {
-            if let Some(updated) = rewrite_html_paths(
-                html,
-                &old_prefix,
-                &new_prefix,
-                &old_prefix_slash,
-                &new_prefix_slash,
-            ) {
-                html_new = Some(updated);
-            }
-        }
-
-        if content_new.is_some() || html_new.is_some() {
+        if content_new.is_some() {
             let content_final = content_new.as_ref().unwrap_or(&content_raw);
-            let html_final = match html_new.as_ref() {
-                Some(v) => Some(v.as_str()),
-                None => html_raw.as_deref(),
-            };
             conn.execute(
-                "UPDATE clipboard_history SET content = ?1, html_content = ?2 WHERE id = ?3",
-                params![content_final, html_final, id],
+                "UPDATE clipboard_history SET content = ?1 WHERE id = ?2",
+                params![content_final, id],
             )
             .map_err(AppError::from)?;
         }
@@ -646,40 +628,6 @@ fn rewrite_content_path(
     }
 
     replace_prefix(value)
-}
-
-fn rewrite_html_paths(
-    value: &str,
-    old_prefix: &str,
-    new_prefix: &str,
-    old_prefix_slash: &str,
-    new_prefix_slash: &str,
-) -> Option<String> {
-    let replace_any = |v: &str| -> Option<String> {
-        let mut updated = v.replace(old_prefix, new_prefix);
-        updated = updated.replace(old_prefix_slash, new_prefix_slash);
-        if updated == v {
-            None
-        } else {
-            Some(updated)
-        }
-    };
-
-    if value.starts_with(ENCRYPT_PREFIX) {
-        #[cfg(not(feature = "portable"))]
-        {
-            let plain = crate::database::encryption::decrypt_value(value)
-                .unwrap_or_else(|| value.to_string());
-            if let Some(updated_plain) = replace_any(&plain) {
-                let encrypted = crate::database::encryption::encrypt_value(&updated_plain)
-                    .unwrap_or(updated_plain);
-                return Some(encrypted);
-            }
-        }
-        return None;
-    }
-
-    replace_any(value)
 }
 
 fn copy_dir_recursive(src: &std::path::Path, dst: &std::path::Path) -> std::io::Result<()> {

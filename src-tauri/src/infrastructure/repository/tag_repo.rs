@@ -243,7 +243,7 @@ impl TagRepository for SqliteTagRepository {
     fn get_entries_by_tag(&self, tag: &str) -> Result<Vec<ClipboardEntry>, String> {
         let conn = self.conn.lock().map_err(|e| e.to_string())?;
         let mut stmt = conn.prepare(
-            "SELECT ch.id, ch.content_type, ch.content, ch.html_content, ch.source_app, ch.timestamp, ch.preview, ch.is_pinned, ch.tags, ch.use_count, ch.is_external, ch.pinned_order, ch.source_app_path 
+            "SELECT ch.id, ch.content_type, ch.content, NULL AS removed_slot, ch.source_app, ch.timestamp, ch.preview, ch.is_pinned, ch.tags, ch.use_count, ch.is_external, ch.pinned_order, ch.source_app_path
              FROM clipboard_history ch
              INNER JOIN entry_tags et ON ch.id = et.entry_id
              WHERE et.tag = ? 
@@ -255,17 +255,16 @@ impl TagRepository for SqliteTagRepository {
                 let tags_str: String = row.get(8).unwrap_or_else(|_| "[]".to_string());
                 let tags: Vec<String> = serde_json::from_str(&tags_str).unwrap_or_default();
                 let content_raw: String = row.get(2)?;
-                let html_raw: Option<String> = row.get(3).ok();
+                let _removed_slot: Option<String> = row.get(3).ok();
                 let preview_raw: String = row.get(6)?;
                 let content = self.maybe_decrypt_text(&content_raw);
                 let preview = self.maybe_decrypt_text(&preview_raw);
-                let html_content = html_raw.map(|v| self.maybe_decrypt_text(&v));
+                let _removed_content = _removed_slot.map(|v| self.maybe_decrypt_text(&v));
 
                 Ok(ClipboardEntry {
                     id: row.get(0)?,
                     content_type: row.get(1)?,
                     content,
-                    html_content,
                     source_app: row.get(4)?,
                     timestamp: row.get(5)?,
                     preview,

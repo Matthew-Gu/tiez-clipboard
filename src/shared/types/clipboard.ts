@@ -2,7 +2,6 @@ export interface ClipboardEntry {
   id: number;
   content_type: string;
   content: string;
-  html_content?: string;
   source_app: string;
   source_app_path?: string;
   timestamp: number;
@@ -38,7 +37,6 @@ export interface ClipboardEntryDetail {
   id: number;
   contentType: string;
   content: string;
-  htmlContent?: string;
 }
 
 export interface ClipboardHistoryPage {

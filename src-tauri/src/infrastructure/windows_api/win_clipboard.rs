@@ -1,14 +1,12 @@
 use windows::Win32::Foundation::HGLOBAL;
 use windows::Win32::System::DataExchange::{
-    CloseClipboard, EmptyClipboard, EnumClipboardFormats, GetClipboardData,
-    GetClipboardFormatNameW, OpenClipboard, SetClipboardData,
+    CloseClipboard, EmptyClipboard, GetClipboardData, OpenClipboard, SetClipboardData,
 };
 use windows::Win32::System::Memory::{GlobalAlloc, GlobalLock, GlobalSize, GlobalUnlock, GHND};
 
 // Clipboard format constants
 const CF_DIB: u32 = 8; // DIB
 const CF_DIBV5: u32 = 17; // DIBV5
-const CF_UNICODETEXT: u32 = 13; // Unicode text
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
@@ -96,12 +94,6 @@ pub struct ImageData {
     pub bytes: Vec<u8>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct NamedClipboardFormat {
-    pub name: String,
-    pub data: Vec<u8>,
-}
-
 unsafe fn copy_hglobal_bytes(h_data: windows::Win32::Foundation::HANDLE) -> Option<Vec<u8>> {
     if h_data.is_invalid() {
         return None;
@@ -118,38 +110,6 @@ unsafe fn copy_hglobal_bytes(h_data: windows::Win32::Foundation::HANDLE) -> Opti
     std::ptr::copy_nonoverlapping(p_data as *const u8, buffer.as_mut_ptr(), data_size);
     let _ = GlobalUnlock(h_global);
     Some(buffer)
-}
-
-unsafe fn clipboard_format_name(format_id: u32) -> Option<String> {
-    let mut buffer = vec![0u16; 256];
-    let len = GetClipboardFormatNameW(format_id, &mut buffer);
-    if len <= 0 {
-        return None;
-    }
-    Some(String::from_utf16_lossy(&buffer[..len as usize]))
-}
-
-unsafe fn set_named_clipboard_format_bytes(format_id: u32, data: &[u8]) -> Result<(), String> {
-    let alloc_len = data.len().max(1);
-    let h_global = GlobalAlloc(GHND, alloc_len).map_err(|e| e.to_string())?;
-    let p_mem = GlobalLock(h_global);
-    if p_mem.is_null() {
-        return Err("GlobalLock failed".to_string());
-    }
-
-    if !data.is_empty() {
-        std::ptr::copy_nonoverlapping(data.as_ptr(), p_mem as *mut u8, data.len());
-    } else {
-        *(p_mem as *mut u8) = 0;
-    }
-
-    let _ = GlobalUnlock(h_global);
-    SetClipboardData(
-        format_id,
-        Some(windows::Win32::Foundation::HANDLE(h_global.0 as _)),
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(())
 }
 
 /// Try to get image from Windows clipboard using native API
@@ -573,179 +533,9 @@ pub unsafe fn get_clipboard_raw_format(format_name: &str) -> Option<Vec<u8>> {
 }
 
 /// Enumerate registered clipboard formats with HGLOBAL-backed payloads.
-pub unsafe fn get_named_clipboard_formats(
-    max_formats: usize,
-    max_format_bytes: usize,
-    max_total_bytes: usize,
-) -> Vec<NamedClipboardFormat> {
-    if OpenClipboard(None).is_err() {
-        return Vec::new();
-    }
-
-    let result = (|| {
-        let mut formats = Vec::new();
-        let mut total_bytes = 0usize;
-        let mut current_id = 0u32;
-
-        loop {
-            current_id = EnumClipboardFormats(current_id);
-            if current_id == 0 {
-                break;
-            }
-
-            let Some(name) = clipboard_format_name(current_id) else {
-                continue;
-            };
-
-            let h_data = match GetClipboardData(current_id) {
-                Ok(handle) => handle,
-                Err(_) => continue,
-            };
-
-            let Some(data) = copy_hglobal_bytes(h_data) else {
-                continue;
-            };
-
-            if data.is_empty() || data.len() > max_format_bytes {
-                continue;
-            }
-
-            if total_bytes.saturating_add(data.len()) > max_total_bytes {
-                continue;
-            }
-
-            total_bytes = total_bytes.saturating_add(data.len());
-            formats.push(NamedClipboardFormat { name, data });
-            if formats.len() >= max_formats {
-                break;
-            }
-        }
-
-        formats
-    })();
-
-    let _ = CloseClipboard();
-    result
-}
-
-unsafe fn set_clipboard_text_and_html_inner(
-    text: &str,
-    cf_html: &str,
-    clear_existing: bool,
-) -> Result<(), String> {
-    use windows::Win32::System::DataExchange::RegisterClipboardFormatW;
-
-    if OpenClipboard(None).is_err() {
-        return Err("Cannot open clipboard".into());
-    }
-
-    let result = (|| {
-        if clear_existing {
-            let _ = EmptyClipboard();
-        }
-
-        // 1) Set CF_UNICODETEXT
-        let mut wide: Vec<u16> = text.encode_utf16().collect();
-        wide.push(0);
-        let byte_len = wide.len() * 2;
-        let h_text = GlobalAlloc(GHND, byte_len).map_err(|e| e.to_string())?;
-        let p_text = GlobalLock(h_text);
-        if p_text.is_null() {
-            return Err("GlobalLock failed".to_string());
-        }
-        std::ptr::copy_nonoverlapping(wide.as_ptr() as *const u8, p_text as *mut u8, byte_len);
-        let _ = GlobalUnlock(h_text);
-        if SetClipboardData(
-            CF_UNICODETEXT,
-            Some(windows::Win32::Foundation::HANDLE(h_text.0 as _)),
-        )
-        .is_err()
-        {
-            return Err("SetClipboardData (CF_UNICODETEXT) failed".to_string());
-        }
-
-        // 2) Set CF_HTML
-        let format_name = "HTML Format";
-        let name_w: Vec<u16> = format_name
-            .encode_utf16()
-            .chain(std::iter::once(0))
-            .collect();
-        let format_id = RegisterClipboardFormatW(windows::core::PCWSTR(name_w.as_ptr()));
-        if format_id == 0 {
-            return Err("RegisterClipboardFormatW failed".to_string());
-        }
-
-        let html_bytes = cf_html.as_bytes();
-        let h_html = GlobalAlloc(GHND, html_bytes.len() + 1).map_err(|e| e.to_string())?;
-        let p_html = GlobalLock(h_html);
-        if p_html.is_null() {
-            return Err("GlobalLock failed".to_string());
-        }
-        std::ptr::copy_nonoverlapping(html_bytes.as_ptr(), p_html as *mut u8, html_bytes.len());
-        *(p_html.add(html_bytes.len()) as *mut u8) = 0;
-        let _ = GlobalUnlock(h_html);
-        let _ = SetClipboardData(
-            format_id,
-            Some(windows::Win32::Foundation::HANDLE(h_html.0 as _)),
-        );
-
-        Ok(())
-    })();
-
-    let _ = CloseClipboard();
-    result
-}
-
 /// Set Unicode text and CF_HTML, replacing existing clipboard formats.
-pub unsafe fn set_clipboard_text_and_html(text: &str, cf_html: &str) -> Result<(), String> {
-    set_clipboard_text_and_html_inner(text, cf_html, true)
-}
-
 /// Append/override Unicode text and CF_HTML while keeping existing non-text formats (e.g. image/DIB).
-pub unsafe fn append_clipboard_text_and_html(text: &str, cf_html: &str) -> Result<(), String> {
-    set_clipboard_text_and_html_inner(text, cf_html, false)
-}
-
 /// Append registered clipboard formats while keeping existing data intact.
-pub unsafe fn append_named_clipboard_formats(
-    formats: &[NamedClipboardFormat],
-) -> Result<(), String> {
-    use windows::Win32::System::DataExchange::RegisterClipboardFormatW;
-
-    if formats.is_empty() {
-        return Ok(());
-    }
-
-    if OpenClipboard(None).is_err() {
-        return Err("Cannot open clipboard".into());
-    }
-
-    let result = (|| {
-        for format in formats {
-            if format.name.trim().is_empty() {
-                continue;
-            }
-
-            let name_w: Vec<u16> = format
-                .name
-                .encode_utf16()
-                .chain(std::iter::once(0))
-                .collect();
-            let format_id = RegisterClipboardFormatW(windows::core::PCWSTR(name_w.as_ptr()));
-            if format_id == 0 {
-                continue;
-            }
-
-            set_named_clipboard_format_bytes(format_id, &format.data)?;
-        }
-
-        Ok(())
-    })();
-
-    let _ = CloseClipboard();
-    result
-}
-
 /// Set image (DIB) and optionally a raw format (like GIF) to clipboard in one go
 pub unsafe fn set_clipboard_image_and_gif(
     image: ImageData,

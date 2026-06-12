@@ -7,7 +7,6 @@ export const useAppState = (): AppState => {
   const [showAppSelector, setShowAppSelector] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecordingSequential, setIsRecordingSequential] = useState(false);
-  const [isRecordingRich, setIsRecordingRich] = useState(false);
   const [isRecordingSearch, setIsRecordingSearch] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -22,8 +21,6 @@ export const useAppState = (): AppState => {
     setIsRecording,
     isRecordingSequential,
     setIsRecordingSequential,
-    isRecordingRich,
-    setIsRecordingRich,
     isRecordingSearch,
     setIsRecordingSearch,
     isLoadingMore,

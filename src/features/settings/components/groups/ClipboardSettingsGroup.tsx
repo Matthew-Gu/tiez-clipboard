@@ -35,14 +35,6 @@ interface ClipboardSettingsGroupProps {
     setDeduplicate: (val: boolean) => void;
     captureFiles: boolean;
     setCaptureFiles: (val: boolean) => void;
-    captureRichText: boolean;
-    setCaptureRichText: (val: boolean) => void;
-    richTextSnapshotPreview: boolean;
-    setRichTextSnapshotPreview: (val: boolean) => void;
-    richPasteHotkey: string;
-    isRecordingRich: boolean;
-    setIsRecordingRich: (val: boolean) => void;
-    updateRichPasteHotkey: (key: string) => void;
     searchHotkey: string;
     isRecordingSearch: boolean;
     setIsRecordingSearch: (val: boolean) => void;
@@ -59,7 +51,7 @@ interface ClipboardSettingsGroupProps {
     isRecordingSequential: boolean;
     setIsRecordingSequential: (val: boolean) => void;
     updateSequentialHotkey: (key: string) => void;
-    checkHotkeyConflict: (newHotkey: string, mode: 'main' | 'sequential' | 'rich' | 'search') => boolean;
+    checkHotkeyConflict: (newHotkey: string, mode: 'main' | 'sequential' | 'search') => boolean;
     privacyProtection: boolean;
     setPrivacyProtection: (val: boolean) => void;
     privacyProtectionKinds: string[];
@@ -247,61 +239,6 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             />
                             <div className="toggle"><div className="left" /><div className="right" /></div>
                         </label>
-                    </div>
-                    <div className="setting-item">
-                        <props.LabelWithHint
-                            label={props.t('capture_rich_text') || '捕获富文本'}
-                            hint={props.t('capture_rich_text_hint') || '开启后可记录富文本并支持双击带格式粘贴'}
-                            hintKey="capture_rich_text"
-                        />
-                        <label className="switch">
-                            <input
-                                className="cb"
-                                type="checkbox"
-                                checked={props.captureRichText}
-                                onChange={(e) => {
-                                    const val = e.target.checked;
-                                    props.setCaptureRichText(val);
-                                }}
-                            />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
-                        </label>
-                    </div>
-                    <div className="setting-item">
-                        <props.LabelWithHint
-                            label={props.t('rich_text_snapshot_preview') || '富文本快照预览'}
-                            hint={props.t('rich_text_snapshot_preview_hint') || '开启后将富文本转换为内存快照图用于条目与悬浮预览'}
-                            hintKey="rich_text_snapshot_preview"
-                        />
-                        <label className="switch">
-                            <input
-                                className="cb"
-                                type="checkbox"
-                                checked={props.richTextSnapshotPreview}
-                                onChange={(e) => {
-                                    const val = e.target.checked;
-                                    props.setRichTextSnapshotPreview(val);
-                                    props.saveAppSetting('rich_text_snapshot_preview', String(val));
-                                }}
-                            />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
-                        </label>
-                    </div>
-
-
-                    <div className="setting-item">
-                        <div className="item-label-group">
-                            <span className="item-label">{props.t('rich_paste_hotkey_label')}</span>
-                            <span className="hint">{props.isRecordingRich ? props.t('hotkey_recording_esc') : props.t('hotkey_click_hint')}</span>
-                        </div>
-                        <HotkeyRecorder
-                            hotkey={props.richPasteHotkey}
-                            isRecording={props.isRecordingRich}
-                            waitingLabel={props.t('waiting_for_input')}
-                            renderHotkey={renderHotkeyCaps}
-                            setIsRecording={props.setIsRecordingRich}
-                            updateHotkey={props.updateRichPasteHotkey}
-                        />
                     </div>
                     <div className="setting-item">
                         <div className="item-label-group">

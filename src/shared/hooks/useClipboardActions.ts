@@ -31,7 +31,7 @@ export const useClipboardActions = ({
   virtualListRef
 }: UseClipboardActionsOptions) => {
   const copyToClipboard = useCallback(
-    async (id: number, content: string, contentType: string, pasteWithFormat = false) => {
+    async (id: number, content: string, contentType: string) => {
       try {
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
@@ -43,7 +43,6 @@ export const useClipboardActions = ({
           paste: true,
           id: id,
           deleteAfterUse: deleteAfterPaste,
-          pasteWithFormat,
           moveToTop: moveToTopAfterPaste
         });
 

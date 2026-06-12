@@ -20,7 +20,7 @@ const DefaultAppsSettingsGroup = ({
     defaultApps,
     setShowAppSelector
 }: DefaultAppsSettingsGroupProps) => {
-    const APP_TYPES = ['text', 'rich_text', 'image', 'video', 'code', 'url'] as const;
+    const APP_TYPES = ['text', 'image', 'video', 'code', 'url'] as const;
     const getTypeName = (type: string) => {
         switch (type) {
             case "code": return t('type_code');
@@ -29,7 +29,6 @@ const DefaultAppsSettingsGroup = ({
             case "file": return t('type_file');
             case "image": return t('type_image');
             case "video": return t('type_video');
-            case "rich_text": return t('type_rich_text');
             default: return t('type_text') || 'Text';
         }
     };

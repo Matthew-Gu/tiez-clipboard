@@ -25,7 +25,7 @@ pub fn has_sensitive_tag(tags: &[String]) -> bool {
 }
 
 pub fn is_text_type(content_type: &str) -> bool {
-    matches!(content_type, "text" | "code" | "url" | "rich_text")
+    matches!(content_type, "text" | "code" | "url")
 }
 
 fn normalize_text(content: &str) -> String {
@@ -184,14 +184,6 @@ pub fn seed_defaults(conn: &Connection) -> Result<()> {
         [],
     );
     let _ = conn.execute(
-        "INSERT OR IGNORE INTO settings (key, value) VALUES ('app.capture_rich_text', 'false')",
-        [],
-    );
-    let _ = conn.execute(
-        "INSERT OR IGNORE INTO settings (key, value) VALUES ('app.rich_text_snapshot_preview', 'true')",
-        [],
-    );
-    let _ = conn.execute(
         "INSERT OR IGNORE INTO settings (key, value) VALUES ('app.deduplicate', 'true')",
         [],
     );
@@ -228,10 +220,6 @@ pub fn seed_defaults(conn: &Connection) -> Result<()> {
     );
     let _ = conn.execute(
         "INSERT OR IGNORE INTO settings (key, value) VALUES ('app.sequential_hotkey', 'Alt+V')",
-        [],
-    );
-    let _ = conn.execute(
-        "INSERT OR IGNORE INTO settings (key, value) VALUES ('app.rich_paste_hotkey', 'Alt+Shift+V')",
         [],
     );
     let _ = conn.execute(
@@ -329,7 +317,6 @@ mod tests {
                 id INTEGER PRIMARY KEY,
                 content_type TEXT NOT NULL,
                 content TEXT NOT NULL,
-                html_content TEXT,
                 source_app TEXT NOT NULL,
                 source_app_path TEXT,
                 timestamp INTEGER NOT NULL,
@@ -369,7 +356,6 @@ mod tests {
             id: 0,
             content_type: "text".to_string(),
             content: "Hello Integration Test".to_string(),
-            html_content: None,
             source_app: "TestApp".to_string(),
             source_app_path: Some("/Applications/TestApp.app".to_string()),
             timestamp: 123456789,
@@ -421,7 +407,6 @@ mod tests {
                 id: 0,
                 content_type: "text".to_string(),
                 content: format!("item-{timestamp}"),
-                html_content: None,
                 source_app: "TestApp".to_string(),
                 source_app_path: None,
                 timestamp,

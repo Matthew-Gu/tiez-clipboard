@@ -71,7 +71,6 @@ const AppHeader = ({
       case "file": return t('type_file');
       case "image": return t('type_image');
       case "video": return t('type_video');
-      case "rich_text": return t('type_rich_text');
       default: return t('type_text') || 'Text';
     }
   };
@@ -223,7 +222,7 @@ const AppHeader = ({
                   }
                 }}
               >
-                {['text', 'image', 'file', 'url', 'code', 'video', 'rich_text'].map(t => (
+                {['text', 'image', 'file', 'url', 'code', 'video'].map(t => (
                   <button
                     key={t}
                     className={`btn-icon ${typeFilter === t ? 'active' : ''}`}

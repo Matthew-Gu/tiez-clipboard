@@ -12,7 +12,6 @@ export const TAURI_COMMANDS = {
   searchClipboardHistorySummaries: "search_clipboard_history_summaries",
   setArrowKeySelection: "set_arrow_key_selection",
   setCaptureFiles: "set_capture_files",
-  setCaptureRichText: "set_capture_rich_text",
   setDeduplication: "set_deduplication",
   setNavigationEnabled: "set_navigation_enabled",
   setPersistence: "set_persistence",
@@ -40,7 +39,6 @@ export const APP_SETTING_KEYS = {
   appCleanupPolicies: "app.app_cleanup_policies",
   arrowKeySelection: "app.arrow_key_selection",
   captureFiles: "app.capture_files",
-  captureRichText: "app.capture_rich_text",
   cleanupRules: "app.cleanup_rules",
   clipboardItemFontSize: "app.clipboard_item_font_size",
   clipboardTagFontSize: "app.clipboard_tag_font_size",
@@ -64,8 +62,6 @@ export const APP_SETTING_KEYS = {
   privacyProtectionKinds: "app.privacy_protection_kinds",
   quickPasteModifier: "app.quick_paste_modifier",
   registryWinVEnabled: "app.registry_win_v_enabled",
-  richPasteHotkey: "app.rich_paste_hotkey",
-  richTextSnapshotPreview: "app.rich_text_snapshot_preview",
   searchHotkey: "app.search_hotkey",
   sensitiveMaskEmailDomain: "app.sensitive_mask_email_domain",
   sensitiveMaskPrefixVisible: "app.sensitive_mask_prefix_visible",
@@ -109,7 +105,6 @@ export interface CopyToClipboardArgs extends Record<string, unknown> {
   paste: boolean;
   id: number;
   deleteAfterUse: boolean;
-  pasteWithFormat?: boolean;
   moveToTop?: boolean;
 }
 
