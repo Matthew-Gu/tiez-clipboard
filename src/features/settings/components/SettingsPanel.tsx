@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import type { ComponentType, ReactNode } from "react";
 import { ChevronRight, HelpCircle } from "lucide-react";
 import type { AppState, SettingsSubpage } from "../../app/types";
+import type { TwoLevelPage } from "../../app/twoLevelPage";
 import GeneralSettingsGroup from "./groups/GeneralSettingsGroup";
 import ClipboardSettingsGroup from "./groups/ClipboardSettingsGroup";
 import AppearanceSettingsGroup from "./groups/AppearanceSettingsGroup";
@@ -30,6 +31,8 @@ interface SettingsPanelActions {
   handleResetSettings: () => void;
   toggleGroup: (group: string) => void;
   settingsSubpage: SettingsSubpage;
+  advancedSettingsPage: TwoLevelPage;
+  setAdvancedSettingsPage: (page: TwoLevelPage) => void;
   openAdvancedSettings: () => void;
 }
 
@@ -91,6 +94,8 @@ const SettingsPanel = (inputProps: SettingsPanelProps) => {
         appCleanupPolicies={props.appCleanupPolicies}
         setAppCleanupPolicies={props.setAppCleanupPolicies}
         installedApps={props.installedApps}
+        page={props.advancedSettingsPage}
+        onPageChange={props.setAdvancedSettingsPage}
       />
     );
   }

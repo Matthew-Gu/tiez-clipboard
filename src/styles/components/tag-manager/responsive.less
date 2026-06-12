@@ -1,50 +1,10 @@
 @media (max-width: 340px) {
   .themed-tag-manager {
-    flex-direction: column !important;
-    gap: 4px !important;
     padding: 6px !important;
-  }
-
-  .themed-tag-manager .tag-sidebar {
-    width: 100% !important;
-    height: var(--tm-sidebar-height, 180px) !important;
-    max-height: none !important;
-  }
-
-  .themed-tag-manager.sidebar-collapsed .tag-sidebar {
-    width: 100% !important;
-    height: auto !important;
-  }
-
-  .themed-tag-manager .tag-scroll {
-    max-height: none !important;
-  }
-
-  .themed-tag-manager .tag-divider {
-    display: flex !important;
-    width: 100% !important;
-    height: 4px !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: row-resize !important;
-  }
-
-  .themed-tag-manager .tag-content {
-    flex: 1 !important;
-    min-height: 0 !important;
-  }
-
-  .themed-tag-manager .tag-divider-handle {
-    width: 36px !important;
-    height: 1px !important;
   }
 
   .themed-tag-manager .sort-btn span,
   .themed-tag-manager .add-item-btn span {
     display: none !important;
-  }
-
-  .themed-tag-manager.stacked-layout .items-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }

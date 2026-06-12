@@ -54,6 +54,8 @@ import type { QuickPasteHint, VirtualClipboardListHandle } from "./features/clip
 
 import type { QuickPasteModifier } from "./features/app/types";
 import { getMainRouteState, MAIN_ROUTES } from "./features/app/routes";
+import { getTwoLevelBackAction, transitionTwoLevelPage } from "./features/app/twoLevelPage";
+import type { TwoLevelPage } from "./features/app/twoLevelPage";
 import { isTauriRuntime } from "./shared/lib/tauriRuntime";
 import { BUILTIN_SENSITIVE_TAG_NAMES } from "./shared/lib/sensitiveTags";
 import { activateWindowFocus, saveSetting } from "./shared/ipc/commands";
@@ -176,6 +178,8 @@ const App = () => {
   const tagColors = useTagColors();
   const virtualListRef = useRef<VirtualClipboardListHandle | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [tagManagerPage, setTagManagerPage] = useState<TwoLevelPage>("list");
+  const [advancedSettingsPage, setAdvancedSettingsPage] = useState<TwoLevelPage>("list");
   const [quickPasteHintsById, setQuickPasteHintsById] = useState<Record<number, QuickPasteHint>>(
     {}
   );
@@ -226,22 +230,40 @@ const App = () => {
 
   const handleHeaderBack = useCallback(() => {
     if (effectiveShowTagManager) {
+      if (getTwoLevelBackAction(tagManagerPage) === "show-list") {
+        setTagManagerPage((page) => transitionTwoLevelPage(page, "show-list"));
+        return;
+      }
       navigate(MAIN_ROUTES.home);
       return;
     }
     if (showSettings) {
       if (settingsSubpage !== "home") {
+        if (getTwoLevelBackAction(advancedSettingsPage) === "show-list") {
+          setAdvancedSettingsPage((page) => transitionTwoLevelPage(page, "show-list"));
+          return;
+        }
         navigate(MAIN_ROUTES.settings);
         return;
       }
       navigate(MAIN_ROUTES.home);
     }
   }, [
+    advancedSettingsPage,
     effectiveShowTagManager,
     navigate,
     settingsSubpage,
-    showSettings
+    showSettings,
+    tagManagerPage
   ]);
+
+  useEffect(() => {
+    if (!effectiveShowTagManager) setTagManagerPage("list");
+  }, [effectiveShowTagManager]);
+
+  useEffect(() => {
+    if (!showSettings || settingsSubpage !== "advanced") setAdvancedSettingsPage("list");
+  }, [settingsSubpage, showSettings]);
 
   useEffect(() => {
     if (!isKnownRoute) {
@@ -580,6 +602,8 @@ const App = () => {
     handleResetSettings,
     toggleGroup,
     settingsSubpage,
+    advancedSettingsPage,
+    setAdvancedSettingsPage,
     openAdvancedSettings: () => navigate(MAIN_ROUTES.advancedSettings),
     state: appState
   });
@@ -621,6 +645,8 @@ const App = () => {
           showSettings={showSettings}
           showTagManager={effectiveShowTagManager}
           tagManagerEnabled={tagManagerEnabled}
+          tagManagerPage={tagManagerPage}
+          onTagManagerPageChange={setTagManagerPage}
           settingsPanelProps={settingsPanelProps}
           filteredHistory={filteredHistory}
           pinnedItems={pinnedItems}

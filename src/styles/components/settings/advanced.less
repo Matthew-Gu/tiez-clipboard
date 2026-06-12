@@ -5,10 +5,10 @@
   flex: 1;
 }
 
-.advanced-workbench {
-  display: grid;
-  grid-template-columns: var(--advanced-sidebar-width, 120px) 4px minmax(0, 1fr);
-  grid-template-rows: 1fr !important;
+.advanced-list-page,
+.advanced-detail-page {
+  display: flex;
+  flex-direction: column;
   flex: 1 !important;
   min-height: 0 !important;
   height: 100% !important;
@@ -20,14 +20,13 @@
   border-top: 1px solid var(--panel-divider-color);
 }
 
-.advanced-sidebar {
+.advanced-list-page {
   display: flex;
   flex-direction: column;
   background: var(--bg-panel);
   min-width: 0;
   height: 100%;
   overflow: hidden;
-  border-right: 1px solid var(--panel-divider-color);
 }
 
 .advanced-sidebar-search {
@@ -220,39 +219,6 @@
   color: var(--accent-color) !important;
 }
 
-.advanced-divider {
-  position: relative;
-  cursor: col-resize;
-  background: transparent;
-}
-
-.advanced-divider::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  transform: translateX(-50%);
-  background: rgba(var(--accent-color-rgb), 0.08);
-}
-
-.advanced-divider.active::before,
-.advanced-divider:hover::before {
-  background: rgba(var(--accent-color-rgb), 0.2);
-}
-
-.advanced-divider-handle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 3px;
-  height: 36px;
-  transform: translate(-50%, -50%);
-  border-radius: 999px;
-  background: rgba(var(--accent-color-rgb), 0.35);
-}
-
 .advanced-editor {
   display: flex;
   flex-direction: column;
@@ -271,6 +237,15 @@
   gap: 12px;
   padding: 18px 24px 12px;
   border-bottom: 1px solid var(--panel-divider-color);
+}
+
+.advanced-editor-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.advanced-back-btn {
+  flex-shrink: 0;
 }
 
 .advanced-editor-title {
@@ -436,47 +411,8 @@
 }
 
 @media (max-width: 340px) {
-  .advanced-workbench {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: var(--advanced-sidebar-height, 180px) 4px minmax(0, 1fr) !important;
-  }
-
-  .advanced-sidebar {
-    height: var(--advanced-sidebar-height, 180px) !important;
-    border-bottom: 1px solid var(--panel-divider-color);
-    border-right: none;
-  }
-
-  .advanced-divider {
-    display: block;
-    cursor: row-resize;
-  }
-
-  .advanced-divider::before {
-    left: 0;
-    right: 0;
-    top: 50%;
-    bottom: auto;
-    width: auto;
-    height: 1px;
-    transform: translateY(-50%);
-  }
-
-  .advanced-divider-handle {
-    left: 50%;
-    top: 50%;
-    width: 36px;
-    height: 3px;
-    transform: translate(-50%, -50%);
-  }
-
-  .advanced-target-list {
-    max-height: none;
-  }
-
   .advanced-editor-toolbar {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 12px;
   }
 }
 

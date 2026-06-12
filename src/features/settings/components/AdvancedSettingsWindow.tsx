@@ -1,12 +1,14 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { translations } from "../../../locales";
 import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
 import { useSettingsStore } from "../../app/stores/settingsStore";
 import { useSettingsInit } from "../../../shared/hooks/useSettingsInit";
+import type { TwoLevelPage } from "../../app/twoLevelPage";
 
 const AdvancedSettingsWindow = () => {
   useSettingsInit();
+  const [page, setPage] = useState<TwoLevelPage>("list");
   const {
     language,
     cleanupRules,
@@ -40,6 +42,9 @@ const AdvancedSettingsWindow = () => {
         appCleanupPolicies={appCleanupPolicies}
         setAppCleanupPolicies={setAppCleanupPolicies}
         installedApps={installedApps}
+        page={page}
+        onPageChange={setPage}
+        showInlineBack
       />
     </div>
   );

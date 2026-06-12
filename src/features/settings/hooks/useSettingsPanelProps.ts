@@ -1,5 +1,6 @@
 import type { SettingsPanelProps } from "../components/SettingsPanel";
 import type { AppState, SettingsSubpage } from "../../app/types";
+import type { TwoLevelPage } from "../../app/twoLevelPage";
 
 interface UseSettingsPanelPropsOptions {
   t: (key: string) => string;
@@ -12,6 +13,8 @@ interface UseSettingsPanelPropsOptions {
   handleResetSettings: () => void;
   toggleGroup: (group: string) => void;
   settingsSubpage: SettingsSubpage;
+  advancedSettingsPage: TwoLevelPage;
+  setAdvancedSettingsPage: (page: TwoLevelPage) => void;
   openAdvancedSettings: () => void;
   state: AppState;
 }

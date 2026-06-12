@@ -10,6 +10,7 @@ import { VirtualClipboardList } from "../../clipboard/components/VirtualClipboar
 import type { ClipboardEntry } from "../../../shared/types";
 import type { VirtualClipboardListHandle } from "../../clipboard/types";
 import { useUiStore } from "../stores/uiStore";
+import type { TwoLevelPage } from "../twoLevelPage";
 
 type SettingsPanelProps = ComponentProps<typeof SettingsPanel>;
 type RenderItem = (
@@ -25,6 +26,8 @@ interface AppMainContentProps {
   showSettings: boolean;
   showTagManager: boolean;
   tagManagerEnabled: boolean;
+  tagManagerPage: TwoLevelPage;
+  onTagManagerPageChange: (page: TwoLevelPage) => void;
   settingsPanelProps: SettingsPanelProps;
   filteredHistory: ClipboardEntry[];
   pinnedItems: ClipboardEntry[];
@@ -87,6 +90,8 @@ const AppMainContent = ({
   showSettings,
   showTagManager,
   tagManagerEnabled,
+  tagManagerPage,
+  onTagManagerPageChange,
   settingsPanelProps,
   filteredHistory,
   pinnedItems,
@@ -195,7 +200,12 @@ const AppMainContent = ({
         animate={{ opacity: 1, x: 0 }}
         style={{ height: "100%" }}
       >
-        <TagManager t={t} theme={theme} />
+        <TagManager
+          t={t}
+          theme={theme}
+          page={tagManagerPage}
+          onPageChange={onTagManagerPageChange}
+        />
       </motion.div>
     );
   }

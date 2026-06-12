@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { focusClipboardWindow } from "../../../../shared/lib/focus";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
 import type { InstalledAppOption } from "../../../app/types";
+import type { TwoLevelPage } from "../../../app/twoLevelPage";
+import { transitionTwoLevelPage } from "../../../app/twoLevelPage";
 import type { AppCleanupPolicy } from "../../types";
 import { notifySettingsChanged, runSettingWrite } from "../../../../shared/ipc/commands";
 
@@ -16,6 +18,9 @@ interface AdvancedSettingsGroupProps {
     appCleanupPolicies: AppCleanupPolicy[];
     setAppCleanupPolicies: (val: AppCleanupPolicy[]) => void;
     installedApps: InstalledAppOption[];
+    page: TwoLevelPage;
+    onPageChange: (page: TwoLevelPage) => void;
+    showInlineBack?: boolean;
 }
 
 interface EditableRule {
@@ -94,17 +99,15 @@ const AdvancedSettingsGroup = ({
     setCleanupRules,
     appCleanupPolicies,
     setAppCleanupPolicies,
-    installedApps
+    installedApps,
+    page,
+    onPageChange,
+    showInlineBack = false
 }: AdvancedSettingsGroupProps) => {
     const [searchText, setSearchText] = useState("");
     const [selectedSourceId, setSelectedSourceId] = useState("global");
     const [expandedRuleIndex, setExpandedRuleIndex] = useState<number | null>(0);
     const [draftRules, setDraftRules] = useState<EditableRule[]>(parseRules(cleanupRules));
-    const [sidebarWidth, setSidebarWidth] = useState(120);
-    const [sidebarHeight, setSidebarHeight] = useState(180);
-    const [isResizing, setIsResizing] = useState(false);
-    const [isStacked, setIsStacked] = useState(false);
-    const workbenchRef = useRef<HTMLElement | null>(null);
 
     const configuredAppPolicies = appCleanupPolicies;
 
@@ -179,54 +182,6 @@ const AdvancedSettingsGroup = ({
 
     // App icons fetching removed for minimalist style
 
-    useEffect(() => {
-        const mediaQuery = window.matchMedia("(max-width: 340px)");
-        const updateLayoutMode = () => {
-            setIsStacked(mediaQuery.matches);
-        };
-
-        updateLayoutMode();
-        mediaQuery.addEventListener("change", updateLayoutMode);
-
-        return () => mediaQuery.removeEventListener("change", updateLayoutMode);
-    }, []);
-
-    useEffect(() => {
-        if (!isResizing) return;
-
-        const handleMouseMove = (event: MouseEvent) => {
-            const bounds = workbenchRef.current?.getBoundingClientRect();
-            if (!bounds) return;
-            if (isStacked) {
-                const maxHeight = Math.max(140, bounds.height - 220);
-                const nextHeight = Math.min(Math.max(event.clientY - bounds.top, 120), maxHeight);
-                setSidebarHeight(nextHeight);
-                return;
-            }
-
-            const nextWidth = Math.min(Math.max(event.clientX - bounds.left, 80), 280);
-            setSidebarWidth(nextWidth);
-        };
-
-        const handleMouseUp = () => {
-            setIsResizing(false);
-            document.body.style.cursor = "";
-            document.body.style.userSelect = "";
-        };
-
-        document.body.style.cursor = isStacked ? "row-resize" : "col-resize";
-        document.body.style.userSelect = "none";
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mouseup", handleMouseUp);
-            document.body.style.cursor = "";
-            document.body.style.userSelect = "";
-        };
-    }, [isResizing, isStacked]);
-
     const handleDeleteTarget = (event: React.MouseEvent, target: SourceTarget) => {
         event.stopPropagation();
         if (target.kind === "global") return;
@@ -241,6 +196,7 @@ const AdvancedSettingsGroup = ({
         // If the deleted target was selected, switch back to global
         if (selectedSourceId === target.id) {
             setSelectedSourceId("global");
+            onPageChange(transitionTwoLevelPage(page, "show-list"));
         }
     };
 
@@ -345,6 +301,7 @@ const AdvancedSettingsGroup = ({
         if (existing) {
             setSelectedSourceId(existing.id);
             setSearchText("");
+            onPageChange(transitionTwoLevelPage(page, "open-item"));
             return;
         }
 
@@ -360,21 +317,18 @@ const AdvancedSettingsGroup = ({
         persistAppPolicies([...appCleanupPolicies, nextPolicy]);
         setSelectedSourceId(`app:${app.value}`);
         setSearchText("");
+        onPageChange(transitionTwoLevelPage(page, "open-item"));
+    };
+
+    const openTarget = (targetId: string) => {
+        setSelectedSourceId(targetId);
+        onPageChange(transitionTwoLevelPage(page, "open-item"));
     };
 
     return (
         <div className="settings-subpage advanced-settings-page">
-            {/* Header is handled by AppHeader */}
-
-            <section
-                ref={workbenchRef}
-                className={`advanced-workbench ${isStacked ? "stacked-layout" : ""}`}
-                style={{
-                    ["--advanced-sidebar-width" as string]: `${sidebarWidth}px`,
-                    ["--advanced-sidebar-height" as string]: `${sidebarHeight}px`
-                }}
-            >
-                <aside className="advanced-sidebar">
+            {page === "list" ? (
+                <section className="advanced-list-page">
                     <div className="advanced-sidebar-search">
                         <input
                             className="search-input advanced-search-input"
@@ -410,7 +364,7 @@ const AdvancedSettingsGroup = ({
                                 key={target.id}
                                 type="button"
                                 className={`advanced-target-item ${selectedTarget?.id === target.id ? "active" : ""}`}
-                                onClick={() => setSelectedSourceId(target.id)}
+                                onClick={() => openTarget(target.id)}
                             >
                                 <span className="advanced-target-meta">
                                     <span className="advanced-target-name">{target.label}</span>
@@ -436,17 +390,29 @@ const AdvancedSettingsGroup = ({
                             </button>
                         ))}
                     </div>
-                </aside>
-
-                <div
-                    className={`advanced-divider ${isResizing ? "active" : ""} ${isStacked ? "stacked" : ""}`}
-                    onMouseDown={() => setIsResizing(true)}
-                >
-                    <span className="advanced-divider-handle" />
-                </div>
-
-                <div className="advanced-editor">
+                </section>
+            ) : (
+                <section className="advanced-detail-page">
+                    <div className="advanced-editor">
                     <div className="advanced-editor-toolbar">
+                        {showInlineBack && (
+                            <button
+                                type="button"
+                                className="btn-icon advanced-back-btn"
+                                onClick={() => onPageChange(transitionTwoLevelPage(page, "show-list"))}
+                                title={t("back")}
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+                        )}
+                        <div className="advanced-editor-heading">
+                            <div className="advanced-editor-title">{selectedTarget?.label}</div>
+                            <div className="advanced-editor-subtitle">
+                                {selectedTarget?.kind === "global"
+                                    ? t("advanced_global_rules_hint")
+                                    : t("advanced_app_rules_hint")}
+                            </div>
+                        </div>
                         {selectedTarget?.kind === "global" || (appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore") ? (
                             <button type="button" className="btn-icon advanced-add-rule-btn" onClick={addRule}>
                                 <Plus size={14} />
@@ -595,8 +561,9 @@ const AdvancedSettingsGroup = ({
                             </>
                         )}
                     </div>
-                </div>
-            </section>
+                    </div>
+                </section>
+            )}
         </div>
     );
 };

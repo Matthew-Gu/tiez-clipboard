@@ -1,6 +1,5 @@
                 .themed-tag-manager {
-                    display: grid;
-                    grid-template-columns: var(--tag-sidebar-width, 130px) auto 1fr;
+                    display: block;
                     height: 100%;
                     background: var(--bg-content);
                     font-family: var(--font-main, ui-monospace, monospace);
@@ -11,8 +10,8 @@
 
                 /* Sidebar */
                 .tag-sidebar {
-                    width: var(--tag-sidebar-width, 130px);
-                    flex-shrink: 0;
+                    width: 100%;
+                    height: 100%;
                     display: flex;
                     flex-direction: column;
                     background: var(--bg-panel);
@@ -21,7 +20,6 @@
                     overflow: hidden;
                     border: var(--panel-border);
                 }
-                .sidebar-collapsed .tag-sidebar { width: 48px; }
                 
                 .sidebar-header {
                     padding: 16px 20px;
@@ -40,20 +38,6 @@
                 .header-actions { display: flex; align-items: center; gap: 8px; }
                 .action-btn { background: transparent; border: none; color: inherit; cursor: pointer; padding: 2px; opacity: 0.7; transition: opacity 0.2s; }
                 .action-btn:hover { opacity: 1; }
-                .collapse-toggle { 
-                    background: var(--bg-main); 
-                    border: none; 
-                    color: inherit; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center;
-                    justify-content: center;
-                    width: 28px;
-                    height: 28px;
-                    border-radius: var(--radius-sm);
-                    transition: all 0.2s;
-                }
-                .collapse-toggle:hover { background: var(--border-light); color: var(--text-primary); }
 
                 /* Tag Search Box */
                 .tag-search-box {
@@ -118,11 +102,6 @@
                 .tag-item.create-hint { border: 1px dashed var(--border); opacity: 0.8; }
                 .tag-item.create-hint:hover { background: var(--bg-main); border-style: solid; }
 
-                .sidebar-collapsed .tag-item { justify-content: center; padding: 10px 0; gap: 0; }
-                .sidebar-collapsed .tag-name,
-                .sidebar-collapsed .tag-badge,
-                .sidebar-collapsed .tag-hover-actions { display: none; }
-                .sidebar-collapsed .tag-color-wrapper { width: 100%; justify-content: center; }
                 .tag-color-wrapper { display: flex; align-items: center; justify-content: center; }
                 .tag-color-dot { 
                     width: 10px; 

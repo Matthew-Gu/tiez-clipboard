@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Trash2, X } from "lucide-react";
+import { Edit2, Plus, Search, Trash2, X } from "lucide-react";
 import { activateWindowFocus } from "../../../shared/ipc/commands";
 import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
 import { getTagColor } from "../../../shared/lib/utils";
@@ -16,17 +16,13 @@ interface TagManagerSidebarProps {
     canCreateTag: boolean;
     editingTag: string | null;
     newTagName: string;
-    isCollapsed: boolean;
-    sidebarWidth: number;
     setTagSearch: (value: string) => void;
     setEditingTag: (value: string | null) => void;
     setNewTagName: (value: string) => void;
-    setIsCollapsed: (value: boolean) => void;
-    setSidebarWidth: (value: number) => void;
     setDeleteTagName: (value: string) => void;
     createTag: (name: string) => Promise<void>;
     renameTag: (oldName: string) => Promise<void>;
-    loadTagItems: (tagName: string) => Promise<void>;
+    openTag: (tagName: string) => Promise<void>;
     setTagColor: (name: string, color: string) => Promise<void>;
 }
 
@@ -42,37 +38,21 @@ const TagManagerSidebar = ({
     canCreateTag,
     editingTag,
     newTagName,
-    isCollapsed,
-    sidebarWidth,
     setTagSearch,
     setEditingTag,
     setNewTagName,
-    setIsCollapsed,
-    setSidebarWidth,
     setDeleteTagName,
     createTag,
     renameTag,
-    loadTagItems,
+    openTag,
     setTagColor
 }: TagManagerSidebarProps) => (
     <div className="tag-sidebar">
         <div className="sidebar-header">
-            {!isCollapsed && <span className="header-label">{t('tags')}</span>}
-            <button
-                className="collapse-toggle"
-                title={isCollapsed ? (t('open') || '展开') : (t('collapse') || '收起')}
-                onClick={() => {
-                    const collapsed = !isCollapsed;
-                    setIsCollapsed(collapsed);
-                    if (!collapsed && sidebarWidth < 110) setSidebarWidth(160);
-                }}
-            >
-                {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-            </button>
+            <span className="header-label">{t('tags')}</span>
         </div>
 
-        {!isCollapsed && (
-            <div className="tag-search-box">
+        <div className="tag-search-box">
                 <Search size={16} className="search-icon-placeholder" />
                 <input
                     placeholder={t('find_or_create')}
@@ -83,7 +63,7 @@ const TagManagerSidebar = ({
                     onKeyDown={async (event) => {
                         if (event.key !== 'Enter' || !tagSearch.trim()) return;
                         const exactMatch = tags.find((tag) => tag.name.toLowerCase() === normalizedTagSearch);
-                        if (exactMatch) await loadTagItems(exactMatch.name);
+                        if (exactMatch) await openTag(exactMatch.name);
                         else await createTag(tagSearch);
                     }}
                 />
@@ -97,12 +77,11 @@ const TagManagerSidebar = ({
                         <X size={12} className="action-icon clear" onClick={() => setTagSearch('')} />
                     </div>
                 ) : null}
-            </div>
-        )}
+        </div>
 
         <div className="tag-scroll custom-scrollbar">
             {filteredTags.map((tag) => (
-                <div key={tag.name} className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`} onClick={() => loadTagItems(tag.name)} title={tag.name}>
+                <div key={tag.name} className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`} onClick={() => openTag(tag.name)} title={tag.name}>
                     <div className="tag-color-wrapper" onClick={(event) => event.stopPropagation()}>
                         <div
                             className="tag-color-dot"
@@ -169,7 +148,7 @@ const TagManagerSidebar = ({
                 </div>
             ))}
             {filteredTags.length === 0 && !tagSearch.trim() && <div className="sidebar-status">{t('no_tags')}</div>}
-            {!isCollapsed && canCreateTag && filteredTags.length === 0 && (
+            {canCreateTag && filteredTags.length === 0 && (
                 <div className="tag-item create-hint" onClick={() => createTag(tagSearch)}>
                     <div className="tag-color-dot" style={{ border: '1px dashed currentColor', background: 'transparent' }} />
                     <span className="tag-name" style={{ opacity: 0.7 }}>{t('create_tag_hint').replace('{tag}', tagSearch.trim())}</span>
