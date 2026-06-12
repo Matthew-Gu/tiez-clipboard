@@ -324,9 +324,6 @@ pub unsafe extern "system" fn keyboard_proc(
 
         // 5. Global Navigation Keys (Up/Down, Enter, Esc)
         if NAVIGATION_ENABLED.load(Ordering::SeqCst) && !IS_RECORDING.load(Ordering::SeqCst) {
-            if IS_HIDDEN.load(Ordering::Relaxed) {
-                return CallNextHookEx(None, n_code, w_param, l_param);
-            }
             let allow_navigation = if let Some(handle) = GLOBAL_APP_HANDLE.get() {
                 let settings = handle.state::<SettingsState>();
                 settings.arrow_key_selection.load(Ordering::Relaxed)

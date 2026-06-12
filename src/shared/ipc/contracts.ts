@@ -47,7 +47,6 @@ export const APP_SETTING_KEYS = {
   customBackgroundOpacity: "app.custom_background_opacity",
   deduplicate: "app.deduplicate",
   deleteAfterPaste: "app.delete_after_paste",
-  edgeDocking: "app.edge_docking",
   followMouse: "app.follow_mouse",
   hideTrayIcon: "app.hide_tray_icon",
   hotkey: "app.hotkey",

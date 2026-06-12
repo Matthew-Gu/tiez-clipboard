@@ -53,7 +53,6 @@ export interface SettingsState {
   scrollTopButtonEnabled: boolean;
   arrowKeySelection: boolean;
   hideTrayIcon: boolean;
-  edgeDocking: boolean;
   customBackground: string;
   customBackgroundOpacity: number;
   surfaceOpacity: number;
@@ -106,7 +105,6 @@ interface SettingsActions {
   setScrollTopButtonEnabled: SettingsSetter<boolean>;
   setArrowKeySelection: SettingsSetter<boolean>;
   setHideTrayIcon: SettingsSetter<boolean>;
-  setEdgeDocking: SettingsSetter<boolean>;
   setCustomBackground: SettingsSetter<string>;
   setCustomBackgroundOpacity: SettingsSetter<number>;
   setSurfaceOpacity: SettingsSetter<number>;
@@ -163,7 +161,6 @@ export const createSettingsInitialState = (): SettingsState => ({
   scrollTopButtonEnabled: true,
   arrowKeySelection: true,
   hideTrayIcon: false,
-  edgeDocking: false,
   customBackground: "",
   customBackgroundOpacity: 45,
   surfaceOpacity: 50,
@@ -220,7 +217,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setScrollTopButtonEnabled: (value) => set((state) => ({ scrollTopButtonEnabled: resolveUpdate(value, state.scrollTopButtonEnabled) })),
   setArrowKeySelection: (value) => set((state) => ({ arrowKeySelection: resolveUpdate(value, state.arrowKeySelection) })),
   setHideTrayIcon: (value) => set((state) => ({ hideTrayIcon: resolveUpdate(value, state.hideTrayIcon) })),
-  setEdgeDocking: (value) => set((state) => ({ edgeDocking: resolveUpdate(value, state.edgeDocking) })),
   setCustomBackground: (value) => set((state) => ({ customBackground: resolveUpdate(value, state.customBackground) })),
   setCustomBackgroundOpacity: (value) => set((state) => ({ customBackgroundOpacity: resolveUpdate(value, state.customBackgroundOpacity) })),
   setSurfaceOpacity: (value) => set((state) => ({ surfaceOpacity: resolveUpdate(value, state.surfaceOpacity) })),

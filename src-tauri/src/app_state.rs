@@ -22,7 +22,6 @@ pub struct SettingsState {
     pub quick_paste_modifier: Mutex<String>,
     pub sound_enabled: AtomicBool,
     pub hide_tray_icon: AtomicBool,
-    pub edge_docking: AtomicBool,
     pub follow_mouse: AtomicBool,
     pub arrow_key_selection: AtomicBool,
     pub main_hotkey: Mutex<String>,

@@ -25,8 +25,6 @@ interface GeneralSettingsGroupProps {
     setSilentStart: (val: boolean) => void;
     hideTrayIcon: boolean;
     setHideTrayIcon: (val: boolean) => void;
-    edgeDocking: boolean;
-    setEdgeDocking: (val: boolean) => void;
     soundEnabled: boolean;
     setSoundEnabled: (val: boolean) => void;
     pasteSoundEnabled: boolean;
@@ -55,8 +53,6 @@ const GeneralSettingsGroup = ({
     setSilentStart,
     hideTrayIcon,
     setHideTrayIcon,
-    edgeDocking,
-    setEdgeDocking,
     soundEnabled,
     setSoundEnabled,
     pasteSoundEnabled,
@@ -123,31 +119,6 @@ const GeneralSettingsGroup = ({
                         <div className="toggle"><div className="left" /><div className="right" /></div>
                     </label>
                 </div>
-
-                <div className="setting-item">
-                    <LabelWithHint
-                        label={t('edge_docking')}
-                        hint={t('edge_docking_hint')}
-                        hintKey="edge_docking"
-                    />
-                    <label className="switch">
-                        <input
-                            className="cb"
-                            type="checkbox"
-                            checked={edgeDocking}
-                            onChange={(e) => {
-                                const val = e.target.checked;
-                                setEdgeDocking(val);
-                                runSettingWrite(
-                                    () => invoke("set_edge_docking", { enabled: val }),
-                                    notifySettingsChanged
-                                ).catch(console.error);
-                            }}
-                        />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
-                    </label>
-                </div>
-
 
                 <div className="setting-item">
                     <div className="item-label-group">

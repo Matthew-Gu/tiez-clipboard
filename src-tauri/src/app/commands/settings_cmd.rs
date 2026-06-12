@@ -26,7 +26,6 @@ enum RuntimeSettingUpdate {
     SilentStart(bool),
     DeleteAfterPaste(bool),
     PrivacyProtection(bool),
-    EdgeDocking(bool),
     FollowMouse(bool),
     HideTrayIcon(bool),
     QuickPasteModifier(String),
@@ -42,7 +41,6 @@ fn runtime_setting_update(key: &str, value: &str) -> Option<RuntimeSettingUpdate
         "app.silent_start" => Some(RuntimeSettingUpdate::SilentStart(value != "false")),
         "app.delete_after_paste" => Some(RuntimeSettingUpdate::DeleteAfterPaste(value == "true")),
         "app.privacy_protection" => Some(RuntimeSettingUpdate::PrivacyProtection(value == "true")),
-        "app.edge_docking" => Some(RuntimeSettingUpdate::EdgeDocking(value == "true")),
         "app.follow_mouse" => Some(RuntimeSettingUpdate::FollowMouse(value != "false")),
         "app.hide_tray_icon" => Some(RuntimeSettingUpdate::HideTrayIcon(value == "true")),
         "app.quick_paste_modifier" => Some(RuntimeSettingUpdate::QuickPasteModifier(
@@ -77,9 +75,6 @@ fn apply_runtime_setting_update(settings_state: &SettingsState, update: RuntimeS
             .store(enabled, Ordering::Relaxed),
         RuntimeSettingUpdate::PrivacyProtection(enabled) => settings_state
             .privacy_protection
-            .store(enabled, Ordering::Relaxed),
-        RuntimeSettingUpdate::EdgeDocking(enabled) => settings_state
-            .edge_docking
             .store(enabled, Ordering::Relaxed),
         RuntimeSettingUpdate::FollowMouse(enabled) => settings_state
             .follow_mouse
@@ -488,20 +483,6 @@ pub fn set_tray_visible(
     db_state
         .settings_repo
         .set("app.hide_tray_icon", &(!visible).to_string())
-        .map_err(AppError::from)
-}
-
-#[tauri::command]
-pub fn set_edge_docking(
-    app_handle: AppHandle,
-    state: State<'_, crate::app_state::SettingsState>,
-    enabled: bool,
-) -> AppResult<()> {
-    state.edge_docking.store(enabled, Ordering::Relaxed);
-    let db_state = app_handle.state::<DbState>();
-    db_state
-        .settings_repo
-        .set("app.edge_docking", &enabled.to_string())
         .map_err(AppError::from)
 }
 

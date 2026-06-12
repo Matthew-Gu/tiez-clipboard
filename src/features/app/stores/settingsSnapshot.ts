@@ -89,7 +89,6 @@ export const parseSettingsSnapshot = (settings: AppSettings): PersistedSettingsS
     deleteAfterPaste: settings[APP_SETTING_KEYS.deleteAfterPaste] === "true",
     moveToTopAfterPaste: settings[APP_SETTING_KEYS.moveToTopAfterPaste] !== "false",
     hideTrayIcon: settings[APP_SETTING_KEYS.hideTrayIcon] === "true",
-    edgeDocking: settings[APP_SETTING_KEYS.edgeDocking] === "true",
     showSearchBox: settings[APP_SETTING_KEYS.showSearchBox] !== "false",
     scrollTopButtonEnabled: settings[APP_SETTING_KEYS.showScrollTopButton] !== "false",
     arrowKeySelection: settings[APP_SETTING_KEYS.arrowKeySelection] !== "false",

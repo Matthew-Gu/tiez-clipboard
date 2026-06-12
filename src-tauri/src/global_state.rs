@@ -1,6 +1,6 @@
 // Global state module
 use std::ptr::null_mut;
-use std::sync::atomic::{AtomicBool, AtomicI32, AtomicPtr, AtomicU32, AtomicU64, AtomicUsize};
+use std::sync::atomic::{AtomicBool, AtomicPtr, AtomicU32, AtomicU64, AtomicUsize};
 
 pub static GLOBAL_APP_HANDLE: std::sync::OnceLock<tauri::AppHandle> = std::sync::OnceLock::new();
 pub static HOOK_HANDLE: AtomicPtr<std::ffi::c_void> = AtomicPtr::new(null_mut());
@@ -35,16 +35,6 @@ pub static HOOK_THREAD_ID: AtomicU32 = AtomicU32::new(0);
 pub static TASKBAR_CREATED_MSG: AtomicU32 = AtomicU32::new(0);
 pub static QUICK_PASTE_DIGIT_MASK: AtomicU32 = AtomicU32::new(0);
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum DockPosition {
-    None,
-    Top,
-    Left,
-    Right,
-}
-
-pub static CURRENT_DOCK: AtomicI32 = AtomicI32::new(0); // 0: None, 1: Top, 2: Left, 3: Right
-pub static IS_HIDDEN: AtomicBool = AtomicBool::new(false);
 pub static IS_MOUSE_BUTTON_DOWN: AtomicBool = AtomicBool::new(false);
 pub static NAVIGATION_ENABLED: AtomicBool = AtomicBool::new(false);
 pub static NAVIGATION_MODE_ACTIVE: AtomicBool = AtomicBool::new(false);

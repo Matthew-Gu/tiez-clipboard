@@ -79,9 +79,8 @@ pub fn toggle_window(app: &AppHandle) {
         #[cfg(windows)]
         let mut active_center: Option<(i32, i32)> = None;
         let is_visible = window.is_visible().unwrap_or(false);
-        let is_hidden_by_edge = IS_HIDDEN.load(Ordering::Relaxed);
 
-        if is_visible && !is_hidden_by_edge {
+        if is_visible {
             #[cfg(target_os = "windows")]
             WindowExt::release_win_keys();
             let _ = window.set_focusable(false);
@@ -89,17 +88,12 @@ pub fn toggle_window(app: &AppHandle) {
 
             let _ = restore_last_focus(app.clone());
 
-            IS_HIDDEN.store(false, Ordering::Relaxed);
             NAVIGATION_ENABLED.store(false, Ordering::SeqCst);
             NAVIGATION_MODE_ACTIVE.store(false, Ordering::SeqCst);
             return;
         }
 
-        IS_HIDDEN.store(false, Ordering::Relaxed);
         NAVIGATION_ENABLED.store(true, Ordering::SeqCst);
-        let was_docked = is_hidden_by_edge;
-        let current_dock_val = CURRENT_DOCK.load(Ordering::Relaxed);
-        CURRENT_DOCK.store(0, Ordering::Relaxed);
 
         #[cfg(windows)]
         {
@@ -190,82 +184,6 @@ pub fn toggle_window(app: &AppHandle) {
                             x: target_x,
                             y: target_y,
                         }));
-                }
-            } else if was_docked {
-                let mut target_monitor = window.current_monitor().ok().flatten();
-
-                #[cfg(windows)]
-                {
-                    let mut point = POINT::default();
-                    unsafe {
-                        let _ = GetCursorPos(&mut point);
-                    }
-                    let (ref_x, ref_y) = active_center.unwrap_or((point.x, point.y));
-
-                    if let Ok(monitors) = window.available_monitors() {
-                        for m in &monitors {
-                            let m_pos = m.position();
-                            let m_size = m.size();
-                            let mx = m_pos.x;
-                            let my = m_pos.y;
-                            let mw = m_size.width as i32;
-                            let mh = m_size.height as i32;
-                            if ref_x >= mx && ref_x < mx + mw && ref_y >= my && ref_y < my + mh {
-                                target_monitor = Some(m.clone());
-                                break;
-                            }
-                        }
-                        if target_monitor.is_none() && !monitors.is_empty() {
-                            target_monitor = Some(monitors[0].clone());
-                        }
-                    }
-                }
-
-                if let Some(monitor) = target_monitor {
-                    let m_size = monitor.size();
-                    let m_pos = monitor.position();
-                    let w = size.width as i32;
-                    let h = size.height as i32;
-                    let mx = m_pos.x;
-                    let my = m_pos.y;
-                    let mw = m_size.width as i32;
-
-                    match current_dock_val {
-                        1 => {
-                            let _ = window.set_position(tauri::Position::Physical(
-                                tauri::PhysicalPosition {
-                                    x: mx + (mw / 2 - w / 2),
-                                    y: my + 10,
-                                },
-                            ));
-                        }
-                        2 => {
-                            let _ = window.set_position(tauri::Position::Physical(
-                                tauri::PhysicalPosition {
-                                    x: mx + 10,
-                                    y: my + 10,
-                                },
-                            ));
-                        }
-                        3 => {
-                            let _ = window.set_position(tauri::Position::Physical(
-                                tauri::PhysicalPosition {
-                                    x: mx + mw - w - 10,
-                                    y: my + 10,
-                                },
-                            ));
-                        }
-                        _ => {
-                            let center_x = mx + (mw / 2) - (w / 2);
-                            let center_y = my + (m_size.height as i32 / 2) - (h / 2);
-                            let _ = window.set_position(tauri::Position::Physical(
-                                tauri::PhysicalPosition {
-                                    x: center_x,
-                                    y: center_y,
-                                },
-                            ));
-                        }
-                    }
                 }
             } else {
                 let w = size.width as i32;

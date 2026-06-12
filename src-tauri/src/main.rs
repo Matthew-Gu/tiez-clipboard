@@ -85,7 +85,6 @@ fn main() {
             app::commands::set_sound_enabled,
             app::commands::set_arrow_key_selection,
             app::commands::set_tray_visible,
-            app::commands::set_edge_docking,
             app::commands::set_follow_mouse,
             app::commands::get_data_path,
             app::commands::open_folder,
