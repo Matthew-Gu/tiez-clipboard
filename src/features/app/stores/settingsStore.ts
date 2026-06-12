@@ -3,6 +3,8 @@ import { DEFAULT_THEME } from "../../../shared/config/themes";
 import type { Locale } from "../../../shared/types";
 import type { AppCleanupPolicy } from "../../settings/types";
 import type { DefaultAppsMap, InstalledAppOption, QuickPasteModifier } from "../types";
+import type { AppSettings } from "../../../shared/ipc/contracts";
+import type { PersistedSettingsSnapshot } from "./settingsSnapshot";
 
 type StateUpdate<T> = T | ((previous: T) => T);
 type SettingsSetter<T> = (value: StateUpdate<T>) => void;
@@ -117,6 +119,7 @@ interface SettingsActions {
   setSoundEnabled: SettingsSetter<boolean>;
   setPasteSoundEnabled: SettingsSetter<boolean>;
   setSoundVolume: SettingsSetter<number>;
+  hydrateSettings: (appSettings: AppSettings, snapshot: PersistedSettingsSnapshot) => void;
   resetSettings: () => void;
 }
 
@@ -236,6 +239,11 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   setSoundEnabled: (value) => set((state) => ({ soundEnabled: resolveUpdate(value, state.soundEnabled) })),
   setPasteSoundEnabled: (value) => set((state) => ({ pasteSoundEnabled: resolveUpdate(value, state.pasteSoundEnabled) })),
   setSoundVolume: (value) => set((state) => ({ soundVolume: resolveUpdate(value, state.soundVolume) })),
+  hydrateSettings: (appSettings, snapshot) => set({
+    ...snapshot,
+    appSettings,
+    settingsLoaded: true
+  }),
   resetSettings: () => set(createSettingsInitialState())
 }));
 

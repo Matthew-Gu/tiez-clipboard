@@ -30,6 +30,21 @@ describe("settings store", () => {
     });
   });
 
+  it("hydrates persisted settings atomically", () => {
+    const appSettings = { "app.theme": "paper" };
+    useSettingsStore.getState().hydrateSettings(appSettings, {
+      theme: "paper",
+      language: "en"
+    });
+
+    expect(useSettingsStore.getState()).toMatchObject({
+      appSettings,
+      theme: "paper",
+      language: "en",
+      settingsLoaded: true
+    });
+  });
+
   it("resets values and creates fresh mutable containers", () => {
     const previousKinds = useSettingsStore.getState().privacyProtectionKinds;
     const previousApps = useSettingsStore.getState().installedApps;
