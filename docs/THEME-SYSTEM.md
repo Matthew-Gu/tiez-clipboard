@@ -24,7 +24,10 @@ This is the single source of truth for:
 ### Shared style layer
 
 - `src/styles/base.css`
-- `src/styles/components/*.css`
+- `src/styles/components/index.less`
+- `src/styles/components/**/*.css`
+- `src/styles/components/**/*.less`
+- `src/features/tag/styles/*.less`
 
 This layer should contain:
 
@@ -45,6 +48,8 @@ This layer should not contain:
 - `src/styles/themes/mica.css`
 - `src/styles/themes/acrylic.css`
 - `src/styles/themes/sticky-note.css`
+- `src/styles/themes/paper.css`
+- `src/styles/themes/sakura.css`
 
 Each theme file is now independent and is responsible for:
 
@@ -72,7 +77,7 @@ Rules:
 
 - only registered theme ids are applied
 - unknown ids fall back to `DEFAULT_THEME`
-- the same theme id is applied to both the main window and compact preview window
+- the same normalized theme id is applied to every active application window
 - active classes are always `theme-<id>` on both `html` and `body`
 
 ## Layer Model
@@ -437,7 +442,7 @@ Before merging a theme change, verify:
 - the stylesheet exists in `src/styles/themes/`
 - the theme appears in settings without locale file edits
 - the main window switches correctly
-- the compact preview window switches correctly
+- the advanced settings window switches correctly
 - header, buttons, inputs, list cards, settings panels, modals, and tags all follow the theme
 - hover, active, selected, and focus states remain readable
 - light and dark variants remain readable
@@ -448,19 +453,22 @@ Before merging a theme change, verify:
 This repository now uses:
 
 - neutral shared component CSS
+- `src/styles/components/index.less` as the pre-theme component style entry
+- `src/features/tag/styles/index.less` as the post-theme TagManager component style entry
 - `retro.css` for the old 3D/mechanical style
 - `mica.css` for soft translucent material
 - `acrylic.css` for blur glass material
 - `sticky-note.css` for the note-style theme
+- `paper.css` for the paper-and-quill theme
+- `sakura.css` for the sakura theme
 
 That is the foundation for adding future themes without rewriting multiple unrelated files every time.
 
 ## Remaining Debt
 
-The main shared UI layer has been normalized, but a few feature-local styles still carry direct visual assumptions and should be migrated into the same token contract in a follow-up pass:
+The main shared UI layer has been normalized. Remaining confirmed style debt is intentionally tracked outside the theme migration:
 
-- `src/styles/components/Announcement.css`
-- `src/styles/components/emoji.css`
-- `src/styles/components/file-transfer.css`
+- `src/styles/components/rich-text-preview.css`
+- the matching dark-mode override in `src/styles/themes/dark.css`
 
-These files are now the exception, not the base theme system.
+These rich-text remnants belong to the separate rich-text removal task and are not part of the Less migration.

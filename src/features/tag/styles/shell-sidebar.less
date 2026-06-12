@@ -1,0 +1,192 @@
+                .themed-tag-manager {
+                    display: grid;
+                    grid-template-columns: var(--tag-sidebar-width, 130px) auto 1fr;
+                    height: 100%;
+                    background: var(--bg-content);
+                    font-family: var(--font-main, ui-monospace, monospace);
+                    color: var(--text-primary);
+                    gap: 0;
+                    padding: 0;
+                }
+
+                /* Sidebar */
+                .tag-sidebar {
+                    width: var(--tag-sidebar-width, 130px);
+                    flex-shrink: 0;
+                    display: flex;
+                    flex-direction: column;
+                    background: var(--bg-panel);
+                    border-radius: 0;
+                    box-shadow: none;
+                    overflow: hidden;
+                    border: var(--panel-border);
+                }
+                .sidebar-collapsed .tag-sidebar { width: 48px; }
+                
+                .sidebar-header {
+                    padding: 16px 20px;
+                    border-bottom: 1px solid var(--panel-divider-color);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    min-height: auto;
+                    background: transparent;
+                    color: var(--text-secondary);
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .header-actions { display: flex; align-items: center; gap: 8px; }
+                .action-btn { background: transparent; border: none; color: inherit; cursor: pointer; padding: 2px; opacity: 0.7; transition: opacity 0.2s; }
+                .action-btn:hover { opacity: 1; }
+                .collapse-toggle { 
+                    background: var(--bg-main); 
+                    border: none; 
+                    color: inherit; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center;
+                    justify-content: center;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: var(--radius-sm);
+                    transition: all 0.2s;
+                }
+                .collapse-toggle:hover { background: var(--border-light); color: var(--text-primary); }
+
+                /* Tag Search Box */
+                .tag-search-box {
+                    padding: 12px 16px;
+                    display: flex; align-items: center; gap: 6px;
+                    background: transparent;
+                    border-bottom: 1px solid var(--panel-divider-color);
+                    margin: 0;
+                    min-height: auto;
+                    position: relative;
+                }
+                .tag-search-box .search-icon-placeholder { opacity: 0.3; color: var(--text-primary); flex-shrink: 0; }
+                .tag-search-box input {
+                    width: 100%;
+                    background: var(--bg-main); 
+                    border: 1px solid var(--border); 
+                    outline: none;
+                    font-size: 13px; 
+                    font-weight: 500; 
+                    color: var(--text-primary);
+                    padding: 10px 12px 10px 36px;
+                    flex: 1;
+                    min-width: 0; 
+                    border-radius: var(--radius-sm);
+                    transition: all 0.2s;
+                }
+                .tag-search-box input:focus {
+                    border-color: var(--accent-color);
+                    background: var(--bg-panel);
+                    box-shadow: 0 0 0 3px var(--accent-light);
+                }
+                .tag-search-box input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: normal; font-size: 13px; }
+                
+                .action-icons { display: flex; align-items: center; gap: 4px; }
+                .action-icon { cursor: pointer; opacity: 0.5; color: var(--text-primary); transition: all 0.15s; }
+                .action-icon:hover { opacity: 1; transform: scale(1.1); }
+                .action-icon.create { color: var(--accent-color); opacity: 0.8; }
+                .action-icon.create:hover { opacity: 1; }
+
+                .tag-scroll { flex: 1; overflow-y: auto; padding: 8px; overflow-x: hidden; }
+                /* Tag Item Layout: [Color] [Name (Flex)] [Actions (Hover)] [Badge] */
+                .tag-item {
+                    display: flex; 
+                    align-items: center; 
+                    gap: 10px;
+                    padding: 10px 12px; 
+                    cursor: pointer;
+                    margin-bottom: 2px; 
+                    border: 1px solid transparent;
+                    border-radius: var(--radius-sm);
+                    transition: all 0.15s;
+                    position: relative;
+                    overflow: hidden;
+                    width: 100%;
+                }
+                .tag-item:hover { background: var(--bg-main); }
+                .tag-item.active { 
+                    background: var(--accent-light); 
+                    border-color: transparent;
+                    box-shadow: none;
+                }
+                .tag-item.create-hint { border: 1px dashed var(--border); opacity: 0.8; }
+                .tag-item.create-hint:hover { background: var(--bg-main); border-style: solid; }
+
+                .sidebar-collapsed .tag-item { justify-content: center; padding: 10px 0; gap: 0; }
+                .sidebar-collapsed .tag-name,
+                .sidebar-collapsed .tag-badge,
+                .sidebar-collapsed .tag-hover-actions { display: none; }
+                .sidebar-collapsed .tag-color-wrapper { width: 100%; justify-content: center; }
+                .tag-color-wrapper { display: flex; align-items: center; justify-content: center; }
+                .tag-color-dot { 
+                    width: 10px; 
+                    height: 10px; 
+                    border-radius: 50%; 
+                    flex-shrink: 0; 
+                    cursor: pointer; 
+                    border: none;
+                    transition: transform 0.2s; 
+                }
+                .tag-color-dot:hover { transform: scale(1.2); }
+                .tag-name { 
+                    flex: 1; 
+                    font-size: 13px; 
+                    font-weight: 500; 
+                    white-space: nowrap; 
+                    overflow: hidden; 
+                    text-overflow: ellipsis; 
+                    min-width: 0; 
+                    margin-right: 4px;
+                }
+                
+                /* Inline Edit Input */
+                .inline-tag-edit {
+                    flex: 1; 
+                    border: 1px solid var(--border); 
+                    background: var(--bg-main); 
+                    color: var(--text-primary); 
+                    font-size: 13px; 
+                    font-weight: 500;
+                    padding: 6px 10px; 
+                    border-radius: var(--radius-sm);
+                    min-width: 0; 
+                    outline: none;
+                    box-shadow: 0 0 0 3px var(--accent-light);
+                }
+
+                /* Actions group: Hidden by default, Flex on hover */
+                .tag-hover-actions { 
+                    display: none; 
+                    gap: 4px; 
+                    align-items: center; 
+                    margin-left: auto;
+                    flex-shrink: 0;
+                }
+                .tag-item:hover .tag-hover-actions { display: flex; }
+                .tag-item:hover .tag-badge { display: none; }
+                
+                .tag-badge { 
+                    font-size: 11px; 
+                    font-weight: 600; 
+                    color: var(--text-secondary); 
+                    background: var(--bg-main); 
+                    padding: 2px 8px; 
+                    border-radius: 10px;
+                    min-width: auto;
+                    text-align: center;
+                }
+                .tag-item.active .tag-badge {
+                    background: var(--accent-color);
+                    color: white;
+                }
+                
+                .tag-hover-actions > *:hover { color: var(--accent-color); }
+                .tag-item.active .tag-hover-actions > * { opacity: 0.8; }
+                .tag-item.active .tag-hover-actions > *:hover { opacity: 1; color: var(--accent-color); }
+

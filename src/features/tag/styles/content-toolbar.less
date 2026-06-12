@@ -1,0 +1,84 @@
+                /* Content Area */
+                .tag-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+                .content-toolbar {
+                    height: 48px; border-bottom: 1px solid var(--panel-divider-color);
+                    background: var(--bg-panel);
+                    display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+                }
+                .toolbar-left { display: flex; align-items: center; gap: 12px; }
+                .selected-tag-indicator { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: var(--text-primary); }
+                .breadcrumb-marker { color: var(--accent-color); }
+
+                .sort-group { display: flex; gap: 6px; padding-left: 12px; border-left: 1px solid var(--panel-divider-color); }
+                .sort-btn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: var(--radius-sm); transition: all 0.15s; }
+                .sort-btn:hover { background: var(--bg-main); color: var(--text-primary); }
+                .sort-btn.active { background: var(--accent-light); color: var(--accent-color); }
+
+                .view-toggle {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 2px;
+                    border: 1px solid var(--panel-divider-color);
+                    border-radius: var(--radius-sm);
+                    background: var(--bg-main);
+                }
+                .toggle-btn {
+                    padding: 4px;
+                    border-radius: var(--radius-sm);
+                    transition: all 0.15s;
+                }
+                .toggle-btn:hover { background: var(--bg-input); }
+                .toggle-btn.active { background: var(--accent-color); color: white; }
+
+                .items-area { 
+                    flex: 1; 
+                    overflow-y: auto; 
+                    padding: 16px 16px 80px 16px; 
+                    background: var(--bg-content); 
+                    position: relative;
+                }
+
+                .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+                .items-list { display: flex; flex-direction: column; gap: 8px; }
+
+                .themed-card {
+                    background: var(--bg-element);
+                    border: 1px solid var(--border);
+                    padding: 12px; cursor: pointer;
+                    position: relative;
+                    border-radius: var(--radius-md);
+                    transition: all 0.15s ease;
+                }
+                .themed-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px var(--shadow); border-color: var(--accent-color); }
+
+                .del-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.4; transition: opacity 0.15s; }
+                .del-btn:hover { opacity: 1; color: #ff4d4f; }
+
+                .card-media { min-height: 60px; border-radius: var(--radius-sm); margin: 8px 0; overflow: hidden; background: var(--bg-main); display: flex; justify-content: center; align-items: center; }
+                .card-media img { max-width: 100%; max-height: 140px; object-fit: contain; border-radius: var(--radius-sm); }
+                
+                .card-body-text { font-size: 13px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; color: var(--text-primary); }
+                .card-footer { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-secondary); opacity: 0.8; }
+                .meta-usage { display: flex; align-items: center; gap: 4px; }
+                
+                .add-item-btn {
+                    margin-left: 12px;
+                }
+
+                .card-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .card-actions-left { display: flex; gap: 6px; }
+                .card-action-btn {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    padding: 4px;
+                    border-radius: var(--radius-sm);
+                    opacity: 0.6;
+                    transition: all 0.15s;
+                }
+                .card-action-btn:hover { opacity: 1; color: var(--accent-color); background: var(--bg-main); }
+
