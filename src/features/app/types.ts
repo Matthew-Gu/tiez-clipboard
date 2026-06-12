@@ -21,10 +21,6 @@ export interface AppState {
   setIsRecordingRich: StateSetter<boolean>;
   isRecordingSearch: boolean;
   setIsRecordingSearch: StateSetter<boolean>;
-  winClipboardDisabled: boolean;
-  setWinClipboardDisabled: StateSetter<boolean>;
-  showHotkeyHint: boolean;
-  setShowHotkeyHint: StateSetter<boolean>;
   isLoadingMore: boolean;
   setIsLoadingMore: StateSetter<boolean>;
   hasMore: boolean;

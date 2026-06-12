@@ -9,15 +9,13 @@ interface UseAppBootstrapOptions {
   setInstalledApps: Dispatch<SetStateAction<InstalledAppOption[]>>;
   setAutoStart: Dispatch<SetStateAction<boolean>>;
   setDefaultApps: Dispatch<SetStateAction<DefaultAppsMap>>;
-  setWinClipboardDisabled: Dispatch<SetStateAction<boolean>>;
 }
 
 export const useAppBootstrap = ({
   setDataPath,
   setInstalledApps,
   setAutoStart,
-  setDefaultApps,
-  setWinClipboardDisabled: _setWinClipboardDisabled
+  setDefaultApps
 }: UseAppBootstrapOptions) => {
   useEffect(() => {
     if (!isTauriRuntime()) return;

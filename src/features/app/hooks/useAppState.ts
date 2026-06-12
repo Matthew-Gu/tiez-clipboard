@@ -9,8 +9,6 @@ export const useAppState = (): AppState => {
   const [isRecordingSequential, setIsRecordingSequential] = useState(false);
   const [isRecordingRich, setIsRecordingRich] = useState(false);
   const [isRecordingSearch, setIsRecordingSearch] = useState(false);
-  const [winClipboardDisabled, setWinClipboardDisabled] = useState(false);
-  const [showHotkeyHint, setShowHotkeyHint] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentOffset, setCurrentOffset] = useState(0);
@@ -28,10 +26,6 @@ export const useAppState = (): AppState => {
     setIsRecordingRich,
     isRecordingSearch,
     setIsRecordingSearch,
-    winClipboardDisabled,
-    setWinClipboardDisabled,
-    showHotkeyHint,
-    setShowHotkeyHint,
     isLoadingMore,
     setIsLoadingMore,
     hasMore,

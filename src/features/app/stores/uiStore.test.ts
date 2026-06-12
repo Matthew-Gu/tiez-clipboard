@@ -20,14 +20,30 @@ describe("ui store", () => {
   it("supports direct and functional updates", () => {
     const store = useUiStore.getState();
     store.setSearch("tag:work");
+    store.setIsComposing(true);
+    store.setSearchIsFocused(true);
+    store.setShowTagFilter(true);
+    store.setTypeFilter("image");
     store.setSelectedIndex((previous) => previous + 2);
+    store.setIsKeyboardMode(true);
+    store.setTagInput("private");
+    store.setEditingTagsId(9);
+    store.setRevealedIds((previous) => new Set([...previous, 9]));
     store.setCollapsedGroups((previous) => ({ ...previous, general: false }));
 
     expect(useUiStore.getState()).toMatchObject({
       search: "tag:work",
+      isComposing: true,
+      searchIsFocused: true,
+      showTagFilter: true,
+      typeFilter: "image",
       selectedIndex: 2,
+      isKeyboardMode: true,
+      tagInput: "private",
+      editingTagsId: 9,
       collapsedGroups: { general: false }
     });
+    expect(useUiStore.getState().revealedIds).toEqual(new Set([9]));
   });
 
   it("resets values and creates fresh mutable containers", () => {
@@ -55,5 +71,9 @@ describe("ui store", () => {
     expect(state).not.toHaveProperty("history");
     expect(state).not.toHaveProperty("currentOffset");
     expect(state).not.toHaveProperty("confirmDialog");
+    expect(state).not.toHaveProperty("showAppSelector");
+    expect(state).not.toHaveProperty("isRecording");
+    expect(state).not.toHaveProperty("window");
+    expect(state).not.toHaveProperty("previewLifecycle");
   });
 });

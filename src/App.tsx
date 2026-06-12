@@ -104,8 +104,6 @@ const App = () => {
     setIsRecordingRich,
     isRecordingSearch,
     setIsRecordingSearch,
-    winClipboardDisabled: _winClipboardDisabled,
-    setWinClipboardDisabled,
     isLoadingMore,
     setIsLoadingMore,
     hasMore,
@@ -374,8 +372,7 @@ const App = () => {
     setDataPath,
     setInstalledApps,
     setAutoStart,
-    setDefaultApps,
-    setWinClipboardDisabled
+    setDefaultApps
   });
 
   useWindowPinnedListener({
