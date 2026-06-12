@@ -1,7 +1,11 @@
 import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { saveSetting } from "../../../../shared/ipc/commands";
+import {
+    notifySettingsChanged,
+    runSettingWrite,
+    saveSetting
+} from "../../../../shared/ipc/commands";
 import { APP_SETTING_KEYS } from "../../../../shared/ipc/contracts";
 
 interface LabelWithHintProps {
@@ -88,7 +92,10 @@ const GeneralSettingsGroup = ({
                             onChange={(e) => {
                                 const enabled = e.target.checked;
                                 setAutoStart(enabled);
-                                invoke("toggle_autostart", { enabled }).catch(console.error);
+                                runSettingWrite(
+                                    () => invoke("toggle_autostart", { enabled }),
+                                    notifySettingsChanged
+                                ).catch(console.error);
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>
@@ -107,7 +114,10 @@ const GeneralSettingsGroup = ({
                             onChange={(e) => {
                                 const val = e.target.checked;
                                 setHideTrayIcon(val);
-                                invoke("set_tray_visible", { visible: !val }).catch(console.error);
+                                runSettingWrite(
+                                    () => invoke("set_tray_visible", { visible: !val }),
+                                    notifySettingsChanged
+                                ).catch(console.error);
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>
@@ -128,7 +138,10 @@ const GeneralSettingsGroup = ({
                             onChange={(e) => {
                                 const val = e.target.checked;
                                 setEdgeDocking(val);
-                                invoke("set_edge_docking", { enabled: val }).catch(console.error);
+                                runSettingWrite(
+                                    () => invoke("set_edge_docking", { enabled: val }),
+                                    notifySettingsChanged
+                                ).catch(console.error);
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>
@@ -148,7 +161,10 @@ const GeneralSettingsGroup = ({
                             onChange={(e) => {
                                 const enabled = e.target.checked;
                                 setSoundEnabled(enabled);
-                                invoke("set_sound_enabled", { enabled }).catch(console.error);
+                                runSettingWrite(
+                                    () => invoke("set_sound_enabled", { enabled }),
+                                    notifySettingsChanged
+                                ).catch(console.error);
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>
@@ -213,7 +229,10 @@ const GeneralSettingsGroup = ({
                             onChange={(e) => {
                                 const enabled = e.target.checked;
                                 setSilentStart(enabled);
-                                invoke("set_silent_start", { enabled }).catch(console.error);
+                                runSettingWrite(
+                                    () => invoke("set_silent_start", { enabled }),
+                                    notifySettingsChanged
+                                ).catch(console.error);
                             }}
                         />
                         <div className="toggle"><div className="left" /><div className="right" /></div>

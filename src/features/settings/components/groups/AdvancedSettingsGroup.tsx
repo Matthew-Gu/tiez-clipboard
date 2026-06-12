@@ -5,6 +5,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import type { InstalledAppOption } from "../../../app/types";
 import type { AppCleanupPolicy } from "../../types";
+import { notifySettingsChanged, runSettingWrite } from "../../../../shared/ipc/commands";
 
 
 
@@ -245,7 +246,10 @@ const AdvancedSettingsGroup = ({
 
     const persistAppPolicies = (nextPolicies: AppCleanupPolicy[]) => {
         setAppCleanupPolicies(nextPolicies);
-        invoke("set_app_cleanup_policies", { policies: JSON.stringify(nextPolicies) }).catch(console.error);
+        runSettingWrite(
+            () => invoke("set_app_cleanup_policies", { policies: JSON.stringify(nextPolicies) }),
+            notifySettingsChanged
+        ).catch(console.error);
     };
 
     const persistRulesForTarget = (target: SourceTarget, nextRules: EditableRule[]) => {
@@ -253,7 +257,10 @@ const AdvancedSettingsGroup = ({
 
         if (target.kind === "global") {
             setCleanupRules(serialized);
-            invoke("set_cleanup_rules", { rules: serialized }).catch(console.error);
+            runSettingWrite(
+                () => invoke("set_cleanup_rules", { rules: serialized }),
+                notifySettingsChanged
+            ).catch(console.error);
             return;
         }
 

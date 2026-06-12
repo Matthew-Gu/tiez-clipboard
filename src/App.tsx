@@ -430,7 +430,6 @@ const App = () => {
   const saveAppSetting = useCallback(async (type: string, path: string) => {
     const key = toAppSettingKey(type);
     console.log(`[THEME DEBUG] saveAppSetting called: key=${key}, value=${path}`);
-    setAppSettings(prev => ({ ...prev, [key]: path }));
 
     // Sync theme-related settings to localStorage for instant startup (prevents flash)
     try {
@@ -442,6 +441,7 @@ const App = () => {
 
     try {
       await saveSetting(toAppSettingKey(type), path);
+      setAppSettings(prev => ({ ...prev, [key]: path }));
       console.log(`[THEME DEBUG] saveAppSetting success: key=${key}`);
     } catch (err) {
       console.error("保存设置失败", err);

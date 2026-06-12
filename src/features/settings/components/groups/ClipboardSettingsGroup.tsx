@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import type { ComponentType, ReactNode } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { saveSetting } from "../../../../shared/ipc/commands";
+import {
+    notifySettingsChanged,
+    runSettingWrite,
+    saveSetting
+} from "../../../../shared/ipc/commands";
 import { APP_SETTING_KEYS } from "../../../../shared/ipc/contracts";
 import { focusClipboardWindow } from "../../../../shared/lib/focus";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -458,7 +462,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                 onChange={(e) => {
                                     const val = e.target.checked;
                                     props.setSequentialModeState(val);
-                                    invoke('set_sequential_mode', { enabled: val }).catch(console.error);
+                                    runSettingWrite(
+                                        () => invoke('set_sequential_mode', { enabled: val }),
+                                        notifySettingsChanged
+                                    ).catch(console.error);
                                     if (val) {
                                         if (props.checkHotkeyConflict(props.sequentialHotkey, 'sequential')) {
                                             props.updateSequentialHotkey("");
@@ -532,7 +539,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                 onChange={(e) => {
                                     const val = e.target.checked;
                                     props.setPrivacyProtection(val);
-                                    invoke('set_privacy_protection', { enabled: val }).catch(console.error);
+                                    runSettingWrite(
+                                        () => invoke('set_privacy_protection', { enabled: val }),
+                                        notifySettingsChanged
+                                    ).catch(console.error);
                                 }}
                             />
                             <div className="toggle"><div className="left" /><div className="right" /></div>
@@ -577,7 +587,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                                         ? [...props.privacyProtectionKinds, opt.id]
                                                         : props.privacyProtectionKinds.filter(t => t !== opt.id);
                                                     props.setPrivacyProtectionKinds(next);
-                                                    invoke('set_privacy_protection_kinds', { kinds: next }).catch(console.error);
+                                                    runSettingWrite(
+                                                        () => invoke('set_privacy_protection_kinds', { kinds: next }),
+                                                        notifySettingsChanged
+                                                    ).catch(console.error);
                                                 }}
                                             />
                                             <span style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{opt.label}</span>
@@ -614,7 +627,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     props.setPrivacyProtectionCustomRules(val);
-                                    invoke('set_privacy_protection_custom_rules', { rules: val }).catch(console.error);
+                                    runSettingWrite(
+                                        () => invoke('set_privacy_protection_custom_rules', { rules: val }),
+                                        notifySettingsChanged
+                                    ).catch(console.error);
                                 }}
                             />
                         )}
