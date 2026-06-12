@@ -12,10 +12,6 @@ export const useAppState = (): AppState => {
     data: true
   });
   const [history, setHistory] = useState<ClipboardEntry[]>([]);
-  const [search, setSearch] = useState("");
-  const [isComposing, setIsComposing] = useState(false);
-  const [searchIsFocused, setSearchIsFocused] = useState(false);
-  const [showTagFilter, setShowTagFilter] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [editingTagsId, setEditingTagsId] = useState<number | null>(null);
   const [revealedIds, setRevealedIds] = useState<Set<number>>(new Set());
@@ -31,21 +27,12 @@ export const useAppState = (): AppState => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentOffset, setCurrentOffset] = useState(0);
-  const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   return {
     collapsedGroups,
     setCollapsedGroups,
     history,
     setHistory,
-    search,
-    setSearch,
-    isComposing,
-    setIsComposing,
-    searchIsFocused,
-    setSearchIsFocused,
-    showTagFilter,
-    setShowTagFilter,
     tagInput,
     setTagInput,
     editingTagsId,
@@ -75,8 +62,6 @@ export const useAppState = (): AppState => {
     hasMore,
     setHasMore,
     currentOffset,
-    setCurrentOffset,
-    typeFilter,
-    setTypeFilter
+    setCurrentOffset
   };
 };

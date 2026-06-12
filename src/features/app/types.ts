@@ -13,14 +13,6 @@ export interface AppState {
   setCollapsedGroups: StateSetter<Record<string, boolean>>;
   history: ClipboardEntry[];
   setHistory: StateSetter<ClipboardEntry[]>;
-  search: string;
-  setSearch: StateSetter<string>;
-  isComposing: boolean;
-  setIsComposing: StateSetter<boolean>;
-  searchIsFocused: boolean;
-  setSearchIsFocused: StateSetter<boolean>;
-  showTagFilter: boolean;
-  setShowTagFilter: StateSetter<boolean>;
   tagInput: string;
   setTagInput: StateSetter<string>;
   editingTagsId: number | null;
@@ -51,6 +43,4 @@ export interface AppState {
   setHasMore: StateSetter<boolean>;
   currentOffset: number;
   setCurrentOffset: StateSetter<number>;
-  typeFilter: string | null;
-  setTypeFilter: StateSetter<string | null>;
 }

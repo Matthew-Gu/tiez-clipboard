@@ -10,6 +10,7 @@ import AppHeader from "./features/app/components/AppHeader";
 import AppMainContent from "./features/app/components/AppMainContent";
 import { useAppState } from "./features/app/hooks/useAppState";
 import { useSettingsStore } from "./features/app/stores/settingsStore";
+import { selectSearch, selectTypeFilter, useUiStore } from "./features/app/stores/uiStore";
 import { useSettingsPanelProps } from "./features/settings/hooks/useSettingsPanelProps";
 import { useDebounce } from "./shared/hooks/useDebounce";
 import { useHistoryFetch } from "./shared/hooks/useHistoryFetch";
@@ -90,14 +91,6 @@ const App = () => {
     setCollapsedGroups,
     history,
     setHistory,
-    search,
-    setSearch,
-    isComposing,
-    setIsComposing,
-    searchIsFocused,
-    setSearchIsFocused,
-    showTagFilter,
-    setShowTagFilter,
     tagInput,
     setTagInput,
     editingTagsId,
@@ -123,10 +116,14 @@ const App = () => {
     hasMore,
     setHasMore,
     currentOffset,
-    setCurrentOffset,
-    typeFilter,
-    setTypeFilter
+    setCurrentOffset
   } = appState;
+  const search = useUiStore(selectSearch);
+  const setSearch = useUiStore((state) => state.setSearch);
+  const isComposing = useUiStore((state) => state.isComposing);
+  const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
+  const showTagFilter = useUiStore((state) => state.showTagFilter);
+  const typeFilter = useUiStore(selectTypeFilter);
   const {
     tagManagerEnabled,
     setAutoStart,
@@ -628,21 +625,12 @@ const App = () => {
         setIsWindowPinned={setIsWindowPinned}
         clearHistory={clearHistory}
         showSearchBox={showSearchBox}
-        search={search}
-        setSearch={setSearch}
-        setIsComposing={setIsComposing}
         searchInputRef={searchInputRef}
-        showTagFilter={showTagFilter}
-        setShowTagFilter={setShowTagFilter}
         allTags={allTags}
-        searchIsFocused={searchIsFocused}
-        setSearchIsFocused={setSearchIsFocused}
         setEditingTagsId={setEditingTagsId}
         theme={theme}
         colorMode={colorMode}
         settingsTitle={showSettings && settingsSubpage === "advanced" ? t("advanced_settings") : t("settings")}
-        typeFilter={typeFilter}
-        setTypeFilter={setTypeFilter}
         onBack={handleHeaderBack}
       />
 
@@ -662,7 +650,6 @@ const App = () => {
           tagManagerEnabled={tagManagerEnabled}
           settingsPanelProps={settingsPanelProps}
           filteredHistory={filteredHistory}
-          search={search}
           pinnedItems={pinnedItems}
           unpinnedItems={unpinnedItems}
           selectedIndex={selectedIndex}

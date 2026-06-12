@@ -9,6 +9,7 @@ import TagManager from "../../tag/components/TagManager";
 import { VirtualClipboardList } from "../../clipboard/components/VirtualClipboardList";
 import type { ClipboardEntry } from "../../../shared/types";
 import type { VirtualClipboardListHandle } from "../../clipboard/types";
+import { useUiStore } from "../stores/uiStore";
 
 type SettingsPanelProps = ComponentProps<typeof SettingsPanel>;
 type RenderItem = (
@@ -26,7 +27,6 @@ interface AppMainContentProps {
   tagManagerEnabled: boolean;
   settingsPanelProps: SettingsPanelProps;
   filteredHistory: ClipboardEntry[];
-  search: string;
   pinnedItems: ClipboardEntry[];
   unpinnedItems: ClipboardEntry[];
   selectedIndex: number;
@@ -91,7 +91,6 @@ const AppMainContent = ({
   tagManagerEnabled,
   settingsPanelProps,
   filteredHistory,
-  search,
   pinnedItems,
   unpinnedItems,
   selectedIndex,
@@ -110,6 +109,7 @@ const AppMainContent = ({
   showScrollTop,
   onScrollTop
 }: AppMainContentProps) => {
+  const search = useUiStore((state) => state.search);
   const [pinnedOrderIds, setPinnedOrderIds] = useState<number[]>(
     () => pinnedItems.map((item) => item.id)
   );

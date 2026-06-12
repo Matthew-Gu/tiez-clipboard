@@ -13,6 +13,7 @@ import {
 import { invoke } from "@tauri-apps/api/core";
 import { activateWindowFocus } from "../../../shared/ipc/commands";
 import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
+import { useUiStore } from "../stores/uiStore";
 
 interface AppHeaderProps {
   t: (key: string) => string;
@@ -25,21 +26,12 @@ interface AppHeaderProps {
   setIsWindowPinned: (val: boolean) => void;
   clearHistory: () => void;
   showSearchBox: boolean;
-  search: string;
-  setSearch: (val: string) => void;
-  setIsComposing: (val: boolean) => void;
   searchInputRef: RefObject<HTMLInputElement | null>;
-  showTagFilter: boolean;
-  setShowTagFilter: (val: boolean) => void;
   allTags: string[];
-  searchIsFocused: boolean;
-  setSearchIsFocused: (val: boolean) => void;
   setEditingTagsId: (val: number | null) => void;
   theme: string;
   colorMode: string;
   settingsTitle: string;
-  typeFilter: string | null;
-  setTypeFilter: (val: string | null) => void;
   onBack: () => void;
 }
 
@@ -54,23 +46,24 @@ const AppHeader = ({
   setIsWindowPinned,
   clearHistory,
   showSearchBox,
-  search,
-  setSearch,
-  setIsComposing,
   searchInputRef,
-  showTagFilter,
-  setShowTagFilter,
   allTags,
-  searchIsFocused,
-  setSearchIsFocused,
   setEditingTagsId,
   theme,
   colorMode,
   settingsTitle,
-  typeFilter,
-  setTypeFilter,
   onBack
 }: AppHeaderProps) => {
+  const search = useUiStore((state) => state.search);
+  const setSearch = useUiStore((state) => state.setSearch);
+  const setIsComposing = useUiStore((state) => state.setIsComposing);
+  const showTagFilter = useUiStore((state) => state.showTagFilter);
+  const setShowTagFilter = useUiStore((state) => state.setShowTagFilter);
+  const searchIsFocused = useUiStore((state) => state.searchIsFocused);
+  const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
+  const typeFilter = useUiStore((state) => state.typeFilter);
+  const setTypeFilter = useUiStore((state) => state.setTypeFilter);
+
   const getTypeName = (type: string) => {
     switch (type) {
       case "code": return t('type_code');
