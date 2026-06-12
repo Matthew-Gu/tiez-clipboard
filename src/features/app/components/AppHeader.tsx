@@ -28,7 +28,6 @@ interface AppHeaderProps {
   showSearchBox: boolean;
   searchInputRef: RefObject<HTMLInputElement | null>;
   allTags: string[];
-  setEditingTagsId: (val: number | null) => void;
   theme: string;
   colorMode: string;
   settingsTitle: string;
@@ -48,7 +47,6 @@ const AppHeader = ({
   showSearchBox,
   searchInputRef,
   allTags,
-  setEditingTagsId,
   theme,
   colorMode,
   settingsTitle,
@@ -63,6 +61,7 @@ const AppHeader = ({
   const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
   const typeFilter = useUiStore((state) => state.typeFilter);
   const setTypeFilter = useUiStore((state) => state.setTypeFilter);
+  const setEditingTagsId = useUiStore((state) => state.setEditingTagsId);
 
   const getTypeName = (type: string) => {
     switch (type) {

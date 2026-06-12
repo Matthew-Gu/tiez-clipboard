@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 const EMPTY_TAG_SUGGESTIONS: string[] = [];
-import type { Dispatch, SetStateAction, MouseEvent, ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import type { DragControls } from "framer-motion";
 import ClipboardItem from "../../features/clipboard/components/ClipboardItem";
 import type { QuickPasteHint } from "../../features/clipboard/types";
@@ -12,10 +12,7 @@ import { useUiStore } from "../../features/app/stores/uiStore";
 
 interface UseClipboardItemRendererOptions {
   privacyProtection: boolean;
-  revealedIds: Set<number>;
   isWindowPinned: boolean;
-  editingTagsId: number | null;
-  tagInput: string;
   allTags: string[];
   tagColors: Record<string, string>;
   theme: string;
@@ -36,12 +33,9 @@ interface UseClipboardItemRendererOptions {
     tags?: string[]
   ) => Promise<void>;
   prefetchDetails: (ids: number[]) => void;
-  setRevealedIds: Dispatch<SetStateAction<Set<number>>>;
   openContent: (item: ClipboardEntry) => void;
   togglePin: (event: MouseEvent, id: number, isPinned: boolean) => void;
   deleteEntry: (event: MouseEvent, id: number) => void;
-  setEditingTagsId: Dispatch<SetStateAction<number | null>>;
-  setTagInput: Dispatch<SetStateAction<string>>;
   handleUpdateTags: (id: number, tags: string[]) => void;
 }
 
@@ -54,10 +48,7 @@ type RenderItemContent = (
 
 export const useClipboardItemRenderer = ({
   privacyProtection,
-  revealedIds,
   isWindowPinned,
-  editingTagsId,
-  tagInput,
   allTags,
   tagColors,
   theme,
@@ -71,17 +62,20 @@ export const useClipboardItemRenderer = ({
   quickPasteHintsById,
   copyToClipboard,
   prefetchDetails,
-  setRevealedIds,
   openContent,
   togglePin,
   deleteEntry,
-  setEditingTagsId,
-  setTagInput,
   handleUpdateTags
 }: UseClipboardItemRendererOptions): { renderItemContent: RenderItemContent } => {
   const selectedIndex = useUiStore((state) => state.selectedIndex);
   const setSelectedIndex = useUiStore((state) => state.setSelectedIndex);
   const isKeyboardMode = useUiStore((state) => state.isKeyboardMode);
+  const revealedIds = useUiStore((state) => state.revealedIds);
+  const setRevealedIds = useUiStore((state) => state.setRevealedIds);
+  const editingTagsId = useUiStore((state) => state.editingTagsId);
+  const setEditingTagsId = useUiStore((state) => state.setEditingTagsId);
+  const tagInput = useUiStore((state) => state.tagInput);
+  const setTagInput = useUiStore((state) => state.setTagInput);
   const renderItemContent = useCallback(
     (item: ClipboardEntry, index: number, dragControls?: DragControls, disableLayout?: boolean) => {
       const isSensitiveHidden =

@@ -11,6 +11,7 @@ import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
 import SettingsFooter from "./SettingsFooter";
 import AppSelectorModal from "./AppSelectorModal";
 import { useSettingsStore } from "../../app/stores/settingsStore";
+import { useUiStore } from "../../app/stores/uiStore";
 
 interface LabelWithHintProps {
   label: string;
@@ -35,7 +36,6 @@ interface SettingsPanelActions {
 
 export type SettingsPanelProps = Pick<
   AppState,
-  | "collapsedGroups"
   | "showAppSelector"
   | "setShowAppSelector"
   | "isRecording"
@@ -50,7 +50,8 @@ export type SettingsPanelProps = Pick<
 
 const SettingsPanel = (inputProps: SettingsPanelProps) => {
   const settings = useSettingsStore();
-  const props = { ...inputProps, ...settings };
+  const collapsedGroups = useUiStore((state) => state.collapsedGroups);
+  const props = { ...inputProps, ...settings, collapsedGroups };
   const [openHints, setOpenHints] = useState<Set<string>>(new Set());
   const [privacyKindsOpen, setPrivacyKindsOpen] = useState(false);
   const [privacyRulesOpen, setPrivacyRulesOpen] = useState(false);

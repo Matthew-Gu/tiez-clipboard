@@ -3,18 +3,7 @@ import type { ClipboardEntry } from "../../../shared/types";
 import type { AppState } from "../types";
 
 export const useAppState = (): AppState => {
-  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({
-    general: true,
-    clipboard: true,
-    advanced: true,
-    appearance: true,
-    default_apps: true,
-    data: true
-  });
   const [history, setHistory] = useState<ClipboardEntry[]>([]);
-  const [tagInput, setTagInput] = useState("");
-  const [editingTagsId, setEditingTagsId] = useState<number | null>(null);
-  const [revealedIds, setRevealedIds] = useState<Set<number>>(new Set());
   const [showAppSelector, setShowAppSelector] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecordingSequential, setIsRecordingSequential] = useState(false);
@@ -27,16 +16,8 @@ export const useAppState = (): AppState => {
   const [currentOffset, setCurrentOffset] = useState(0);
 
   return {
-    collapsedGroups,
-    setCollapsedGroups,
     history,
     setHistory,
-    tagInput,
-    setTagInput,
-    editingTagsId,
-    setEditingTagsId,
-    revealedIds,
-    setRevealedIds,
     showAppSelector,
     setShowAppSelector,
     isRecording,

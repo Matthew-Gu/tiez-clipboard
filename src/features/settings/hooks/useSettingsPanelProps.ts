@@ -21,7 +21,6 @@ export const useSettingsPanelProps = ({
   state,
   ...actions
 }: UseSettingsPanelPropsOptions): SettingsPanelProps => ({
-  collapsedGroups: state.collapsedGroups,
   showAppSelector: state.showAppSelector,
   setShowAppSelector: state.setShowAppSelector,
   isRecording: state.isRecording,

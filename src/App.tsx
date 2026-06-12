@@ -94,15 +94,8 @@ const App = () => {
   const appState = useAppState();
   const settingsState = useSettingsStore();
   const {
-    setCollapsedGroups,
     history,
     setHistory,
-    tagInput,
-    setTagInput,
-    editingTagsId,
-    setEditingTagsId,
-    revealedIds,
-    setRevealedIds,
     isRecording,
     setIsRecording,
     isRecordingSequential,
@@ -126,6 +119,8 @@ const App = () => {
   const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
   const typeFilter = useUiStore(selectTypeFilter);
+  const setCollapsedGroups = useUiStore((state) => state.setCollapsedGroups);
+  const editingTagsId = useUiStore((state) => state.editingTagsId);
   const selectedIndex = useUiStore(selectSelectedIndex);
   const setSelectedIndex = useUiStore((state) => state.setSelectedIndex);
   const isKeyboardMode = useUiStore(selectIsKeyboardMode);
@@ -571,10 +566,7 @@ const App = () => {
 
   const { renderItemContent } = useClipboardItemRenderer({
     privacyProtection,
-    revealedIds,
     isWindowPinned,
-    editingTagsId,
-    tagInput,
     allTags,
     tagColors,
     theme,
@@ -588,12 +580,9 @@ const App = () => {
     quickPasteHintsById,
     copyToClipboard,
     prefetchDetails,
-    setRevealedIds,
     openContent,
     togglePin,
     deleteEntry,
-    setEditingTagsId,
-    setTagInput,
     handleUpdateTags,
   });
 
@@ -630,7 +619,6 @@ const App = () => {
         showSearchBox={showSearchBox}
         searchInputRef={searchInputRef}
         allTags={allTags}
-        setEditingTagsId={setEditingTagsId}
         theme={theme}
         colorMode={colorMode}
         settingsTitle={showSettings && settingsSubpage === "advanced" ? t("advanced_settings") : t("settings")}

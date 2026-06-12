@@ -9,16 +9,8 @@ export type QuickPasteModifier = "disabled" | "ctrl" | "alt" | "shift" | "win";
 export type SettingsSubpage = "home" | "advanced";
 
 export interface AppState {
-  collapsedGroups: Record<string, boolean>;
-  setCollapsedGroups: StateSetter<Record<string, boolean>>;
   history: ClipboardEntry[];
   setHistory: StateSetter<ClipboardEntry[]>;
-  tagInput: string;
-  setTagInput: StateSetter<string>;
-  editingTagsId: number | null;
-  setEditingTagsId: StateSetter<number | null>;
-  revealedIds: Set<number>;
-  setRevealedIds: StateSetter<Set<number>>;
   showAppSelector: string | null;
   setShowAppSelector: StateSetter<string | null>;
   isRecording: boolean;
