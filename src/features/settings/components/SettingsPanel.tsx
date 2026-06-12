@@ -33,7 +33,20 @@ interface SettingsPanelActions {
   openAdvancedSettings: () => void;
 }
 
-export type SettingsPanelProps = AppState & SettingsPanelActions;
+export type SettingsPanelProps = Pick<
+  AppState,
+  | "collapsedGroups"
+  | "showAppSelector"
+  | "setShowAppSelector"
+  | "isRecording"
+  | "setIsRecording"
+  | "isRecordingSequential"
+  | "setIsRecordingSequential"
+  | "isRecordingRich"
+  | "setIsRecordingRich"
+  | "isRecordingSearch"
+  | "setIsRecordingSearch"
+> & SettingsPanelActions;
 
 const SettingsPanel = (inputProps: SettingsPanelProps) => {
   const settings = useSettingsStore();

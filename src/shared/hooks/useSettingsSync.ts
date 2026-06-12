@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { TAURI_COMMANDS } from "../ipc/contracts";
+import { notifySettingsChanged, runSettingWrite } from "../ipc/commands";
 
 interface UseSettingsSyncOptions {
   settingsLoaded: boolean;
@@ -36,19 +37,28 @@ export const useSettingsSync = ({
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke(TAURI_COMMANDS.setCaptureFiles, { enabled: captureFiles });
+      runSettingWrite(
+        () => invoke(TAURI_COMMANDS.setCaptureFiles, { enabled: captureFiles }),
+        notifySettingsChanged
+      ).catch(console.error);
     }
   }, [captureFiles, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke(TAURI_COMMANDS.setCaptureRichText, { enabled: captureRichText });
+      runSettingWrite(
+        () => invoke(TAURI_COMMANDS.setCaptureRichText, { enabled: captureRichText }),
+        notifySettingsChanged
+      ).catch(console.error);
     }
   }, [captureRichText, settingsLoaded]);
 
   useEffect(() => {
     if (settingsLoaded) {
-      invoke(TAURI_COMMANDS.setPersistence, { enabled: persistent });
+      runSettingWrite(
+        () => invoke(TAURI_COMMANDS.setPersistence, { enabled: persistent }),
+        notifySettingsChanged
+      ).catch(console.error);
     }
   }, [persistent, settingsLoaded]);
 
@@ -59,7 +69,10 @@ export const useSettingsSync = ({
   }, [saveAppSetting, settingsLoaded, soundVolume]);
 
   useEffect(() => {
-    invoke(TAURI_COMMANDS.setArrowKeySelection, { enabled: arrowKeySelection }).catch(console.error);
+    runSettingWrite(
+      () => invoke(TAURI_COMMANDS.setArrowKeySelection, { enabled: arrowKeySelection }),
+      notifySettingsChanged
+    ).catch(console.error);
     if (!arrowKeySelection) {
       setIsKeyboardMode(false);
       setSelectedIndex(0);

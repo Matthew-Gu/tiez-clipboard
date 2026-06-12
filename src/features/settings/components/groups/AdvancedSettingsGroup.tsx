@@ -175,7 +175,7 @@ const AdvancedSettingsGroup = ({
         const nextRules = parseRules(selectedTarget.rawRules);
         setDraftRules(nextRules);
         setExpandedRuleIndex(nextRules.length > 0 ? 0 : null);
-    }, [selectedTarget?.id]);
+    }, [selectedTarget?.id, selectedTarget?.rawRules]);
 
     // App icons fetching removed for minimalist style
 
