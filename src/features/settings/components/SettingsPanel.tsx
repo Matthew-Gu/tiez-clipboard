@@ -10,6 +10,7 @@ import DataSettingsGroup from "./groups/DataSettingsGroup";
 import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
 import SettingsFooter from "./SettingsFooter";
 import AppSelectorModal from "./AppSelectorModal";
+import { useSettingsStore } from "../../app/stores/settingsStore";
 
 interface LabelWithHintProps {
   label: string;
@@ -34,7 +35,9 @@ interface SettingsPanelActions {
 
 export type SettingsPanelProps = AppState & SettingsPanelActions;
 
-const SettingsPanel = (props: SettingsPanelProps) => {
+const SettingsPanel = (inputProps: SettingsPanelProps) => {
+  const settings = useSettingsStore();
+  const props = { ...inputProps, ...settings };
   const [openHints, setOpenHints] = useState<Set<string>>(new Set());
   const [privacyKindsOpen, setPrivacyKindsOpen] = useState(false);
   const [privacyRulesOpen, setPrivacyRulesOpen] = useState(false);
