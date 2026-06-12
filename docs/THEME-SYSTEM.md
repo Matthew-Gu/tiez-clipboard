@@ -466,9 +466,4 @@ That is the foundation for adding future themes without rewriting multiple unrel
 
 ## Remaining Debt
 
-The main shared UI layer has been normalized. Remaining confirmed style debt is intentionally tracked outside the theme migration:
-
-- `src/styles/components/rich-text-preview.css`
-- the matching dark-mode override in `src/styles/themes/dark.css`
-
-These rich-text remnants belong to the separate rich-text removal task and are not part of the Less migration.
+The main shared UI layer has been normalized. Confirmed unused rich-text, compact-mode, template, and historical dark-mode styles have been removed.

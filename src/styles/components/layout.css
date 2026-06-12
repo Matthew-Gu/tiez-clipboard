@@ -224,11 +224,6 @@ select.search-input option {
   box-sizing: border-box;
 }
 
-.history-item.compact {
-  height: 100%;
-  padding: 6px 10px 4px 10px;
-}
-
 .history-item:hover {
   transform: var(--card-hover-transform);
   box-shadow: var(--card-hover-shadow);
