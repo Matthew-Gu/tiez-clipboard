@@ -29,8 +29,6 @@ interface AppMainContentProps {
   filteredHistory: ClipboardEntry[];
   pinnedItems: ClipboardEntry[];
   unpinnedItems: ClipboardEntry[];
-  selectedIndex: number;
-  isKeyboardMode: boolean;
   virtualListRef: RefObject<VirtualClipboardListHandle | null>;
   handlePinnedReorder: (newOrderIds: number[]) => void;
   renderItemContent: RenderItem;
@@ -93,8 +91,6 @@ const AppMainContent = ({
   filteredHistory,
   pinnedItems,
   unpinnedItems,
-  selectedIndex,
-  isKeyboardMode,
   virtualListRef,
   handlePinnedReorder,
   renderItemContent,
@@ -110,6 +106,8 @@ const AppMainContent = ({
   onScrollTop
 }: AppMainContentProps) => {
   const search = useUiStore((state) => state.search);
+  const selectedIndex = useUiStore((state) => state.selectedIndex);
+  const isKeyboardMode = useUiStore((state) => state.isKeyboardMode);
   const [pinnedOrderIds, setPinnedOrderIds] = useState<number[]>(
     () => pinnedItems.map((item) => item.id)
   );

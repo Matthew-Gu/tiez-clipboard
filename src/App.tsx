@@ -10,7 +10,13 @@ import AppHeader from "./features/app/components/AppHeader";
 import AppMainContent from "./features/app/components/AppMainContent";
 import { useAppState } from "./features/app/hooks/useAppState";
 import { useSettingsStore } from "./features/app/stores/settingsStore";
-import { selectSearch, selectTypeFilter, useUiStore } from "./features/app/stores/uiStore";
+import {
+  selectIsKeyboardMode,
+  selectSearch,
+  selectSelectedIndex,
+  selectTypeFilter,
+  useUiStore
+} from "./features/app/stores/uiStore";
 import { useSettingsPanelProps } from "./features/settings/hooks/useSettingsPanelProps";
 import { useDebounce } from "./shared/hooks/useDebounce";
 import { useHistoryFetch } from "./shared/hooks/useHistoryFetch";
@@ -107,10 +113,6 @@ const App = () => {
     setIsRecordingSearch,
     winClipboardDisabled: _winClipboardDisabled,
     setWinClipboardDisabled,
-    selectedIndex,
-    setSelectedIndex,
-    isKeyboardMode,
-    setIsKeyboardMode,
     isLoadingMore,
     setIsLoadingMore,
     hasMore,
@@ -124,6 +126,10 @@ const App = () => {
   const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
   const typeFilter = useUiStore(selectTypeFilter);
+  const selectedIndex = useUiStore(selectSelectedIndex);
+  const setSelectedIndex = useUiStore((state) => state.setSelectedIndex);
+  const isKeyboardMode = useUiStore(selectIsKeyboardMode);
+  const setIsKeyboardMode = useUiStore((state) => state.setIsKeyboardMode);
   const {
     tagManagerEnabled,
     setAutoStart,
@@ -566,8 +572,6 @@ const App = () => {
   const { renderItemContent } = useClipboardItemRenderer({
     privacyProtection,
     revealedIds,
-    isKeyboardMode,
-    selectedIndex,
     isWindowPinned,
     editingTagsId,
     tagInput,
@@ -584,7 +588,6 @@ const App = () => {
     quickPasteHintsById,
     copyToClipboard,
     prefetchDetails,
-    setSelectedIndex,
     setRevealedIds,
     openContent,
     togglePin,
@@ -652,8 +655,6 @@ const App = () => {
           filteredHistory={filteredHistory}
           pinnedItems={pinnedItems}
           unpinnedItems={unpinnedItems}
-          selectedIndex={selectedIndex}
-          isKeyboardMode={isKeyboardMode}
           virtualListRef={virtualListRef}
           handlePinnedReorder={handlePinnedReorder}
           renderItemContent={renderItemContent}

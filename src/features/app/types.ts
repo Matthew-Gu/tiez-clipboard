@@ -33,10 +33,6 @@ export interface AppState {
   setWinClipboardDisabled: StateSetter<boolean>;
   showHotkeyHint: boolean;
   setShowHotkeyHint: StateSetter<boolean>;
-  selectedIndex: number;
-  setSelectedIndex: StateSetter<number>;
-  isKeyboardMode: boolean;
-  setIsKeyboardMode: StateSetter<boolean>;
   isLoadingMore: boolean;
   setIsLoadingMore: StateSetter<boolean>;
   hasMore: boolean;

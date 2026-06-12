@@ -8,12 +8,11 @@ import type { QuickPasteHint } from "../../features/clipboard/types";
 import type { ClipboardEntry } from "../types";
 import type { Locale } from "../types";
 import { hasSensitiveTag } from "../lib/sensitiveTags";
+import { useUiStore } from "../../features/app/stores/uiStore";
 
 interface UseClipboardItemRendererOptions {
   privacyProtection: boolean;
   revealedIds: Set<number>;
-  isKeyboardMode: boolean;
-  selectedIndex: number;
   isWindowPinned: boolean;
   editingTagsId: number | null;
   tagInput: string;
@@ -37,7 +36,6 @@ interface UseClipboardItemRendererOptions {
     tags?: string[]
   ) => Promise<void>;
   prefetchDetails: (ids: number[]) => void;
-  setSelectedIndex: Dispatch<SetStateAction<number>>;
   setRevealedIds: Dispatch<SetStateAction<Set<number>>>;
   openContent: (item: ClipboardEntry) => void;
   togglePin: (event: MouseEvent, id: number, isPinned: boolean) => void;
@@ -57,8 +55,6 @@ type RenderItemContent = (
 export const useClipboardItemRenderer = ({
   privacyProtection,
   revealedIds,
-  isKeyboardMode,
-  selectedIndex,
   isWindowPinned,
   editingTagsId,
   tagInput,
@@ -75,7 +71,6 @@ export const useClipboardItemRenderer = ({
   quickPasteHintsById,
   copyToClipboard,
   prefetchDetails,
-  setSelectedIndex,
   setRevealedIds,
   openContent,
   togglePin,
@@ -84,6 +79,9 @@ export const useClipboardItemRenderer = ({
   setTagInput,
   handleUpdateTags
 }: UseClipboardItemRendererOptions): { renderItemContent: RenderItemContent } => {
+  const selectedIndex = useUiStore((state) => state.selectedIndex);
+  const setSelectedIndex = useUiStore((state) => state.setSelectedIndex);
+  const isKeyboardMode = useUiStore((state) => state.isKeyboardMode);
   const renderItemContent = useCallback(
     (item: ClipboardEntry, index: number, dragControls?: DragControls, disableLayout?: boolean) => {
       const isSensitiveHidden =

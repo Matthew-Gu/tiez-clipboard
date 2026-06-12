@@ -22,8 +22,6 @@ export const useAppState = (): AppState => {
   const [isRecordingSearch, setIsRecordingSearch] = useState(false);
   const [winClipboardDisabled, setWinClipboardDisabled] = useState(false);
   const [showHotkeyHint, setShowHotkeyHint] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isKeyboardMode, setIsKeyboardMode] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentOffset, setCurrentOffset] = useState(0);
@@ -53,10 +51,6 @@ export const useAppState = (): AppState => {
     setWinClipboardDisabled,
     showHotkeyHint,
     setShowHotkeyHint,
-    selectedIndex,
-    setSelectedIndex,
-    isKeyboardMode,
-    setIsKeyboardMode,
     isLoadingMore,
     setIsLoadingMore,
     hasMore,
