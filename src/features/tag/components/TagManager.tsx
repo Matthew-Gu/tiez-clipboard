@@ -1,41 +1,20 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { invoke, convertFileSrc } from '@tauri-apps/api/core';
-import { listen, emit } from '@tauri-apps/api/event';
-import {
-    Edit2, Trash2, X, ChevronRight, LayoutGrid, List,
-    Clock, MousePointer2, ChevronLeft, Plus, Search, ExternalLink, CheckSquare, Copy
-} from 'lucide-react';
-import { getTagColor } from "../../../shared/lib/utils";
-import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
-import {
-    activateWindowFocus,
-    copyToClipboard as invokeCopyToClipboard,
-    deleteClipboardEntry,
-    openContent
-} from "../../../shared/ipc/commands";
-import { TAURI_EVENTS } from "../../../shared/ipc/contracts";
-import type { ClipboardEntry } from "../../../shared/types";
+import { activateWindowFocus } from "../../../shared/ipc/commands";
+import { useTagManagerData } from "../hooks/useTagManagerData";
+import TagManagerContent from "./TagManagerContent";
+import TagManagerDialogs from "./TagManagerDialogs";
+import TagManagerSidebar from "./TagManagerSidebar";
 
 interface TagManagerProps {
     t: (key: string) => string;
     theme: string;
 }
 
-interface TagInfo {
-    name: string;
-    count: number;
-}
-
 export default function TagManager({ t, theme }: TagManagerProps) {
     const TAG_MANAGER_VIEW_MODE_KEY = "tiez_tag_manager_view_mode";
-    const [tags, setTags] = useState<TagInfo[]>([]);
     const [tagSearch, setTagSearch] = useState('');
-    const [selectedTag, setSelectedTag] = useState<string | null>(null);
-    const [tagItems, setTagItems] = useState<ClipboardEntry[]>([]);
-    const [tagColors, setTagColors] = useState<Record<string, string>>({});
     const [editingTag, setEditingTag] = useState<string | null>(null);
     const [newTagName, setNewTagName] = useState('');
-    const [loading, setLoading] = useState(false);
     const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
         try {
             const saved = window.localStorage.getItem(TAG_MANAGER_VIEW_MODE_KEY);
@@ -44,7 +23,6 @@ export default function TagManager({ t, theme }: TagManagerProps) {
             return 'grid';
         }
     });
-    const [isDeleting, setIsDeleting] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState<{ show: boolean, tagName: string | null }>({ show: false, tagName: null });
     const [itemDeleteConfirmation, setItemDeleteConfirmation] = useState<{ show: boolean, id: number | null }>({ show: false, id: null });
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -59,9 +37,22 @@ export default function TagManager({ t, theme }: TagManagerProps) {
     const [isManageMode, setIsManageMode] = useState(false);
     const [selectedItemIds, setSelectedItemIds] = useState<Set<number>>(new Set());
     const containerRef = useRef<HTMLDivElement>(null);
-
-    const selectedTagRef = useRef<string | null>(null);
-    useEffect(() => { selectedTagRef.current = selectedTag; }, [selectedTag]);
+    const {
+        tags,
+        selectedTag,
+        tagItems,
+        tagColors,
+        loading,
+        loadTagItems,
+        createTag: createDataTag,
+        renameTag,
+        deleteTag,
+        setTagColor,
+        addManualItem,
+        updateItemContent,
+        copyItem,
+        deleteItems
+    } = useTagManagerData();
 
     useEffect(() => {
         try {
@@ -70,25 +61,6 @@ export default function TagManager({ t, theme }: TagManagerProps) {
             // Ignore storage write failures and keep UI functional.
         }
     }, [viewMode]);
-
-    useEffect(() => {
-        let unlisteners: (() => void)[] = [];
-        const setupListeners = async () => {
-            const handleUpdate = () => {
-                // Don't refresh if we're in the middle of a delete operation
-                if (isDeleting) return;
-                fetchTags();
-                if (selectedTagRef.current) loadTagItems(selectedTagRef.current);
-            };
-            unlisteners.push(await listen(TAURI_EVENTS.clipboardChanged, handleUpdate));
-            unlisteners.push(await listen(TAURI_EVENTS.clipboardUpdated, handleUpdate));
-            unlisteners.push(await listen(TAURI_EVENTS.clipboardRemoved, handleUpdate));
-        };
-        setupListeners();
-        return () => unlisteners.forEach(f => f());
-    }, [isDeleting]);
-
-    useEffect(() => { fetchTags(); }, []);
 
     useEffect(() => {
         const mediaQuery = window.matchMedia("(max-width: 340px)");
@@ -147,115 +119,46 @@ export default function TagManager({ t, theme }: TagManagerProps) {
         };
     }, [isResizing, isStacked]);
 
-    const fetchTags = async () => {
-        try {
-            const [tagMap, colors] = await Promise.all([
-                invoke<Record<string, number>>('get_all_tags_info'),
-                invoke<Record<string, string>>('get_tag_colors')
-            ]);
-
-            const tagArray = Object.entries(tagMap).map(([name, count]) => ({ name, count }));
-            tagArray.sort((a, b) => b.count - a.count);
-            setTags(tagArray);
-            setTagColors(colors || {});
-
-            const activeTag = selectedTagRef.current;
-            if (tagArray.length === 0) {
-                setSelectedTag(null);
-                setTagItems([]);
-                return;
-            }
-            if (!activeTag || !tagArray.some(tag => tag.name === activeTag)) {
-                loadTagItems(tagArray[0].name);
-            }
-        } catch (err) { console.error(err); }
-    };
-
-    const loadTagItems = async (tagName: string) => {
-        setLoading(true);
-        setSelectedTag(tagName);
-        try {
-            const items = await invoke<ClipboardEntry[]>('get_tag_items', { tag: tagName });
-            setTagItems(items || []);
-        } catch (err) { console.error(err); setTagItems([]); }
-        finally { setLoading(false); }
-    };
-
     const createTag = async (rawName: string) => {
-        const trimmed = rawName.trim();
-        if (!trimmed) return;
-
-        try {
-            await invoke('create_new_tag', { tagName: trimmed });
+        if (await createDataTag(rawName)) {
             setNewTagName('');
             setTagSearch('');
-            await fetchTags();
-            await loadTagItems(trimmed);
-        } catch (err) { console.error(err); }
+        }
     };
 
     const handleRenameTag = async (oldName: string) => {
         const trimmed = newTagName.trim();
         if (!trimmed || trimmed === oldName) { setEditingTag(null); return; }
-
-        if (isSensitiveTag(oldName)) {
-            setEditingTag(null);
-            return;
-        }
-
-        try {
-            await invoke('rename_tag_globally', { oldName, newName: trimmed });
-            if (selectedTag === oldName) setSelectedTag(trimmed);
-            await fetchTags();
-            await loadTagItems(trimmed);
+        if (await renameTag(oldName, trimmed)) {
             setEditingTag(null);
             setNewTagName('');
-        } catch (err) { console.error(err); }
-    };
-
-    const handleDeleteTag = async (tagName: string) => {
-        if (isSensitiveTag(tagName)) return;
-        setIsDeleting(true);
-        try {
-            await invoke('delete_tag_from_all', { tagName });
-            await emit(TAURI_EVENTS.clipboardChanged); // Notify App.tsx to refresh
-            await fetchTags();
-        } catch (err) { console.error(err); }
-        finally {
-            setIsDeleting(false);
         }
     };
 
     const handleAddManualItem = async () => {
-        if (!newItemContent.trim() || !selectedTag) return;
-        try {
-            await invoke('add_manual_item', {
-                content: newItemContent,
-                contentType: 'text',
-                tags: [selectedTag]
-            });
+        if (await addManualItem(newItemContent)) {
             setNewItemContent('');
             setIsCreatingItem(false);
-            await loadTagItems(selectedTag);
-        } catch (err) { console.error(err); }
+        }
     };
 
     const handleUpdateItemContent = async () => {
         if (!editingItem || !editingItem.content.trim()) return;
-        try {
-            await invoke('update_item_content', {
-                id: editingItem.id,
-                newContent: editingItem.content
-            });
+        if (await updateItemContent(editingItem.id, editingItem.content)) {
             setEditingItem(null);
-            if (selectedTag) await loadTagItems(selectedTag);
-        } catch (err) { console.error(err); }
+        }
     };
 
-    const copyToClipboard = async (id: number, content: string, type: string) => {
+    const handleDeleteItems = async (id: number) => {
         try {
-            await invokeCopyToClipboard({ content, contentType: type, paste: true, id, deleteAfterUse: false });
-        } catch (err) { console.error(err); }
+            await deleteItems(id === -1 ? Array.from(selectedItemIds) : [id]);
+            if (id === -1) {
+                setIsManageMode(false);
+                setSelectedItemIds(new Set());
+            }
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const filteredTags = useMemo(() => {
@@ -271,14 +174,6 @@ export default function TagManager({ t, theme }: TagManagerProps) {
         return b.timestamp - a.timestamp;
     });
 
-    const formatItemDate = (timestamp: number) => {
-        const date = new Date(timestamp);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-
     return (
         <div
             ref={containerRef}
@@ -289,155 +184,31 @@ export default function TagManager({ t, theme }: TagManagerProps) {
             } as any}
             onMouseDown={() => activateWindowFocus().catch(console.error)}
         >
-            {/* Sidebar with CRUD support */}
-            {/* Sidebar with Unified Search & Create */}
-            <div className="tag-sidebar">
-                <div className="sidebar-header">
-                    {!isCollapsed && <span className="header-label">{t('tags')}</span>}
-                    <button
-                        className="collapse-toggle"
-                        title={isCollapsed ? (t('open') || '展开') : (t('collapse') || '收起')}
-                        onClick={() => {
-                            const newCollapsed = !isCollapsed;
-                            setIsCollapsed(newCollapsed);
-                            if (!newCollapsed && sidebarWidth < 110) {
-                                setSidebarWidth(160);
-                            }
-                        }}
-                    >
-                        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-                    </button>
-                </div>
-
-                {!isCollapsed && (
-                    <div className="tag-search-box">
-                        <Search size={16} className="search-icon-placeholder" />
-                        <input
-                            placeholder={t('find_or_create')}
-                            value={tagSearch}
-                            onMouseDown={() => activateWindowFocus().catch(console.error)}
-                            onFocus={() => activateWindowFocus().catch(console.error)}
-                            onChange={e => setTagSearch(e.target.value)}
-                            onKeyDown={async (e) => {
-                                if (e.key === 'Enter' && tagSearch.trim()) {
-                                    // If exact match exists, select it. If not, create new.
-                                    const exactMatch = tags.find(t => t.name.toLowerCase() === normalizedTagSearch);
-                                    if (exactMatch) {
-                                        loadTagItems(exactMatch.name);
-                                    } else {
-                                        await createTag(tagSearch);
-                                    }
-                                }
-                            }}
-                        />
-                        {tagSearch ? (
-                            <div className="action-icons">
-                                { /* If no exact match, show Plus to indicate creation */}
-                                {canCreateTag ? (
-                                    <span
-                                        title={t('create_new_tag_tooltip')}
-                                        className="action-icon create"
-                                        onClick={() => createTag(tagSearch)}
-                                    >
-                                        <Plus size={12} />
-                                    </span>
-                                ) : null}
-                                <X size={12} className="action-icon clear" onClick={() => setTagSearch('')} />
-                            </div>
-                        ) : null}
-                    </div>
-                )}
-
-                <div className="tag-scroll custom-scrollbar">
-                    {filteredTags.map(tag => (
-                        <div
-                            key={tag.name}
-                            className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`}
-                            onClick={() => loadTagItems(tag.name)}
-                            title={tag.name}
-                        >
-                            <div className="tag-color-wrapper" onClick={(e) => e.stopPropagation()}>
-                                <div
-                                    className="tag-color-dot"
-                                    style={{ background: tagColors[tag.name] || getTagColor(tag.name, theme) }}
-                                    onClick={() => document.getElementById(`color-picker-${tag.name}`)?.click()}
-                                />
-                                <input
-                                    type="color"
-                                    id={`color-picker-${tag.name}`}
-                                    style={{ display: 'none' }}
-                                    value={tagColors[tag.name] || '#888888'} // Approximation if not set, or maybe convert HSL to Hex?
-                                    onChange={async (e) => {
-                                        const newColor = e.target.value;
-                                        setTagColors(prev => ({ ...prev, [tag.name]: newColor }));
-                                        await invoke('set_tag_color', { name: tag.name, color: newColor });
-                                        await emit(TAURI_EVENTS.tagColorsUpdated);
-                                    }}
-                                />
-                            </div>
-                            {editingTag === tag.name ? (
-                                <input
-                                    className="inline-tag-edit"
-                                    value={newTagName}
-                                    onMouseDown={() => activateWindowFocus().catch(console.error)}
-                                    onFocus={() => activateWindowFocus().catch(console.error)}
-                                    onChange={(e) => setNewTagName(e.target.value)}
-                                    autoFocus
-                                    onKeyDown={async (e) => {
-                                        if (e.key === 'Enter') {
-                                            await handleRenameTag(tag.name);
-                                        } else if (e.key === 'Escape') {
-                                            setEditingTag(null);
-                                        }
-                                    }}
-                                    onBlur={() => setEditingTag(null)}
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                            ) : (
-                                <>
-                                    <span className="tag-name">{tag.name}</span>
-                                    <div className="tag-hover-actions">
-                                        {!isSensitiveTag(tag.name) && (
-                                            <span title="重命名" onClick={(e) => {
-                                                e.stopPropagation();
-                                                setEditingTag(tag.name);
-                                                setNewTagName(tag.name);
-                                            }} style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                cursor: 'pointer'
-                                            }}>
-                                                <Edit2 size={12} />
-                                            </span>
-                                        )}
-                                        {!isSensitiveTag(tag.name) && (
-                                            <span title="删除" onClick={(e) => {
-                                                e.stopPropagation();
-                                                e.preventDefault();
-                                                setDeleteConfirmation({ show: true, tagName: tag.name });
-                                            }} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                                                <Trash2 size={12} />
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="tag-badge">{tag.count}</span>
-                                </>
-                            )}
-                        </div>
-                    ))}
-                    {filteredTags.length === 0 && !tagSearch.trim() && (
-                        <div className="sidebar-status">{t('no_tags')}</div>
-                    )}
-                    {/* Visual cue for creating new tag when filtering shows no results */}
-                    {!isCollapsed && canCreateTag && filteredTags.length === 0 && (
-                        <div className="tag-item create-hint" onClick={() => createTag(tagSearch)}>
-                            <div className="tag-color-dot" style={{ border: '1px dashed currentColor', background: 'transparent' }} />
-                            <span className="tag-name" style={{ opacity: 0.7 }}>{t('create_tag_hint').replace('{tag}', tagSearch.trim())}</span>
-                            <Plus size={10} />
-                        </div>
-                    )}
-                </div>
-            </div>
+            <TagManagerSidebar
+                t={t}
+                theme={theme}
+                tags={tags}
+                filteredTags={filteredTags}
+                tagColors={tagColors}
+                selectedTag={selectedTag}
+                tagSearch={tagSearch}
+                normalizedTagSearch={normalizedTagSearch}
+                canCreateTag={canCreateTag}
+                editingTag={editingTag}
+                newTagName={newTagName}
+                isCollapsed={isCollapsed}
+                sidebarWidth={sidebarWidth}
+                setTagSearch={setTagSearch}
+                setEditingTag={setEditingTag}
+                setNewTagName={setNewTagName}
+                setIsCollapsed={setIsCollapsed}
+                setSidebarWidth={setSidebarWidth}
+                setDeleteTagName={(tagName) => setDeleteConfirmation({ show: true, tagName })}
+                createTag={createTag}
+                renameTag={handleRenameTag}
+                loadTagItems={loadTagItems}
+                setTagColor={setTagColor}
+            />
 
             {!isCollapsed && (
                 <div 
@@ -451,330 +222,44 @@ export default function TagManager({ t, theme }: TagManagerProps) {
                 </div>
             )}
 
-            {/* Right Main Area */}
-            <div className="tag-content">
-                <div className="content-toolbar">
-                    <div className="toolbar-left">
-                        <div className="selected-tag-indicator">
-                            <span className="breadcrumb-marker">#</span>
-                            <span className="breadcrumb-text">{selectedTag || t('tags')}</span>
-                        </div>
-                        <div className="toolbar-divider" />
-                        <div className="sort-group">
-                            <button
-                                className={`sort-btn ${sortBy === 'time' ? 'active' : ''}`}
-                                title={t('sort_time') || '按时间'}
-                                onClick={() => setSortBy('time')}
-                            >
-                                <Clock size={12} />
-                                <span>{t('sort_time') || '时间'}</span>
-                            </button>
-                            <button
-                                className={`sort-btn ${sortBy === 'count' ? 'active' : ''}`}
-                                title={t('sort_usage') || '按频率'}
-                                onClick={() => setSortBy('count')}
-                            >
-                                <MousePointer2 size={12} />
-                                <span>{t('sort_usage') || '频率'}</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div className="toolbar-right">
-                        {selectedTag && (
-                            <div className="toolbar-actions">
-                                {isManageMode ? (
-                                    <>
-                                        <button
-                                            className="sort-btn"
-                                            onClick={() => {
-                                                setIsManageMode(false);
-                                                setSelectedItemIds(new Set());
-                                            }}
-                                        >
-                                            {t('cancel') || '取消'}
-                                        </button>
-                                        <button
-                                            className="sort-btn danger"
-                                            disabled={selectedItemIds.size === 0}
-                                            onClick={() => setItemDeleteConfirmation({ show: true, id: -1 })}
-                                        >
-                                            <Trash2 size={14} />
-                                            <span>{t('delete_selected') || '删除选中'}</span>
-                                        </button>
-                                        <button
-                                            className="sort-btn active"
-                                            disabled={selectedItemIds.size === 0}
-                                            onClick={async () => {
-                                                const selectedItems = tagItems.filter(item => selectedItemIds.has(item.id));
-                                                if (selectedItems.length > 0) {
-                                                    const combinedContent = selectedItems.map(item => item.content).join('\n');
-                                                    await invokeCopyToClipboard({
-                                                        content: combinedContent,
-                                                        contentType: 'text',
-                                                        paste: true,
-                                                        id: -1,
-                                                        deleteAfterUse: false
-                                                    });
-                                                    setIsManageMode(false);
-                                                    setSelectedItemIds(new Set());
-                                                }
-                                            }}
-                                        >
-                                            <Copy size={14} />
-                                            <span>{t('copy_selected') || '复制选中'}</span>
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button
-                                            className={`sort-btn manage-btn ${isManageMode ? 'active' : ''}`}
-                                            onClick={() => setIsManageMode(true)}
-                                            title={t('manage_items') || '管理条目'}
-                                        >
-                                            <CheckSquare size={14} />
-                                            <span>{t('manage') || '管理'}</span>
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    <div className="view-toggle">
-                        <button
-                            type="button"
-                            className={`toggle-btn btn-icon ${viewMode === 'list' ? 'active' : ''}`}
-                            title="列表视图"
-                            onClick={() => setViewMode('list')}
-                        ><List size={14} /></button>
-                        <button
-                            type="button"
-                            className={`toggle-btn btn-icon ${viewMode === 'grid' ? 'active' : ''}`}
-                            title="卡片视图"
-                            onClick={() => setViewMode('grid')}
-                        ><LayoutGrid size={14} /></button>
-                    </div>
-                    </div>
-                </div>
+            <TagManagerContent
+                t={t}
+                selectedTag={selectedTag}
+                tagItems={tagItems}
+                sortedItems={sortedItems}
+                loading={loading}
+                viewMode={viewMode}
+                sortBy={sortBy}
+                isManageMode={isManageMode}
+                selectedItemIds={selectedItemIds}
+                setViewMode={setViewMode}
+                setSortBy={setSortBy}
+                setIsManageMode={setIsManageMode}
+                setSelectedItemIds={setSelectedItemIds}
+                setItemDeleteId={(id) => setItemDeleteConfirmation({ show: true, id })}
+                setEditingItem={setEditingItem}
+                setIsCreatingItem={setIsCreatingItem}
+                copyItem={copyItem}
+            />
 
-                <div className="items-area custom-scrollbar">
-                    {loading ? <div className="status-msg">{t('processing')}</div> : sortedItems.length === 0 ? (
-                        <div className="status-msg">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</div>
-                    ) : (
-                        <div className={`items-${viewMode} ${isManageMode ? 'manage-mode' : ''}`}>
-                            {sortedItems.map(item => (
-                                <div
-                                    key={item.id}
-                                    className={`themed-card ${selectedItemIds.has(item.id) ? 'selected' : ''}`}
-                                    onClick={() => {
-                                        if (isManageMode) {
-                                            setSelectedItemIds(prev => {
-                                                const next = new Set(prev);
-                                                if (next.has(item.id)) next.delete(item.id);
-                                                else next.add(item.id);
-                                                return next;
-                                            });
-                                        } else {
-                                            copyToClipboard(item.id, item.content, item.content_type);
-                                        }
-                                    }}
-                                >
-                                    <div className="card-top-row">
-                                        <div className="card-actions-left">
-                                            {isManageMode ? (
-                                                <div className={`selection-indicator ${selectedItemIds.has(item.id) ? 'checked' : ''}`}>
-                                                    <div className="inner-check" />
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    {(item.content_type === 'text' || item.content_type === 'code') && (
-                                                        <button className="card-action-btn" title="编辑" onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setEditingItem({ id: item.id, content: item.content });
-                                                        }}>
-                                                            <Edit2 size={10} />
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        className="card-action-btn"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            openContent({
-                                                                id: item.id,
-                                                                content: item.content,
-                                                                contentType: item.content_type
-                                                            });
-                                                        }}
-                                                        title={t('open')}
-                                                    >
-                                                        <ExternalLink size={10} />
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-                                        {!isManageMode && (
-                                            <button className="del-btn" title="删除" onClick={(e) => {
-                                                e.stopPropagation();
-                                                setItemDeleteConfirmation({ show: true, id: item.id });
-                                            }}>
-                                                <X size={10} />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {item.content_type === 'image' ? (
-                                        <div className="card-media">
-                                            <img
-                                                src={item.content.startsWith('data:') ? item.content : convertFileSrc(item.content)}
-                                                alt=""
-                                                className="image-preview"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="card-body-text">{item.preview || item.content}</div>
-                                    )}
-
-                                    <div className="card-divider" />
-                                    <div className="card-footer">
-                                        <span className="meta-time">{formatItemDate(item.timestamp)}</span>
-                                        <div className="meta-usage"><MousePointer2 size={8} /> {item.use_count || 0}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-                {selectedTag && !isManageMode && (
-                    <button
-                        className="fab-add-btn"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setIsCreatingItem(true);
-                        }}
-                        title={t('add_item')}
-                    >
-                        <Plus size={24} />
-                    </button>
-                )}
-            </div>
-
-            {/* Modals for Create (Rename is handled inline now) */}
-            {/* Kept minimal if needed for future extensions, but currently inline handles rename */}
-
-            {/* Tag Delete Confirmation Modal */}
-            {deleteConfirmation.show && (
-                <div className="modal-overlay" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>
-                    <div className={`confirm-dialog tag-manager-dialog theme-${theme}`} onClick={(e) => e.stopPropagation()}>
-                        <h3>{t('confirm_delete')}</h3>
-                        <p>
-                            {t('confirm_delete_tag')}
-                            <br />
-                            <span className="tag-highlight" style={{ marginTop: '8px', display: 'inline-block' }}>
-                                {deleteConfirmation.tagName}
-                            </span>
-                        </p>
-                        <div className="confirm-dialog-buttons">
-                            <button className="confirm-dialog-button" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>
-                                {t('cancel')}
-                            </button>
-                            <button className="confirm-dialog-button primary" onClick={() => {
-                                if (deleteConfirmation.tagName) {
-                                    handleDeleteTag(deleteConfirmation.tagName);
-                                }
-                                setDeleteConfirmation({ show: false, tagName: null });
-                            }}>
-                                {t('delete')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Item Delete Confirmation Modal */}
-            {itemDeleteConfirmation.show && (
-                <div className="modal-overlay" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>
-                    <div className={`confirm-dialog tag-manager-dialog theme-${theme}`} onClick={e => e.stopPropagation()}>
-                        <h3>{t('confirm_delete')}</h3>
-                        <p>{t('confirm_delete_desc') || "确定要删除这条记录吗？"}</p>
-                        <div className="confirm-dialog-buttons">
-                            <button className="confirm-dialog-button" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>
-                                {t('cancel')}
-                            </button>
-                            <button className="confirm-dialog-button primary" onClick={async () => {
-                                if (itemDeleteConfirmation.id === -1) {
-                                    // Bulk delete
-                                    try {
-                                        for (const id of Array.from(selectedItemIds)) {
-                                            await deleteClipboardEntry(id);
-                                        }
-                                        setIsManageMode(false);
-                                        setSelectedItemIds(new Set());
-                                        if (selectedTag) await loadTagItems(selectedTag);
-                                        emit(TAURI_EVENTS.clipboardChanged);
-                                    } catch (err) { console.error(err); }
-                                } else if (itemDeleteConfirmation.id) {
-                                    await deleteClipboardEntry(itemDeleteConfirmation.id);
-                                    loadTagItems(selectedTag!);
-                                    emit(TAURI_EVENTS.clipboardChanged);
-                                }
-                                setItemDeleteConfirmation({ show: false, id: null });
-                            }}>
-                                {t('delete')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Create Item Modal */}
-            {isCreatingItem && (
-                <div className="modal-overlay" onClick={() => setIsCreatingItem(false)}>
-                    <div className={`confirm-dialog tag-manager-dialog theme-${theme}`} onClick={e => e.stopPropagation()}>
-                        <h3>{t('add_item')}</h3>
-                        <div className="modal-input-field">
-                            <textarea
-                                className="tag-manager-textarea"
-                                value={newItemContent}
-                                onChange={e => setNewItemContent(e.target.value)}
-                                placeholder={t('input_content_placeholder')}
-                                autoFocus
-                            />
-                        </div>
-                        <div className="confirm-dialog-buttons">
-                            <button className="confirm-dialog-button" onClick={() => setIsCreatingItem(false)}>
-                                {t('cancel')}
-                            </button>
-                            <button className="confirm-dialog-button primary" onClick={handleAddManualItem}>
-                                {t('confirm')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Edit Item Modal */}
-            {editingItem && (
-                <div className="modal-overlay" onClick={() => setEditingItem(null)}>
-                    <div className={`confirm-dialog tag-manager-dialog theme-${theme}`} onClick={e => e.stopPropagation()}>
-                        <h3>{t('edit_item')}</h3>
-                        <div className="modal-input-field">
-                            <textarea
-                                className="tag-manager-textarea"
-                                value={editingItem.content}
-                                onChange={e => setEditingItem({ ...editingItem, content: e.target.value })}
-                                autoFocus
-                            />
-                        </div>
-                        <div className="confirm-dialog-buttons">
-                            <button className="confirm-dialog-button" onClick={() => setEditingItem(null)}>
-                                {t('cancel')}
-                            </button>
-                            <button className="confirm-dialog-button primary" onClick={handleUpdateItemContent}>
-                                {t('save')}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <TagManagerDialogs
+                t={t}
+                theme={theme}
+                deleteConfirmation={deleteConfirmation}
+                itemDeleteConfirmation={itemDeleteConfirmation}
+                isCreatingItem={isCreatingItem}
+                newItemContent={newItemContent}
+                editingItem={editingItem}
+                setDeleteConfirmation={setDeleteConfirmation}
+                setItemDeleteConfirmation={setItemDeleteConfirmation}
+                setIsCreatingItem={setIsCreatingItem}
+                setNewItemContent={setNewItemContent}
+                setEditingItem={setEditingItem}
+                onDeleteTag={deleteTag}
+                onDeleteItems={handleDeleteItems}
+                onAddItem={handleAddManualItem}
+                onUpdateItem={handleUpdateItemContent}
+            />
             <style>{`
                 .themed-tag-manager {
                     display: grid;

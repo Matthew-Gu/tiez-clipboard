@@ -10,7 +10,7 @@
 - 开始时间：阶段 1 于 2026-06-11 10:04:50 +08:00 开始
 - 完成时间：待完成
 - 依赖阶段：无
-- 当前阶段：阶段 6 跨组件 UI 状态迁移实现完成，待人工验收
+- 当前阶段：阶段 7 高复杂度组件拆分已完成，待启动阶段 8
 - 阻塞项：无
 
 ## 验证结果
@@ -30,6 +30,9 @@
 - 阶段 5 自动化门禁：`npm test` 48 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；主 JS 778.61 kB，gzip 240.77 kB
 - 阶段 5 人工回归：用户于 2026-06-12 确认验收通过
 - 阶段 6 自动化门禁：`npm test` 48 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；主 JS 778.58 kB，gzip 240.85 kB
+- 阶段 6 人工回归：用户于 2026-06-12 确认验收通过
+- 阶段 7 自动化门禁：`npm test` 53 个测试通过；`npx tsc --noEmit`、`npm run build` 与 `git diff --check` 通过；主 JS 780.17 kB，gzip 241.83 kB
+- 阶段 7 人工回归：用户于 2026-06-12 确认验收通过
 
 ## 相关提交
 
@@ -228,8 +231,8 @@
 | 3. 路由迁移 | [03-ROUTER-MIGRATION.md](./03-ROUTER-MIGRATION.md) | 已完成 | 2-3 天 | 本次执行约 0.1 小时，不含人工回归 | 阶段 2 |
 | 4. Zustand 基础 | [04-ZUSTAND-FOUNDATION.md](./04-ZUSTAND-FOUNDATION.md) | 已完成 | 2-3 天 | 本次执行约 0.1 小时 | 阶段 3 |
 | 5. 设置迁移 | [05-SETTINGS-MIGRATION.md](./05-SETTINGS-MIGRATION.md) | 已完成 | 4-6 天 | 本次执行约 0.2 小时，不含人工回归 | 阶段 4 |
-| 6. UI 状态迁移 | [06-UI-STATE-MIGRATION.md](./06-UI-STATE-MIGRATION.md) | 实现完成，待人工验收 | 3-5 天 | 本次执行约 0.1 小时，不含人工回归 | 阶段 5 |
-| 7. 组件拆分 | [07-COMPONENT-SPLITTING.md](./07-COMPONENT-SPLITTING.md) | 未开始 | 6-9 天 | 待记录 | 阶段 6 |
+| 6. UI 状态迁移 | [06-UI-STATE-MIGRATION.md](./06-UI-STATE-MIGRATION.md) | 已完成 | 3-5 天 | 本次执行约 0.1 小时，不含人工回归 | 阶段 5 |
+| 7. 组件拆分 | [07-COMPONENT-SPLITTING.md](./07-COMPONENT-SPLITTING.md) | 已完成 | 6-9 天 | 本次执行约 0.3 小时，不含人工回归 | 阶段 6 |
 | 8. Less、样式与清理 | [08-STYLES-AND-CLEANUP.md](./08-STYLES-AND-CLEANUP.md) | 未开始 | 4-7 天 | 待记录 | 阶段 7 |
 | 9. 回归收尾 | [09-REGRESSION-CLOSEOUT.md](./09-REGRESSION-CLOSEOUT.md) | 未开始 | 2-3 天 | 待记录 | 阶段 8 |
 
@@ -321,3 +324,5 @@
 | 2026-06-11 | React Router、Zustand、Less 保留为三项已批准例外 | 已确认能够针对现有导航、状态和大型样式问题进行有限治理 |
 | 2026-06-12 | 首页列表缓存补充与紧凑模式移除人工复验通过，启动阶段 5 | 阶段 5 阻塞已解除 |
 | 2026-06-12 | 阶段 5 设置状态迁移人工验收通过，启动阶段 6 | 设置状态迁移已满足阶段门禁 |
+| 2026-06-12 | 阶段 6 跨组件 UI 状态迁移人工验收通过，启动阶段 7 | UI 状态迁移已满足阶段门禁；阶段 7 不恢复已移除的紧凑预览窗口 |
+| 2026-06-12 | 阶段 7 高复杂度组件拆分人工验收通过 | 组件拆分已满足阶段门禁，阶段 8 尚未启动 |

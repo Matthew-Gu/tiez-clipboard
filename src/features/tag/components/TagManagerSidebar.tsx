@@ -1,0 +1,183 @@
+import { ChevronLeft, ChevronRight, Edit2, Plus, Search, Trash2, X } from "lucide-react";
+import { activateWindowFocus } from "../../../shared/ipc/commands";
+import { isSensitiveTag } from "../../../shared/lib/sensitiveTags";
+import { getTagColor } from "../../../shared/lib/utils";
+import type { TagInfo } from "../hooks/useTagManagerData";
+
+interface TagManagerSidebarProps {
+    t: (key: string) => string;
+    theme: string;
+    tags: TagInfo[];
+    filteredTags: TagInfo[];
+    tagColors: Record<string, string>;
+    selectedTag: string | null;
+    tagSearch: string;
+    normalizedTagSearch: string;
+    canCreateTag: boolean;
+    editingTag: string | null;
+    newTagName: string;
+    isCollapsed: boolean;
+    sidebarWidth: number;
+    setTagSearch: (value: string) => void;
+    setEditingTag: (value: string | null) => void;
+    setNewTagName: (value: string) => void;
+    setIsCollapsed: (value: boolean) => void;
+    setSidebarWidth: (value: number) => void;
+    setDeleteTagName: (value: string) => void;
+    createTag: (name: string) => Promise<void>;
+    renameTag: (oldName: string) => Promise<void>;
+    loadTagItems: (tagName: string) => Promise<void>;
+    setTagColor: (name: string, color: string) => Promise<void>;
+}
+
+const TagManagerSidebar = ({
+    t,
+    theme,
+    tags,
+    filteredTags,
+    tagColors,
+    selectedTag,
+    tagSearch,
+    normalizedTagSearch,
+    canCreateTag,
+    editingTag,
+    newTagName,
+    isCollapsed,
+    sidebarWidth,
+    setTagSearch,
+    setEditingTag,
+    setNewTagName,
+    setIsCollapsed,
+    setSidebarWidth,
+    setDeleteTagName,
+    createTag,
+    renameTag,
+    loadTagItems,
+    setTagColor
+}: TagManagerSidebarProps) => (
+    <div className="tag-sidebar">
+        <div className="sidebar-header">
+            {!isCollapsed && <span className="header-label">{t('tags')}</span>}
+            <button
+                className="collapse-toggle"
+                title={isCollapsed ? (t('open') || '展开') : (t('collapse') || '收起')}
+                onClick={() => {
+                    const collapsed = !isCollapsed;
+                    setIsCollapsed(collapsed);
+                    if (!collapsed && sidebarWidth < 110) setSidebarWidth(160);
+                }}
+            >
+                {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            </button>
+        </div>
+
+        {!isCollapsed && (
+            <div className="tag-search-box">
+                <Search size={16} className="search-icon-placeholder" />
+                <input
+                    placeholder={t('find_or_create')}
+                    value={tagSearch}
+                    onMouseDown={() => activateWindowFocus().catch(console.error)}
+                    onFocus={() => activateWindowFocus().catch(console.error)}
+                    onChange={(event) => setTagSearch(event.target.value)}
+                    onKeyDown={async (event) => {
+                        if (event.key !== 'Enter' || !tagSearch.trim()) return;
+                        const exactMatch = tags.find((tag) => tag.name.toLowerCase() === normalizedTagSearch);
+                        if (exactMatch) await loadTagItems(exactMatch.name);
+                        else await createTag(tagSearch);
+                    }}
+                />
+                {tagSearch ? (
+                    <div className="action-icons">
+                        {canCreateTag && (
+                            <span title={t('create_new_tag_tooltip')} className="action-icon create" onClick={() => createTag(tagSearch)}>
+                                <Plus size={12} />
+                            </span>
+                        )}
+                        <X size={12} className="action-icon clear" onClick={() => setTagSearch('')} />
+                    </div>
+                ) : null}
+            </div>
+        )}
+
+        <div className="tag-scroll custom-scrollbar">
+            {filteredTags.map((tag) => (
+                <div key={tag.name} className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`} onClick={() => loadTagItems(tag.name)} title={tag.name}>
+                    <div className="tag-color-wrapper" onClick={(event) => event.stopPropagation()}>
+                        <div
+                            className="tag-color-dot"
+                            style={{ background: tagColors[tag.name] || getTagColor(tag.name, theme) }}
+                            onClick={() => document.getElementById(`color-picker-${tag.name}`)?.click()}
+                        />
+                        <input
+                            type="color"
+                            id={`color-picker-${tag.name}`}
+                            style={{ display: 'none' }}
+                            value={tagColors[tag.name] || '#888888'}
+                            onChange={(event) => setTagColor(tag.name, event.target.value)}
+                        />
+                    </div>
+                    {editingTag === tag.name ? (
+                        <input
+                            className="inline-tag-edit"
+                            value={newTagName}
+                            onMouseDown={() => activateWindowFocus().catch(console.error)}
+                            onFocus={() => activateWindowFocus().catch(console.error)}
+                            onChange={(event) => setNewTagName(event.target.value)}
+                            autoFocus
+                            onKeyDown={async (event) => {
+                                if (event.key === 'Enter') await renameTag(tag.name);
+                                else if (event.key === 'Escape') setEditingTag(null);
+                            }}
+                            onBlur={() => setEditingTag(null)}
+                            onClick={(event) => event.stopPropagation()}
+                        />
+                    ) : (
+                        <>
+                            <span className="tag-name">{tag.name}</span>
+                            <div className="tag-hover-actions">
+                                {!isSensitiveTag(tag.name) && (
+                                    <span
+                                        title="重命名"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            setEditingTag(tag.name);
+                                            setNewTagName(tag.name);
+                                        }}
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    >
+                                        <Edit2 size={12} />
+                                    </span>
+                                )}
+                                {!isSensitiveTag(tag.name) && (
+                                    <span
+                                        title="删除"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            event.preventDefault();
+                                            setDeleteTagName(tag.name);
+                                        }}
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    >
+                                        <Trash2 size={12} />
+                                    </span>
+                                )}
+                            </div>
+                            <span className="tag-badge">{tag.count}</span>
+                        </>
+                    )}
+                </div>
+            ))}
+            {filteredTags.length === 0 && !tagSearch.trim() && <div className="sidebar-status">{t('no_tags')}</div>}
+            {!isCollapsed && canCreateTag && filteredTags.length === 0 && (
+                <div className="tag-item create-hint" onClick={() => createTag(tagSearch)}>
+                    <div className="tag-color-dot" style={{ border: '1px dashed currentColor', background: 'transparent' }} />
+                    <span className="tag-name" style={{ opacity: 0.7 }}>{t('create_tag_hint').replace('{tag}', tagSearch.trim())}</span>
+                    <Plus size={10} />
+                </div>
+            )}
+        </div>
+    </div>
+);
+
+export default TagManagerSidebar;
