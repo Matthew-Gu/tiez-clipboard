@@ -158,7 +158,7 @@ const ClipboardItemTags = ({
                             aria-controls={pickableSuggestions.length > 0 && onTagPick ? `tag-suggest-list-${itemId}` : undefined}
                             aria-activedescendant={suggestionIndex >= 0 && pickableSuggestions.length > 0 && onTagPick ? `tag-suggest-opt-${itemId}-${suggestionIndex}` : undefined}
                             placeholder={t('enter_tag_name')}
-                            style={{ background: 'var(--bg-input)', border: 'none', borderRadius: '0', padding: '2px 6px', fontSize: '10px', color: 'var(--text-primary)', outline: 'none' }}
+                            style={{ background: 'var(--bg-input)', border: 'none', borderRadius: '6px', padding: '2px 6px', fontSize: '10px', color: 'var(--text-primary)', outline: 'none' }}
                             onClick={(event) => event.stopPropagation()}
                         />
                         <button
