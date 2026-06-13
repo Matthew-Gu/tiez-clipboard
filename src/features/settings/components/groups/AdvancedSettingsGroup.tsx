@@ -326,30 +326,30 @@ const AdvancedSettingsGroup = ({
     };
 
     return (
-        <div className="settings-subpage advanced-settings-page">
+        <div className="settings-page__subpage advanced-settings">
             {page === "list" ? (
-                <section className="advanced-list-page">
-                    <div className="advanced-sidebar-search">
+                <section className="advanced-settings__list-page">
+                    <div className="advanced-settings__search">
                         <input
-                            className="ui-input advanced-ui-input"
+                            className="ui-input advanced-settings__search-input"
                             placeholder={t("search_apps_placeholder")}
                             value={searchText}
                             onFocus={focusEditorWindow}
                             onChange={(e) => setSearchText(e.target.value)}
                         />
                         {searchResults.length > 0 && (
-                            <div className="advanced-search-results">
+                            <div className="advanced-settings__search-results">
                                 {searchResults.map((app) => (
                                     <button
                                         key={app.value}
                                         type="button"
-                                        className="advanced-search-result-item"
+                                        className="advanced-settings__search-result"
                                         onClick={() => handleAddApp(app)}
                                     >
-                                        <span className="advanced-search-result-main">
-                                            <span className="advanced-search-result-name">{app.label}</span>
+                                        <span className="advanced-settings__search-result-main">
+                                            <span className="advanced-settings__search-result-name">{app.label}</span>
                                         </span>
-                                        <span className="advanced-search-result-action">
+                                        <span className="advanced-settings__search-result-action">
                                             {app.added ? t("advanced_open_added_app") : t("advanced_add_app")}
                                         </span>
                                     </button>
@@ -358,17 +358,17 @@ const AdvancedSettingsGroup = ({
                         )}
                     </div>
 
-                    <div className="advanced-target-list">
+                    <div className="advanced-settings__target-list">
                         {filteredTargets.map((target) => (
                             <button
                                 key={target.id}
                                 type="button"
-                                className={`advanced-target-item ${selectedTarget?.id === target.id ? "active" : ""}`}
+                                className={`advanced-settings__target ${selectedTarget?.id === target.id ? "advanced-settings__target--active" : ""}`}
                                 onClick={() => openTarget(target.id)}
                             >
-                                <span className="advanced-target-meta">
-                                    <span className="advanced-target-name">{target.label}</span>
-                                    <span className="advanced-target-sub">
+                                <span className="advanced-settings__target-meta">
+                                    <span className="advanced-settings__target-name">{target.label}</span>
+                                    <span className="advanced-settings__target-detail">
                                         {target.kind === "app" && appCleanupPolicies.find(p => p.id === target.policyId || p.appPath === target.appPath)?.action === "ignore"
                                             ? t("app_cleanup_policy_ignore")
                                             : target.ruleCount > 0
@@ -380,7 +380,7 @@ const AdvancedSettingsGroup = ({
                                 {target.kind !== "global" && (
                                     <button
                                         type="button"
-                                        className="advanced-target-delete"
+                                        className="advanced-settings__target-delete"
                                         onClick={(e) => handleDeleteTarget(e, target)}
                                         title={t("delete")}
                                     >
@@ -392,29 +392,29 @@ const AdvancedSettingsGroup = ({
                     </div>
                 </section>
             ) : (
-                <section className="advanced-detail-page">
-                    <div className="advanced-editor">
-                    <div className="advanced-editor-toolbar">
+                <section className="advanced-settings__detail-page">
+                    <div className="advanced-settings__editor">
+                    <div className="advanced-settings__toolbar">
                         {showInlineBack && (
                             <button
                                 type="button"
-                                className="ui-button ui-button--icon advanced-back-btn"
+                                className="ui-button ui-button--icon advanced-settings__back"
                                 onClick={() => onPageChange(transitionTwoLevelPage(page, "show-list"))}
                                 title={t("back")}
                             >
                                 <ChevronLeft size={16} />
                             </button>
                         )}
-                        <div className="advanced-editor-heading">
-                            <div className="advanced-editor-title">{selectedTarget?.label}</div>
-                            <div className="advanced-editor-subtitle">
+                        <div className="advanced-settings__heading">
+                            <div className="advanced-settings__title">{selectedTarget?.label}</div>
+                            <div className="advanced-settings__subtitle">
                                 {selectedTarget?.kind === "global"
                                     ? t("advanced_global_rules_hint")
                                     : t("advanced_app_rules_hint")}
                             </div>
                         </div>
                         {selectedTarget?.kind === "global" || (appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore") ? (
-                            <button type="button" className="ui-button ui-button--icon advanced-add-rule-btn" onClick={addRule}>
+                            <button type="button" className="ui-button ui-button--icon advanced-settings__add-rule" onClick={addRule}>
                                 <Plus size={14} />
                                 <span>{t("advanced_add_rule")}</span>
                             </button>
@@ -422,10 +422,10 @@ const AdvancedSettingsGroup = ({
                     </div>
 
                     {selectedTarget?.kind === "app" && (
-                        <div className="advanced-action-toggle">
-                            <div className="advanced-action-info">
-                                <span className="advanced-action-label">记录此应用的内容？</span>
-                                <span className="advanced-action-hint">
+                        <div className="advanced-settings__capture">
+                            <div className="advanced-settings__capture-info">
+                                <span className="advanced-settings__capture-label">记录此应用的内容？</span>
+                                <span className="advanced-settings__capture-hint">
                                     {appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action === "ignore"
                                         ? "当前已关闭记录，来自该应用的剪贴板内容将被忽略"
                                         : "当前已开启记录，您可以点击上方按钮添加清洗或拦截规则"
@@ -434,13 +434,13 @@ const AdvancedSettingsGroup = ({
                             </div>
                             <button 
                                 type="button" 
-                                className={`advanced-action-switch ${appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore" ? "active" : ""}`}
+                                className={`advanced-settings__capture-switch ${appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore" ? "advanced-settings__capture-switch--active" : ""}`}
                                 onClick={toggleTargetAction}
                             >
-                                <span className="advanced-action-switch-track">
-                                    <span className="advanced-action-switch-thumb" />
+                                <span className="advanced-settings__capture-track">
+                                    <span className="advanced-settings__capture-thumb" />
                                 </span>
-                                <span className="advanced-action-switch-label">
+                                <span className="advanced-settings__capture-state">
                                     {appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore"
                                         ? "开启"
                                         : "关闭"
@@ -450,20 +450,20 @@ const AdvancedSettingsGroup = ({
                         </div>
                     )}
 
-                    <div className="advanced-rule-list">
+                    <div className="advanced-settings__rule-list">
                         {selectedTarget?.kind === "app" && appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action === "ignore" ? (
-                            <div className="advanced-empty-state ignore-mode">
-                                <div className="advanced-empty-title">已停止记录</div>
-                                <div className="advanced-empty-text">
+                            <div className="advanced-settings__empty advanced-settings__empty--ignored">
+                                <div className="advanced-settings__empty-title">已停止记录</div>
+                                <div className="advanced-settings__empty-text">
                                     当前应用已被设置为忽略，记录功能已关闭。
                                 </div>
                             </div>
                         ) : (
                             <>
                                 {draftRules.length === 0 && (
-                                    <div className="advanced-empty-state">
-                                        <div className="advanced-empty-title">{t("advanced_empty_rules_title")}</div>
-                                        <div className="advanced-empty-text">
+                                    <div className="advanced-settings__empty">
+                                        <div className="advanced-settings__empty-title">{t("advanced_empty_rules_title")}</div>
+                                        <div className="advanced-settings__empty-text">
                                             {selectedTarget?.kind === "global"
                                                 ? t("advanced_empty_rules_global")
                                                 : t("advanced_empty_rules_app")}
@@ -474,35 +474,35 @@ const AdvancedSettingsGroup = ({
                                 {draftRules.map((rule, index) => {
                                     const expanded = expandedRuleIndex === index;
                                     return (
-                                        <div key={`${selectedTarget?.id ?? "target"}-${index}`} className="advanced-rule-card">
+                                        <div key={`${selectedTarget?.id ?? "target"}-${index}`} className="advanced-settings__rule">
                                             <button
                                                 type="button"
-                                                className="advanced-rule-header"
+                                                className="advanced-settings__rule-header"
                                                 onClick={() => setExpandedRuleIndex(expanded ? null : index)}
                                             >
-                                                <span className="advanced-rule-title">
+                                                <span className="advanced-settings__rule-title">
                                                     {rule.label?.trim() || `${t("advanced_rule_label")} ${index + 1}`}
                                                 </span>
                                                 {expanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                                             </button>
 
                                             {expanded && (
-                                                <div className="advanced-rule-body">
-                                                    <div className="advanced-rule-field">
+                                                <div className="advanced-settings__rule-body">
+                                                    <div className="advanced-settings__rule-field">
                                                         <label>{t("advanced_rule_label_name")}</label>
                                                         <input
                                                             type="text"
-                                                            className="ui-input advanced-rule-input"
+                                                            className="ui-input advanced-settings__rule-input"
                                                             value={rule.label ?? ""}
                                                             placeholder={`${t("advanced_rule_label")} ${index + 1}`}
                                                             onFocus={focusEditorWindow}
                                                             onChange={(e) => updateRule(index, { label: e.target.value })}
                                                         />
                                                     </div>
-                                                    <div className="advanced-rule-field">
+                                                    <div className="advanced-settings__rule-field">
                                                         <label>{t("advanced_match_label")}</label>
                                                         <textarea
-                                                            className="ui-input advanced-rule-textarea"
+                                                            className="ui-input advanced-settings__rule-textarea"
                                                             value={rule.match}
                                                             placeholder={t("advanced_match_placeholder")}
                                                             onFocus={focusEditorWindow}
@@ -510,19 +510,19 @@ const AdvancedSettingsGroup = ({
                                                         />
                                                     </div>
 
-                                                    <div className="advanced-rule-field">
+                                                    <div className="advanced-settings__rule-field">
                                                         <label>命中后动作</label>
-                                                        <div className="advanced-rule-action-tabs">
+                                                        <div className="advanced-settings__action-tabs">
                                                             <button 
                                                                 type="button" 
-                                                                className={`advanced-rule-action-tab ${rule.actionType === "replace" ? "active" : ""}`}
+                                                                className={`advanced-settings__action-tab ${rule.actionType === "replace" ? "advanced-settings__action-tab--active" : ""}`}
                                                                 onClick={() => updateRule(index, { actionType: "replace" })}
                                                             >
                                                                 {t("advanced_replace_label")}
                                                             </button>
                                                             <button 
                                                                 type="button" 
-                                                                className={`advanced-rule-action-tab ${rule.actionType === "ignore" ? "active" : ""}`}
+                                                                className={`advanced-settings__action-tab ${rule.actionType === "ignore" ? "advanced-settings__action-tab--active" : ""}`}
                                                                 onClick={() => updateRule(index, { actionType: "ignore" })}
                                                             >
                                                                 {t("app_cleanup_policy_ignore")}
@@ -531,10 +531,10 @@ const AdvancedSettingsGroup = ({
                                                     </div>
 
                                                     {rule.actionType === "replace" && (
-                                                        <div className="advanced-rule-field">
+                                                        <div className="advanced-settings__rule-field">
                                                             <label>{t("advanced_replace_label")}</label>
                                                             <textarea
-                                                                className="ui-input advanced-rule-textarea"
+                                                                className="ui-input advanced-settings__rule-textarea"
                                                                 value={rule.replace}
                                                                 placeholder={t("advanced_replace_placeholder")}
                                                                 onFocus={focusEditorWindow}
@@ -543,10 +543,10 @@ const AdvancedSettingsGroup = ({
                                                         </div>
                                                     )}
 
-                                                    <div className="advanced-rule-actions">
+                                                    <div className="advanced-settings__rule-actions">
                                                         <button
                                                             type="button"
-                                                            className="ui-button ui-button--icon advanced-delete-btn"
+                                                            className="ui-button ui-button--icon advanced-settings__delete-rule"
                                                             onClick={() => deleteRule(index)}
                                                         >
                                                             <Trash2 size={14} />

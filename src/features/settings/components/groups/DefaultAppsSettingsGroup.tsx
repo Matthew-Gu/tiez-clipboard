@@ -34,17 +34,17 @@ const DefaultAppsSettingsGroup = ({
     };
 
     return (
-        <div className={`settings-group ${collapsed ? 'collapsed' : ''}`}>
-            <div className="group-header" onClick={onToggle}>
+        <div className={`settings-group ${collapsed ? 'settings-group--collapsed' : ''}`}>
+            <div className="settings-group__header" onClick={onToggle}>
                 <h3 style={{ margin: 0 }}>{t('default_apps')}</h3>
                 {collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
             </div>
             {!collapsed && (
-                <div className="group-content">
+                <div className="settings-group__content">
                     {APP_TYPES.map((type, idx, arr) => (
-                        <div key={type} className={`setting-item column ${idx === arr.length - 1 ? 'no-border' : ''}`}>
+                        <div key={type} className={`settings-group__item settings-group__item--column ${idx === arr.length - 1 ? 'settings-group__item--borderless' : ''}`}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                <span className="item-label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{getTypeName(type)}</span>
+                                <span className="settings-group__label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{getTypeName(type)}</span>
                                 <button
                                     className="ui-button ui-button--icon"
                                     onClick={() => setShowAppSelector(type)}
@@ -55,7 +55,7 @@ const DefaultAppsSettingsGroup = ({
                                 </button>
                             </div>
 
-                            <div onClick={() => setShowAppSelector(type)} className="data-panel" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div onClick={() => setShowAppSelector(type)} className="settings-group__data-panel" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {appSettings[`app.${type}`]
                                     ? (() => {
                                         const path = appSettings[`app.${type}`];

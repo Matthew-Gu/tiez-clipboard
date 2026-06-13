@@ -10,16 +10,16 @@ interface DataSettingsGroupProps {
 }
 
 const DataSettingsGroup = ({ t, collapsed, onToggle, dataPath }: DataSettingsGroupProps) => (
-    <div className={`settings-group ${collapsed ? 'collapsed' : ''}`}>
-        <div className="group-header" onClick={onToggle}>
+    <div className={`settings-group ${collapsed ? 'settings-group--collapsed' : ''}`}>
+        <div className="settings-group__header" onClick={onToggle}>
             <h3 style={{ margin: 0 }}>{t('data_management')}</h3>
             {collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
         </div>
         {!collapsed && (
-            <div className="group-content">
-                <div className="setting-item column no-border">
+            <div className="settings-group__content">
+                <div className="settings-group__item settings-group__item--column settings-group__item--borderless">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <span className="item-label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{t('data_path')}</span>
+                        <span className="settings-group__label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{t('data_path')}</span>
                         <div style={{ display: 'flex', gap: '8px' }}>
                             <button
                                 className="ui-button ui-button--icon"
@@ -78,7 +78,7 @@ const DataSettingsGroup = ({ t, collapsed, onToggle, dataPath }: DataSettingsGro
                             </button>
                         </div>
                     </div>
-                    <div className="data-panel" style={{ fontSize: '11px', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
+                    <div className="settings-group__data-panel" style={{ fontSize: '11px', color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
                         {dataPath}
                     </div>
                 </div>

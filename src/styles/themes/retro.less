@@ -88,10 +88,10 @@ body.theme-retro {
   --panel-header-background: var(--bg-button);
   --panel-divider-color: rgba(0, 0, 0, 0.05);
 
-  --data-panel-border: 2px solid var(--border-dark);
-  --data-panel-radius: 0;
-  --data-panel-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.05);
-  --data-panel-hover-background: #ffffff;
+  --settings-group__data-panel-border: 2px solid var(--border-dark);
+  --settings-group__data-panel-radius: 0;
+  --settings-group__data-panel-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.05);
+  --settings-group__data-panel-hover-background: #ffffff;
 
   --range-track-border: 2px solid var(--border-dark);
   --range-track-radius: 6px;
@@ -210,13 +210,13 @@ body.theme-retro {
   color: var(--accent-color);
 }
 
-.theme-retro .key-cap {
+.theme-retro .hotkey-recorder__key {
   border-bottom-width: 5px;
   text-transform: uppercase;
 }
 
-.theme-retro .key-group:active .key-cap,
-.theme-retro .key-group.recording .key-cap {
+.theme-retro .hotkey-recorder:active .hotkey-recorder__key,
+.theme-retro .hotkey-recorder--recording .hotkey-recorder__key {
   transform: translateY(3px);
   border-bottom-width: 2px;
 }
@@ -261,8 +261,8 @@ body.theme-retro {
     --shadow-inset: inset 4px 4px 0 rgba(255, 255, 255, 0.02);
 
     --card-selected-background: rgba(255, 255, 255, 0.06);
-    --data-panel-border: 1px solid #333333;
-    --data-panel-hover-background: #2c2c2c;
+    --settings-group__data-panel-border: 1px solid #333333;
+    --settings-group__data-panel-hover-background: #2c2c2c;
   }
 }
 
@@ -290,6 +290,6 @@ body.dark-mode.theme-retro {
   --shadow-inset: inset 4px 4px 0 rgba(255, 255, 255, 0.02);
 
   --card-selected-background: rgba(255, 255, 255, 0.06);
-  --data-panel-border: 1px solid #333333;
-  --data-panel-hover-background: #2c2c2c;
+  --settings-group__data-panel-border: 1px solid #333333;
+  --settings-group__data-panel-hover-background: #2c2c2c;
 }

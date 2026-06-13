@@ -87,18 +87,18 @@ const AppearanceSettingsGroup = ({
     const showSurfaceOpacityControls = supportsSurfaceOpacity(theme);
 
     return (
-    <div className={`settings-group ${collapsed ? 'collapsed' : ''}`}>
-        <div className="group-header" onClick={onToggle}>
+    <div className={`settings-group ${collapsed ? 'settings-group--collapsed' : ''}`}>
+        <div className="settings-group__header" onClick={onToggle}>
             <h3 style={{ margin: 0 }}>{t('appearance_settings')}</h3>
             {collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
         </div>
         {!collapsed && (
-            <div className="group-content">
-                <div className="setting-item column">
-                    <div className="item-label-group" style={{ marginBottom: '8px' }}>
-                        <span className="item-label">{t('visual_theme')}</span>
+            <div className="settings-group__content">
+                <div className="settings-group__item settings-group__item--column">
+                    <div className="settings-group__label-group" style={{ marginBottom: '8px' }}>
+                        <span className="settings-group__label">{t('visual_theme')}</span>
                     </div>
-                    <div className="settings-choice-grid theme-choice-grid">
+                    <div className="settings-page__choice-grid settings-page__theme-grid">
                         {THEMES.map(themeItem => (
                             <button
                                 key={themeItem.id}
@@ -106,10 +106,10 @@ const AppearanceSettingsGroup = ({
                                     setTheme(themeItem.id);
                                     saveAppSetting('theme', themeItem.id);
                                 }}
-                                className={`ui-button ui-button--icon theme-choice-btn ${theme === themeItem.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon settings-page__theme-choice ${theme === themeItem.id ? 'settings-page__theme-choice--active' : ''}`}
                                 type="button"
                             >
-                                <span className="theme-choice-title">
+                                <span className="settings-page__theme-title">
                                     {getThemeLabel(themeItem.id, language)}
                                 </span>
                             </button>
@@ -117,11 +117,11 @@ const AppearanceSettingsGroup = ({
                     </div>
                 </div>
 
-                <div className="setting-item column">
-                    <div className="item-label-group" style={{ marginBottom: '8px' }}>
-                        <span className="item-label">{t('color_mode')}</span>
+                <div className="settings-group__item settings-group__item--column">
+                    <div className="settings-group__label-group" style={{ marginBottom: '8px' }}>
+                        <span className="settings-group__label">{t('color_mode')}</span>
                     </div>
-                    <div className="settings-inline-choice-row">
+                    <div className="settings-page__choices">
                         {[
                             { id: 'system', name: t('mode_system') },
                             { id: 'light', name: t('mode_light') },
@@ -134,7 +134,7 @@ const AppearanceSettingsGroup = ({
                                     setColorMode(modeItem.id);
                                     saveAppSetting('color_mode', modeItem.id);
                                 }}
-                                className={`ui-button ui-button--icon settings-inline-choice-btn ${colorMode === modeItem.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon settings-page__choice ${colorMode === modeItem.id ? 'settings-page__choice--active' : ''}`}
                             >
                                 {modeItem.name}
                             </button>
@@ -142,11 +142,11 @@ const AppearanceSettingsGroup = ({
                     </div>
                 </div>
 
-                <div className="setting-item column no-border">
-                    <div className="item-label-group" style={{ marginBottom: '8px' }}>
-                        <span className="item-label">{t('language')}</span>
+                <div className="settings-group__item settings-group__item--column settings-group__item--borderless">
+                    <div className="settings-group__label-group" style={{ marginBottom: '8px' }}>
+                        <span className="settings-group__label">{t('language')}</span>
                     </div>
-                    <div className="settings-inline-choice-row">
+                    <div className="settings-page__choices">
                         {[
                             { id: 'zh', name: '简体' },
                             { id: 'tw', name: '繁體' },
@@ -158,7 +158,7 @@ const AppearanceSettingsGroup = ({
                                     setLanguage(lang.id as Locale);
                                     saveAppSetting('language', lang.id);
                                 }}
-                                className={`ui-button ui-button--icon settings-inline-choice-btn ${language === lang.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon settings-page__choice ${language === lang.id ? 'settings-page__choice--active' : ''}`}
                             >
                                 {lang.name}
                             </button>
@@ -168,15 +168,15 @@ const AppearanceSettingsGroup = ({
 
 
 
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('show_source_app_icon') || '显示来源应用图标'}
                         hint={t('show_source_app_icon_hint') || '关闭后不显示来源应用图标，改为显示剪贴板条目类型图标'}
                         hintKey="show_source_app_icon"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={showSourceAppIcon}
                             onChange={(e) => {
@@ -185,11 +185,11 @@ const AppearanceSettingsGroup = ({
                                 saveAppSetting('show_source_app_icon', String(val));
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
 
-                <div className="setting-item column">
+                <div className="settings-group__item settings-group__item--column">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                         <LabelWithHint
                             label={t('clipboard_item_font_size') || '条目字体大小'}
@@ -215,7 +215,7 @@ const AppearanceSettingsGroup = ({
                     />
                 </div>
 
-                <div className="setting-item column">
+                <div className="settings-group__item settings-group__item--column">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                         <LabelWithHint
                             label={t('clipboard_tag_font_size') || '标签字体大小'}
@@ -244,9 +244,9 @@ const AppearanceSettingsGroup = ({
                 {(showCustomBackgroundControls || showSurfaceOpacityControls) && (
                     <>
                         {showCustomBackgroundControls && (
-                        <div className="setting-item column no-border">
-                            <div className="item-label-group" style={{ marginBottom: '8px' }}>
-                                <span className="item-label">{t('custom_background') || '自定义背景'}</span>
+                        <div className="settings-group__item settings-group__item--column settings-group__item--borderless">
+                            <div className="settings-group__label-group" style={{ marginBottom: '8px' }}>
+                                <span className="settings-group__label">{t('custom_background') || '自定义背景'}</span>
                             </div>
                             <div style={{ display: 'flex', gap: '8px', width: '100%', alignItems: 'center' }}>
                                 <button
@@ -302,9 +302,9 @@ const AppearanceSettingsGroup = ({
                             )}
 
                             {customBackground && (
-                                <div className="setting-item column no-border" style={{ marginTop: '12px' }}>
-                                    <div className="item-label-group" style={{ marginBottom: '4px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="item-label">{t('background_opacity')}</span>
+                                <div className="settings-group__item settings-group__item--column settings-group__item--borderless" style={{ marginTop: '12px' }}>
+                                    <div className="settings-group__label-group" style={{ marginBottom: '4px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span className="settings-group__label">{t('background_opacity')}</span>
                                         <span className="hint" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{customBackgroundOpacity}%</span>
                                     </div>
                                     <input
@@ -325,9 +325,9 @@ const AppearanceSettingsGroup = ({
                         )}
 
                         {showSurfaceOpacityControls && (
-                        <div className="setting-item column">
-                            <div className="item-label-group" style={{ marginBottom: '4px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span className="item-label">{t('surface_opacity') || '界面底板透明度'}</span>
+                        <div className="settings-group__item settings-group__item--column">
+                            <div className="settings-group__label-group" style={{ marginBottom: '4px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span className="settings-group__label">{t('surface_opacity') || '界面底板透明度'}</span>
                                 <span className="hint" style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{surfaceOpacity}%</span>
                             </div>
                             <input

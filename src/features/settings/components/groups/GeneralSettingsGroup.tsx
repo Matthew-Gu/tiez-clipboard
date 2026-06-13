@@ -69,20 +69,20 @@ const GeneralSettingsGroup = ({
     setSoundVolume,
     saveAppSetting
 }: GeneralSettingsGroupProps) => (
-    <div className={`settings-group ${collapsed ? 'collapsed' : ''}`}>
-        <div className="group-header" onClick={onToggle}>
+    <div className={`settings-group ${collapsed ? 'settings-group--collapsed' : ''}`}>
+        <div className="settings-group__header" onClick={onToggle}>
             <h3 style={{ margin: 0 }}>{t('general_settings')}</h3>
             {collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
         </div>
         {!collapsed && (
-            <div className="group-content">
-                <div className="setting-item">
-                    <div className="item-label-group">
-                        <span className="item-label">{t('autostart')}</span>
+            <div className="settings-group__content">
+                <div className="settings-group__item">
+                    <div className="settings-group__label-group">
+                        <span className="settings-group__label">{t('autostart')}</span>
                     </div>
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={autoStart}
                             onChange={(e) => {
@@ -94,17 +94,17 @@ const GeneralSettingsGroup = ({
                                 ).catch(console.error);
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
 
-                <div className="setting-item">
-                    <div className="item-label-group">
-                        <span className="item-label">{t('hide_tray_icon')}</span>
+                <div className="settings-group__item">
+                    <div className="settings-group__label-group">
+                        <span className="settings-group__label">{t('hide_tray_icon')}</span>
                     </div>
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={hideTrayIcon}
                             onChange={(e) => {
@@ -116,17 +116,17 @@ const GeneralSettingsGroup = ({
                                 ).catch(console.error);
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
 
-                <div className="setting-item">
-                    <div className="item-label-group">
-                        <span className="item-label">{t('sound_effects') || "Sound Effects"}</span>
+                <div className="settings-group__item">
+                    <div className="settings-group__label-group">
+                        <span className="settings-group__label">{t('sound_effects') || "Sound Effects"}</span>
                     </div>
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={soundEnabled}
                             onChange={(e) => {
@@ -138,17 +138,17 @@ const GeneralSettingsGroup = ({
                                 ).catch(console.error);
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
                 {soundEnabled && (
-                    <div className="setting-item" style={{ marginLeft: '18px' }}>
-                        <div className="item-label-group">
-                            <span className="item-label">{t('paste_sound') || "Paste Sound"}</span>
+                    <div className="settings-group__item" style={{ marginLeft: '18px' }}>
+                        <div className="settings-group__label-group">
+                            <span className="settings-group__label">{t('paste_sound') || "Paste Sound"}</span>
                         </div>
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={pasteSoundEnabled}
                                 onChange={(e) => {
@@ -157,14 +157,14 @@ const GeneralSettingsGroup = ({
                                     saveSetting(APP_SETTING_KEYS.soundPasteEnabled, String(enabled)).catch(console.error);
                                 }}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
                 )}
                 {soundEnabled && (
-                    <div className="setting-item column" style={{ marginLeft: '18px', borderBottom: 'none' }}>
-                        <div className="item-label-group">
-                            <span className="item-label">{t('sound_volume') || "Sound Volume"} ({Math.round(soundVolume * 100)}%)</span>
+                    <div className="settings-group__item settings-group__item--column" style={{ marginLeft: '18px', borderBottom: 'none' }}>
+                        <div className="settings-group__label-group">
+                            <span className="settings-group__label">{t('sound_volume') || "Sound Volume"} ({Math.round(soundVolume * 100)}%)</span>
                         </div>
                         <div style={{ padding: '0 4px', width: '100%' }}>
                             <input
@@ -186,15 +186,15 @@ const GeneralSettingsGroup = ({
                 )}
 
 
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('silent_start')}
                         hint={t('silent_start_hint')}
                         hintKey="silent_start"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={silentStart}
                             onChange={(e) => {
@@ -206,18 +206,18 @@ const GeneralSettingsGroup = ({
                                 ).catch(console.error);
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('show_search_box')}
                         hint={t('show_search_box_hint')}
                         hintKey="show_search_box"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={showSearchBox}
                             onChange={(e) => {
@@ -226,18 +226,18 @@ const GeneralSettingsGroup = ({
                                 saveAppSetting('show_search_box', String(enabled));
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('scroll_top_button')}
                         hint={t('scroll_top_button_hint')}
                         hintKey="scroll_top_button"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={scrollTopButtonEnabled}
                             onChange={(e) => {
@@ -246,18 +246,18 @@ const GeneralSettingsGroup = ({
                                 saveAppSetting('show_scroll_top_button', String(enabled));
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('tag_manager_enabled') || '标签管理页开关'}
                         hint={t('tag_manager_enabled_hint') || '关闭后隐藏标签管理入口'}
                         hintKey="tag_manager_enabled"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={tagManagerEnabled}
                             onChange={(e) => {
@@ -266,18 +266,18 @@ const GeneralSettingsGroup = ({
                                 saveAppSetting('tag_manager_enabled', String(enabled));
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
-                <div className="setting-item">
+                <div className="settings-group__item">
                     <LabelWithHint
                         label={t('arrow_key_selection')}
                         hint={t('arrow_key_selection_hint')}
                         hintKey="arrow_key_selection"
                     />
-                    <label className="switch">
+                    <label className="ui-switch">
                         <input
-                            className="cb"
+                            className="ui-switch__input"
                             type="checkbox"
                             checked={arrowKeySelection}
                             onChange={(e) => {
@@ -286,7 +286,7 @@ const GeneralSettingsGroup = ({
                                 saveAppSetting('arrow_key_selection', String(enabled));
                             }}
                         />
-                        <div className="toggle"><div className="left" /><div className="right" /></div>
+                        <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                     </label>
                 </div>
 

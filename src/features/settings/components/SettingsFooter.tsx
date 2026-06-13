@@ -7,7 +7,7 @@ interface SettingsFooterProps {
 
 const SettingsFooter = ({ t, onResetSettings }: SettingsFooterProps) => (
   <div
-    className="settings-footer"
+    className="settings-page__footer"
     style={{
       marginTop: "16px",
       marginBottom: "32px",
@@ -17,7 +17,7 @@ const SettingsFooter = ({ t, onResetSettings }: SettingsFooterProps) => (
   >
     <button
       type="button"
-      className="reset-btn"
+      className="settings-page__reset"
       style={{
         width: "auto",
         minWidth: "144px",

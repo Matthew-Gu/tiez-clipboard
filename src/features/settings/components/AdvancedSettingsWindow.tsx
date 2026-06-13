@@ -34,7 +34,7 @@ const AdvancedSettingsWindow = () => {
   }, [setInstalledApps]);
 
   return (
-    <div className="advanced-settings-window-shell">
+    <div className="advanced-settings__window">
       <AdvancedSettingsGroup
         t={t}
         cleanupRules={cleanupRules}

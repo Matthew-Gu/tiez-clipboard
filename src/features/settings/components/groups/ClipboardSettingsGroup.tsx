@@ -113,47 +113,47 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
     const renderHotkeyCaps = (hotkey: string) => {
         const tokens = getHotkeyDisplayTokens(hotkey);
         if (tokens.length === 0) {
-            return <div className="key-cap" style={{ width: '8em', opacity: 0.5 }}>{props.t('not_set')}</div>;
+            return <div className="hotkey-recorder__key" style={{ width: '8em', opacity: 0.5 }}>{props.t('not_set')}</div>;
         }
         const compactLabel = tokens.map((token) => token.label).join(" + ");
-        return <div className="key-cap key-cap-chord">{compactLabel}</div>;
+        return <div className="hotkey-recorder__key hotkey-recorder__key--chord">{compactLabel}</div>;
     };
 
     return (
-        <div className={`settings-group ${props.collapsed ? 'collapsed' : ''}`}>
-            <div className="group-header" onClick={props.onToggle}>
+        <div className={`settings-group ${props.collapsed ? 'settings-group--collapsed' : ''}`}>
+            <div className="settings-group__header" onClick={props.onToggle}>
                 <h3 style={{ margin: 0 }}>{props.t('clipboard_settings')}</h3>
                 {props.collapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
             </div>
             {!props.collapsed && (
-                <div className="group-content">
-                    <div className="setting-item">
+                <div className="settings-group__content">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('persistent_storage')}
                             hint={props.t('persistent_hint')}
                             hintKey="persistent_storage"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.persistent}
                                 onChange={(e) => props.setPersistent(e.target.checked)}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
                     {props.persistent && (
                         <>
-                            <div className="setting-item">
+                            <div className="settings-group__item">
                                 <props.LabelWithHint
                                     label={props.t('persistent_limit_enabled')}
                                     hint={props.t('persistent_limit_enabled_hint')}
                                     hintKey="persistent_limit_enabled"
                                 />
-                                <label className="switch">
+                                <label className="ui-switch">
                                     <input
-                                        className="cb"
+                                        className="ui-switch__input"
                                         type="checkbox"
                                         checked={props.persistentLimitEnabled}
                                         onChange={(e) => {
@@ -161,11 +161,11 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                             props.saveAppSetting('persistent_limit_enabled', e.target.checked.toString());
                                         }}
                                     />
-                                    <div className="toggle"><div className="left" /><div className="right" /></div>
+                                    <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                                 </label>
                             </div>
                             {props.persistentLimitEnabled && (
-                                <div className="setting-item">
+                                <div className="settings-group__item">
                                     <props.LabelWithHint
                                         label={props.t('persistent_limit')}
                                         hint={props.t('persistent_limit_hint')}
@@ -210,39 +210,39 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             )}
                         </>
                     )}
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('merge_duplicates')}
                             hint={props.t('merge_duplicates_hint') || "Time limit to prevent accidental multiple copies"}
                             hintKey="merge_duplicates"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.deduplicate}
                                 onChange={(e) => props.setDeduplicate(e.target.checked)}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
-                    <div className="setting-item">
-                        <div className="item-label-group">
-                            <span className="item-label">{props.t('capture_files')}</span>
+                    <div className="settings-group__item">
+                        <div className="settings-group__label-group">
+                            <span className="settings-group__label">{props.t('capture_files')}</span>
                         </div>
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.captureFiles}
                                 onChange={(e) => props.setCaptureFiles(e.target.checked)}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
-                    <div className="setting-item">
-                        <div className="item-label-group">
-                            <span className="item-label">{props.t('search_hotkey_label')}</span>
+                    <div className="settings-group__item">
+                        <div className="settings-group__label-group">
+                            <span className="settings-group__label">{props.t('search_hotkey_label')}</span>
                             <span className="hint">{props.isRecordingSearch ? props.t('hotkey_recording_esc') : props.t('hotkey_click_hint')}</span>
                         </div>
                         <HotkeyRecorder
@@ -254,7 +254,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             updateHotkey={props.updateSearchHotkey}
                         />
                     </div>
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('quick_paste_modifier')}
                             hint={props.t('quick_paste_modifier_hint')}
@@ -284,15 +284,15 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             ))}
                         </select>
                     </div>
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('delete_after_paste')}
                             hint={props.t('delete_after_paste_hint')}
                             hintKey="delete_after_paste"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.deleteAfterPaste}
                                 onChange={(e) => {
@@ -301,18 +301,18 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     props.saveAppSetting('delete_after_paste', String(val));
                                 }}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('move_to_top_after_paste')}
                             hint={props.t('move_to_top_after_paste_hint')}
                             hintKey="move_to_top_after_paste"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.moveToTopAfterPaste}
                                 onChange={(e) => {
@@ -321,18 +321,18 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     props.saveAppSetting('move_to_top_after_paste', String(val));
                                 }}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('sequential_paste_mode')}
                             hint={props.t('sequential_paste_hint')}
                             hintKey="sequential_paste_mode"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.sequentialMode}
                                 onChange={(e) => {
@@ -349,14 +349,14 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     }
                                 }}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
 
                     {props.sequentialMode && (
-                        <div className="setting-item">
-                            <div className="item-label-group">
-                                <span className="item-label">{props.t('sequential_paste_hotkey_label')}</span>
+                        <div className="settings-group__item">
+                            <div className="settings-group__label-group">
+                                <span className="settings-group__label">{props.t('sequential_paste_hotkey_label')}</span>
                                 <span className="hint">{props.isRecordingSequential ? props.t('hotkey_recording_esc') : props.t('hotkey_click_hint')}</span>
                             </div>
                             <HotkeyRecorder
@@ -370,15 +370,15 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         </div>
                     )}
 
-                    <div className="setting-item">
+                    <div className="settings-group__item">
                         <props.LabelWithHint
                             label={props.t('privacy_protection')}
                             hint={props.t('privacy_protection_hint')}
                             hintKey="privacy_protection"
                         />
-                        <label className="switch">
+                        <label className="ui-switch">
                             <input
-                                className="cb"
+                                className="ui-switch__input"
                                 type="checkbox"
                                 checked={props.privacyProtection}
                                 onChange={(e) => {
@@ -390,11 +390,11 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     ).catch(console.error);
                                 }}
                             />
-                            <div className="toggle"><div className="left" /><div className="right" /></div>
+                            <div className="ui-switch__track"><div className="ui-switch__icon ui-switch__icon--left" /><div className="ui-switch__icon ui-switch__icon--right" /></div>
                         </label>
                     </div>
 
-                    <div className="setting-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                    <div className="settings-group__item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
@@ -424,7 +424,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     return (
                                         <label key={opt.id} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             <input
-                                                className="cb"
+                                                className="ui-switch__input"
                                                 type="checkbox"
                                                 checked={checked}
                                                 onChange={(e) => {
@@ -446,7 +446,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         )}
                     </div>
 
-                    <div className="setting-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                    <div className="settings-group__item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
@@ -481,7 +481,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         )}
                     </div>
 
-                    <div className="setting-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                    <div className="settings-group__item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
@@ -491,12 +491,12 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                             >
                                 {maskSettingsOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                             </button>
-                            <span className="item-label">{props.t('sensitive_mask_settings')}</span>
+                            <span className="settings-group__label">{props.t('sensitive_mask_settings')}</span>
                         </div>
                         {maskSettingsOpen && (
                             <div style={{ width: 'calc(100% - 30px)', marginLeft: '30px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <div className="setting-item" style={{ padding: 0, borderBottom: 'none' }}>
-                                    <span className="item-label">{props.t('sensitive_mask_prefix_visible')}</span>
+                                <div className="settings-group__item" style={{ padding: 0, borderBottom: 'none' }}>
+                                    <span className="settings-group__label">{props.t('sensitive_mask_prefix_visible')}</span>
                                     <input
                                         type="number"
                                         className="ui-input"
@@ -511,8 +511,8 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                         }}
                                     />
                                 </div>
-                                <div className="setting-item" style={{ padding: 0, borderBottom: 'none' }}>
-                                    <span className="item-label">{props.t('sensitive_mask_suffix_visible')}</span>
+                                <div className="settings-group__item" style={{ padding: 0, borderBottom: 'none' }}>
+                                    <span className="settings-group__label">{props.t('sensitive_mask_suffix_visible')}</span>
                                     <input
                                         type="number"
                                         className="ui-input"
@@ -527,13 +527,13 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                         }}
                                     />
                                 </div>
-                                <div className="setting-item" style={{ padding: 0, borderBottom: 'none' }}>
+                                <div className="settings-group__item" style={{ padding: 0, borderBottom: 'none' }}>
                                     <props.LabelWithHint
                                         label={props.t('sensitive_mask_email_domain')}
                                         hint={props.t('sensitive_mask_email_domain_hint')}
                                         hintKey="sensitive_mask_email_domain"
                                     />
-                                    <label className="switch">
+                                    <label className="ui-switch">
                                         <input
                                             type="checkbox"
                                             checked={props.sensitiveMaskEmailDomain}
@@ -549,10 +549,10 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         )}
                     </div>
 
-                    <div className="setting-item no-border">
-                        <div className="item-label-group">
+                    <div className="settings-group__item settings-group__item--borderless">
+                        <div className="settings-group__label-group">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span className="item-label">{props.t('global_hotkey')}</span>
+                                <span className="settings-group__label">{props.t('global_hotkey')}</span>
                             </div>
                             <span className="hint">{props.isRecording ? props.t('hotkey_recording_esc') : props.t('hotkey_click_hint')}</span>
                         </div>

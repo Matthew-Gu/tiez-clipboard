@@ -46,7 +46,7 @@ const HotkeyRecorder = ({
 
   return (
     <div
-      className={`key-group ${isRecording ? "recording" : ""}`}
+      className={`hotkey-recorder ${isRecording ? "hotkey-recorder--recording" : ""}`}
       onClick={(event) => {
         setIsRecording(true);
         event.currentTarget.focus();
@@ -55,7 +55,7 @@ const HotkeyRecorder = ({
       onKeyDown={handleKeyDown}
     >
       {isRecording
-        ? <div className="key-cap" style={{ width: "8em" }}>{waitingLabel}</div>
+        ? <div className="hotkey-recorder__key" style={{ width: "8em" }}>{waitingLabel}</div>
         : renderHotkey(hotkey)}
     </div>
   );

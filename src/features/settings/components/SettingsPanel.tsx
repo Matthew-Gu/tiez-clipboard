@@ -57,13 +57,13 @@ const SettingsPanel = (inputProps: SettingsPanelProps) => {
   const [privacyRulesOpen, setPrivacyRulesOpen] = useState(false);
 
   const LabelWithHint: ComponentType<LabelWithHintProps> = ({ label, hint, hintKey }) => (
-    <div className="item-label-group">
+    <div className="settings-group__label-group">
       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        <span className="item-label">{label}</span>
+        <span className="settings-group__label">{label}</span>
         {hint && (
           <button
             type="button"
-            className="hint-icon-btn"
+            className="settings-group__hint-button"
             title={typeof hint === "string" ? hint : undefined}
             onClick={(event) => {
               event.stopPropagation();
@@ -101,7 +101,7 @@ const SettingsPanel = (inputProps: SettingsPanelProps) => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "4px", minHeight: "100%", flex: 1 }}>
+    <div className="settings-page__groups">
       <GeneralSettingsGroup
         {...props}
         collapsed={props.collapsedGroups.general}
@@ -138,12 +138,12 @@ const SettingsPanel = (inputProps: SettingsPanelProps) => {
       <div className="settings-group">
         <button
           type="button"
-          className="group-header settings-nav-card"
+          className="settings-group__header settings-page__nav-card"
           onClick={props.openAdvancedSettings}
         >
           <div style={{ minWidth: 0, textAlign: "left" }}>
             <h3 style={{ margin: 0 }}>{props.t("advanced_settings")}</h3>
-            <div className="settings-subpage-note">{props.t("advanced_settings_entry_desc")}</div>
+            <div className="settings-page__nav-note">{props.t("advanced_settings_entry_desc")}</div>
           </div>
           <ChevronRight size={16} />
         </button>

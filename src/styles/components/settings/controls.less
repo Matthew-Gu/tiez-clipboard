@@ -1,9 +1,9 @@
-.settings-view input[type="range"]::-webkit-slider-runnable-track {
+.settings-page input[type="range"]::-webkit-slider-runnable-track {
   height: 8px;
   background: transparent;
 }
 
-.settings-view input[type="range"]::-webkit-slider-thumb {
+.settings-page input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -16,12 +16,12 @@
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.settings-view input[type="range"]:active::-webkit-slider-thumb {
+.settings-page input[type="range"]:active::-webkit-slider-thumb {
   transform: var(--range-thumb-active-transform);
   box-shadow: var(--range-thumb-active-shadow);
 }
 
-.settings-view input[type="range"]::-moz-range-track {
+.settings-page input[type="range"]::-moz-range-track {
   height: 8px;
   background: rgba(var(--accent-color-rgb), 0.1);
   border: var(--range-track-border);
@@ -29,13 +29,13 @@
   box-shadow: var(--range-track-shadow);
 }
 
-.settings-view input[type="range"]::-moz-range-progress {
+.settings-page input[type="range"]::-moz-range-progress {
   height: 8px;
   background: var(--accent-color);
   border-radius: var(--range-track-radius);
 }
 
-.settings-view input[type="range"]::-moz-range-thumb {
+.settings-page input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
   background: var(--accent-color);
@@ -45,28 +45,28 @@
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
-.settings-view input[type="range"]::-moz-range-thumb:active {
+.settings-page input[type="range"]::-moz-range-thumb:active {
   transform: var(--range-thumb-active-transform);
   box-shadow: var(--range-thumb-active-shadow);
 }
 
-.settings-view input[type="range"]:focus-visible {
+.settings-page input[type="range"]:focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
-.settings-choice-grid {
+.settings-page__choice-grid {
   width: 100%;
   display: grid;
   gap: 10px;
 }
 
-.theme-choice-grid {
+.settings-page__theme-grid {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
-.theme-choice-btn {
+.settings-page__theme-choice {
   min-height: 40px;
   width: 100%;
   padding: 8px 10px;
@@ -75,7 +75,7 @@
   text-align: left;
 }
 
-.theme-choice-title {
+.settings-page__theme-title {
   font-size: 12px;
   font-weight: 700;
   line-height: 1.15;
@@ -83,10 +83,10 @@
   text-align: center;
 }
 
-body.theme-mica .settings-view select.ui-input,
-body.theme-acrylic .settings-view select.ui-input,
-body.theme-mica .settings-view input.ui-input,
-body.theme-acrylic .settings-view input.ui-input {
+body.theme-mica .settings-page select.ui-input,
+body.theme-acrylic .settings-page select.ui-input,
+body.theme-mica .settings-page input.ui-input,
+body.theme-acrylic .settings-page input.ui-input {
   background: var(--bg-input);
   color: var(--text-primary);
   border: var(--input-border);
@@ -96,8 +96,8 @@ body.theme-acrylic .settings-view input.ui-input {
   backdrop-filter: saturate(135%);
 }
 
-body.theme-mica .settings-view select.ui-input,
-body.theme-acrylic .settings-view select.ui-input {
+body.theme-mica .settings-page select.ui-input,
+body.theme-acrylic .settings-page select.ui-input {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 28px;
@@ -111,13 +111,13 @@ body.theme-acrylic .settings-view select.ui-input {
   background-repeat: no-repeat;
 }
 
-body.theme-mica .settings-view select.ui-input option,
-body.theme-acrylic .settings-view select.ui-input option {
+body.theme-mica .settings-page select.ui-input option,
+body.theme-acrylic .settings-page select.ui-input option {
   background: var(--bg-window);
   color: var(--text-primary);
 }
 
-.switch {
+.ui-switch {
   font-size: 9px;
   position: relative;
   display: flex;
@@ -128,13 +128,13 @@ body.theme-acrylic .settings-view select.ui-input option {
   flex-shrink: 0;
 }
 
-.switch .cb {
+.ui-switch .ui-switch__input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.toggle {
+.ui-switch__track {
   position: absolute;
   inset: 0;
   cursor: pointer;
@@ -146,7 +146,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   overflow: hidden;
 }
 
-.toggle::before {
+.ui-switch__track::before {
   content: "";
   position: absolute;
   top: var(--switch-thumb-offset);
@@ -160,12 +160,12 @@ body.theme-acrylic .settings-view select.ui-input option {
   transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.toggle > .left,
-.toggle > .right {
+.ui-switch__track > .ui-switch__icon--left,
+.ui-switch__track > .ui-switch__icon--right {
   display: none;
 }
 
-.toggle > .left {
+.ui-switch__track > .ui-switch__icon--left {
   position: absolute;
   width: 50%;
   height: 88%;
@@ -183,7 +183,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   font-weight: 900;
 }
 
-.toggle > .left::before {
+.ui-switch__track > .ui-switch__icon--left::before {
   position: absolute;
   content: "OFF";
   color: inherit;
@@ -192,7 +192,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   z-index: 1;
 }
 
-.toggle > .left::after {
+.ui-switch__track > .ui-switch__icon--left::after {
   position: absolute;
   content: "";
   width: 100%;
@@ -204,7 +204,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   z-index: -1;
 }
 
-.toggle > .right {
+.ui-switch__track > .ui-switch__icon--right {
   position: absolute;
   width: 50%;
   height: 88%;
@@ -222,7 +222,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   font-weight: 900;
 }
 
-.toggle > .right::before {
+.ui-switch__track > .ui-switch__icon--right::before {
   position: absolute;
   content: "ON";
   color: inherit;
@@ -231,7 +231,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   z-index: 1;
 }
 
-.toggle > .right::after {
+.ui-switch__track > .ui-switch__icon--right::after {
   position: absolute;
   content: "";
   width: 100%;
@@ -242,16 +242,16 @@ body.theme-acrylic .settings-view select.ui-input option {
   z-index: -1;
 }
 
-.switch input:checked + .toggle {
+.ui-switch input:checked + .ui-switch__track {
   background: var(--switch-track-active-background);
   border-color: var(--switch-track-active-border-color);
 }
 
-.switch input:checked + .toggle::before {
+.ui-switch input:checked + .ui-switch__track::before {
   transform: translateX(var(--switch-thumb-translate));
 }
 
-.key-group {
+.hotkey-recorder {
   display: flex;
   gap: 6px;
   cursor: pointer;
@@ -261,11 +261,11 @@ body.theme-acrylic .settings-view select.ui-input option {
   margin-top: 4px;
 }
 
-.key-group.recording {
+.hotkey-recorder--recording {
   opacity: 0.8;
 }
 
-.key-cap {
+.hotkey-recorder__key {
   position: relative;
   min-width: 4.15em;
   height: 2.5em;
@@ -287,13 +287,13 @@ body.theme-acrylic .settings-view select.ui-input option {
   font-size: 11px;
 }
 
-.key-cap::before,
-.key-cap::after {
+.hotkey-recorder__key::before,
+.hotkey-recorder__key::after {
   content: none;
 }
 
-.key-group:active .key-cap,
-.key-group.recording .key-cap {
+.hotkey-recorder:active .hotkey-recorder__key,
+.hotkey-recorder--recording .hotkey-recorder__key {
   transform: var(--keycap-active-transform);
   box-shadow: var(--keycap-active-shadow);
   background-color: var(--bg-button);
@@ -330,7 +330,7 @@ body.theme-acrylic .settings-view select.ui-input option {
   color: var(--text-primary);
 }
 
-.ui-segmented__item.active {
+.ui-segmented__item--active {
   background: var(--segment-active-background);
   color: var(--segment-active-color);
   box-shadow: var(--segment-active-shadow);
