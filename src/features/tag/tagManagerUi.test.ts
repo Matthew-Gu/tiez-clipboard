@@ -8,10 +8,13 @@ import {
 } from "./tagManagerUi";
 
 describe("tag manager ui helpers", () => {
-  it("normalizes valid six-digit hex colors", () => {
+  it("normalizes valid six-digit and eight-digit hex colors", () => {
     expect(normalizeHexColor("AABBCC")).toBe("#aabbcc");
     expect(normalizeHexColor("#4f7dff")).toBe("#4f7dff");
+    expect(normalizeHexColor("AABBCC80")).toBe("#aabbcc80");
+    expect(normalizeHexColor("#4f7dffcc")).toBe("#4f7dffcc");
     expect(normalizeHexColor("#fff")).toBeNull();
+    expect(normalizeHexColor("#ffff")).toBeNull();
     expect(normalizeHexColor("invalid")).toBeNull();
   });
 

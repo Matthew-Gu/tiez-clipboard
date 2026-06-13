@@ -16,7 +16,7 @@ export const TAG_COLOR_PRESETS = [
 export const normalizeHexColor = (value: string): string | null => {
   const trimmed = value.trim();
   const prefixed = trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
-  return /^#[0-9a-fA-F]{6}$/.test(prefixed) ? prefixed.toLowerCase() : null;
+  return /^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(prefixed) ? prefixed.toLowerCase() : null;
 };
 
 export const toggleSelectedItem = (selectedIds: Set<number>, id: number): Set<number> => {

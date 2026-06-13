@@ -38,6 +38,30 @@ const maskMiddleChars = (value: string, prefixVisibleCount: number, suffixVisibl
   return `${chars.slice(0, prefix).join("")}${SENSITIVE_MASK}${chars.slice(chars.length - suffix).join("")}`;
 };
 
+const hslToHex = (hue: number, saturation: number, lightness: number) => {
+  const s = saturation / 100;
+  const l = lightness / 100;
+  const chroma = (1 - Math.abs(2 * l - 1)) * s;
+  const segment = hue / 60;
+  const secondary = chroma * (1 - Math.abs((segment % 2) - 1));
+  const offset = l - chroma / 2;
+  const [red, green, blue] = segment < 1
+    ? [chroma, secondary, 0]
+    : segment < 2
+      ? [secondary, chroma, 0]
+      : segment < 3
+        ? [0, chroma, secondary]
+        : segment < 4
+          ? [0, secondary, chroma]
+          : segment < 5
+            ? [secondary, 0, chroma]
+            : [chroma, 0, secondary];
+
+  return `#${[red, green, blue]
+    .map((channel) => Math.round((channel + offset) * 255).toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
 // Helper function to generate a consistent color from a string based on theme
 export const getTagColor = (tag: string, theme: string) => {
   let hash = 0;
@@ -51,10 +75,10 @@ export const getTagColor = (tag: string, theme: string) => {
 
   if (theme === "retro") {
     // Retro: Keep mechanical saturation, but avoid overly dark chips.
-    return `hsl(${hue}, 58%, 48%)`;
+    return hslToHex(hue, 58, 48);
   } else {
     // Modern: Slightly lighter to keep tag chips readable.
-    return `hsl(${hue}, 76%, 62%)`;
+    return hslToHex(hue, 76, 62);
   }
 };
 

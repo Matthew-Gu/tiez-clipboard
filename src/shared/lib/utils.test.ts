@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatSensitivePreview } from "./utils";
+import { formatSensitivePreview, getTagColor } from "./utils";
 
 describe("formatSensitivePreview", () => {
   describe("空值处理", () => {
@@ -148,5 +148,13 @@ describe("formatSensitivePreview", () => {
       const result = formatSensitivePreview("😀😁😂🤣😃😄😅", "text");
       expect(result).toContain("...");
     });
+  });
+});
+
+describe("getTagColor", () => {
+  it("returns stable six-digit hex colors", () => {
+    expect(getTagColor("password", "dark")).toMatch(/^#[0-9a-f]{6}$/);
+    expect(getTagColor("password", "dark")).toBe(getTagColor("password", "dark"));
+    expect(getTagColor("password", "retro")).toMatch(/^#[0-9a-f]{6}$/);
   });
 });
