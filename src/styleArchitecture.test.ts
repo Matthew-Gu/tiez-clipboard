@@ -34,6 +34,7 @@ const styledPersistentModifiers = new Set([
   "tag-manager__card--selected",
   "tag-manager__selection-control--checked",
   "tag-manager__tag--active",
+  "tag-chip--active",
   "dialog__color-preset--active"
 ]);
 

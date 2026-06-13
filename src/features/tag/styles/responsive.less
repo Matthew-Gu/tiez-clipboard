@@ -11,6 +11,36 @@
 }
 
 @media (max-width: 520px) {
+    .tag-manager__toolbar:not(.tag-manager__toolbar--managing) {
+        padding-inline: 10px;
+    }
+
+    .tag-manager__toolbar-main {
+        gap: 6px;
+    }
+
+    .tag-manager__selection {
+        flex: 1 1 auto;
+    }
+
+    .tag-manager__sort {
+        gap: 2px;
+        padding-left: 6px;
+    }
+
+    .tag-manager__sort-button {
+        padding: 5px;
+    }
+
+    .tag-manager__sort-button span,
+    .tag-manager__manage-button span {
+        display: none;
+    }
+
+    .tag-manager__manage-button {
+        margin-left: 0;
+    }
+
     .tag-manager__toolbar--managing {
         align-items: stretch;
         flex-direction: column;
@@ -27,5 +57,9 @@
 
     .tag-manager__batch-button span {
         display: none;
+    }
+
+    .tag-manager__items {
+        padding: 12px 12px 72px;
     }
 }

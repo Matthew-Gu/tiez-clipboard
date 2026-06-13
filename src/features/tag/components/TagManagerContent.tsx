@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 import type { Dispatch, SetStateAction } from "react";
-import { CheckSquare, Clock, Copy, Edit2, ExternalLink, LayoutGrid, List, MousePointer2, Plus, Trash2, X } from "lucide-react";
+import { CheckSquare, Clock, Copy, Edit2, ExternalLink, Inbox, LayoutGrid, List, MousePointer2, Plus, Trash2, X } from "lucide-react";
 import { copyToClipboard, openContent } from "../../../shared/ipc/commands";
 import type { ClipboardEntry } from "../../../shared/types";
 import { toggleAllSelectedItems, toggleSelectedItem } from "../tagManagerUi";
@@ -130,7 +130,10 @@ const TagManagerContent = ({
 
         <div className="tag-manager__items ui-scroll">
             {loading ? <div className="tag-manager__items-status">{t('processing')}</div> : sortedItems.length === 0 ? (
-                <div className="tag-manager__items-status">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</div>
+                <div className="tag-manager__items-status">
+                    <Inbox size={30} className="tag-manager__items-status-icon" />
+                    <span className="tag-manager__items-status-title">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</span>
+                </div>
             ) : (
                 <div className={`tag-manager__items-${viewMode} ${isManageMode ? 'tag-manager__items--managing' : ''}`}>
                     {sortedItems.map((item) => (
