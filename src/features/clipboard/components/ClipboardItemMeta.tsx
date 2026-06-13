@@ -64,11 +64,11 @@ const ClipboardItemMeta = ({
     onToggleTagEditor,
     onDelete
 }: ClipboardItemMetaProps) => (
-    <div className="item-meta">
-        <div className="item-meta-left">
+    <div className="clipboard-item__meta">
+        <div className="clipboard-item__meta-left">
             {dragControls && (
                 <div
-                    className="drag-handle"
+                    className="clipboard-item__drag-handle"
                     onPointerDown={(event) => dragControls.start(event)}
                     onClick={(event) => event.stopPropagation()}
                     style={{ cursor: 'grab', opacity: 0.5, display: 'flex', alignItems: 'center', touchAction: 'none' }}
@@ -76,34 +76,34 @@ const ClipboardItemMeta = ({
                     <GripVertical size={14} />
                 </div>
             )}
-            <div className="app-info">
+            <div className="clipboard-item__source">
                 {item.is_pinned && !dragControls && <Pin size={10} style={{ color: 'var(--accent-color)', marginRight: '-2px' }} />}
                 {showSourceAppIcon && sourceAppIcon
-                    ? <img src={sourceAppIcon} alt={`${item.source_app} icon`} className="source-app-icon" loading="lazy" />
+                    ? <img src={sourceAppIcon} alt={`${item.source_app} icon`} className="clipboard-item__source-icon" loading="lazy" />
                     : getIcon(item.content_type)}
                 <span>{item.source_app}</span>
             </div>
         </div>
 
-        <div className="item-meta-right">
-            <div className="item-actions">
+        <div className="clipboard-item__meta-right">
+            <div className="clipboard-item__actions">
                 {hasSensitiveTag(item.tags) && (
-                    <button className={`ui-button ui-button--icon ${isRevealed ? "active" : ""}`} onClick={onToggleReveal} title={isRevealed ? t('hide') : t('reveal')}>
+                    <button className={`ui-button ui-button--icon ${isRevealed ? "ui-button--active" : ""}`} onClick={onToggleReveal} title={isRevealed ? t('hide') : t('reveal')}>
                         {isRevealed ? <EyeOff size={12} /> : <Eye size={12} />}
                     </button>
                 )}
                 <button className="ui-button ui-button--icon" onClick={onOpen} title={t('open')}><ExternalLink size={12} /></button>
-                <button className={`ui-button ui-button--icon ${item.is_pinned ? "active" : ""}`} onClick={onTogglePin} title={item.is_pinned ? t('unpin') : t('pin')}>
+                <button className={`ui-button ui-button--icon ${item.is_pinned ? "ui-button--active" : ""}`} onClick={onTogglePin} title={item.is_pinned ? t('unpin') : t('pin')}>
                     {item.is_pinned ? <PinOff size={12} /> : <Pin size={12} />}
                 </button>
-                <button className={`ui-button ui-button--icon ${item.tags && item.tags.length > 0 ? "active" : ""}`} onClick={onToggleTagEditor} title="Tags">
+                <button className={`ui-button ui-button--icon ${item.tags && item.tags.length > 0 ? "ui-button--active" : ""}`} onClick={onToggleTagEditor} title="Tags">
                     <Tag size={12} />
                 </button>
                 <button className="ui-button ui-button--icon" onClick={onDelete} title={t('delete')}><X size={12} /></button>
             </div>
-            <div className="item-meta-right-info">
+            <div className="clipboard-item__meta-info">
                 {quickPasteHint && item.is_pinned && (
-                    <span className="quick-paste-hint" title={`${t('quick_paste_modifier')}: ${quickPasteHint.combo}`}>{quickPasteHint.combo}</span>
+                    <span className="clipboard-item__quick-paste" title={`${t('quick_paste_modifier')}: ${quickPasteHint.combo}`}>{quickPasteHint.combo}</span>
                 )}
                 <span>{getConciseTime(item.timestamp, language)}</span>
             </div>

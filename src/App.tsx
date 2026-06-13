@@ -610,7 +610,7 @@ const App = () => {
 
   return (
     <div
-      className="app-container"
+      className="app-shell"
     >
       <AppHeader
         t={t}
@@ -632,7 +632,7 @@ const App = () => {
       />
 
       <main
-        className={`main-content${effectiveShowTagManager ? " tag-manager-mode" : ""}`}
+        className={`app-shell__main${effectiveShowTagManager ? " tag-manager-mode" : ""}`}
         style={{ 
           overflowY: (showSettings || effectiveShowTagManager) ? 'auto' : 'hidden',
           padding: effectiveShowTagManager ? '0' : undefined

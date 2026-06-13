@@ -1,5 +1,5 @@
 /* --- Base Layout --- */
-.tags-dropdown {
+.app-header__tag-menu {
     position: absolute;
     top: 100%;
     left: 0;
@@ -27,7 +27,7 @@
     box-sizing: border-box;
 }
 
-.tags-label {
+.app-header__tag-menu-label {
     font-size: 11px;
     font-weight: 800;
     color: var(--text-secondary);
@@ -35,7 +35,7 @@
     opacity: 0.7;
 }
 
-.tags-list {
+.app-header__tag-menu-list {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
@@ -70,7 +70,7 @@
 }
 
 /* Inline tag editor: input + floating suggestion list (same column width) */
-.tag-edit-anchor {
+.clipboard-item__tag-editor {
     position: relative;
     display: inline-flex;
     flex-direction: column;
@@ -81,7 +81,7 @@
     box-sizing: border-box;
 }
 
-.tag-edit-input-row {
+.clipboard-item__tag-editor-row {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -90,18 +90,18 @@
     box-sizing: border-box;
 }
 
-.tag-edit-input-row .tag-input {
+.clipboard-item__tag-editor-row .clipboard-item__tag-input {
     flex: 1 1 0;
     min-width: 0;
     width: 100%;
     max-width: 100%;
 }
 
-.tag-edit-input-row .ui-button--icon {
+.clipboard-item__tag-editor-row .ui-button--icon {
     flex-shrink: 0;
 }
 
-.tag-edit-suggestions-popover {
+.clipboard-item__tag-suggestions {
     position: absolute;
     left: 0;
     right: 0;
@@ -121,7 +121,7 @@
     box-sizing: border-box;
 }
 
-.tag-suggest-item {
+.clipboard-item__tag-suggestion {
     display: flex;
     align-items: center;
     width: 100%;
@@ -139,7 +139,7 @@
     min-height: 0;
 }
 
-.tag-suggest-pill {
+.clipboard-item__tag-suggestion-pill {
     display: inline-block;
     max-width: 100%;
     overflow: hidden;
@@ -153,21 +153,21 @@
     vertical-align: middle;
 }
 
-.tag-suggest-item:hover {
+.clipboard-item__tag-suggestion:hover {
     background: var(--bg-hover, rgba(128, 128, 128, 0.14));
 }
 
-.tag-suggest-item--active,
-.tag-suggest-item--active:hover {
+.clipboard-item__tag-suggestion--active,
+.clipboard-item__tag-suggestion--active:hover {
     background: var(--accent-soft, rgba(128, 128, 128, 0.2));
 }
 
-.tag-suggest-item:focus-visible {
+.clipboard-item__tag-suggestion:focus-visible {
     outline: 2px solid var(--accent-color, #3b82f6);
     outline-offset: -1px;
 }
 
-.history-item:has(.item-tags-container.tag-edit-active) {
+.clipboard-item:has(.clipboard-item__tags.clipboard-item__tags--editing) {
     z-index: 48;
 }
 
@@ -181,8 +181,8 @@
 }
 
 /* --- Modern Styles (Mica / Acrylic) --- */
-.theme-mica .ui-input.dropdown-open,
-.theme-acrylic .ui-input.dropdown-open {
+.theme-mica .ui-input.ui-input--menu-open,
+.theme-acrylic .ui-input.ui-input--menu-open {
     border-radius: 10px;
     border: 1px solid rgba(128, 128, 128, 0.2);
     box-shadow: none;
@@ -191,8 +191,8 @@
     -webkit-backdrop-filter: none;
 }
 
-:root.dark-mode .theme-mica .ui-input.dropdown-open,
-:root.dark-mode .theme-acrylic .ui-input.dropdown-open {
+:root.dark-mode .theme-mica .ui-input.ui-input--menu-open,
+:root.dark-mode .theme-acrylic .ui-input.ui-input--menu-open {
     background: rgba(255, 255, 255, 0.18);
     border-color: rgba(255, 255, 255, 0.1);
 }

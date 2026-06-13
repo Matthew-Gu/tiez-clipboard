@@ -159,7 +159,7 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
         }), [header, hasMore, isLoading]);
 
         return (
-            <div className="virtual-list-wrapper" style={{ height: '100%', width: '100%' }}>
+            <div className="clipboard-list__virtual" style={{ height: '100%', width: '100%' }}>
                 <Virtuoso
                     ref={virtuosoRef}
                     data={items}

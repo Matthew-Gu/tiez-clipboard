@@ -70,7 +70,7 @@ const SortableItem = ({
       dragControls={controls}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      className={isFirst ? "first-virtual-item" : undefined}
+      className={isFirst ? "clipboard-list__first-item" : undefined}
       style={{
         listStyle: "none",
         overflow: "visible",
@@ -234,22 +234,15 @@ const AppMainContent = ({
   if (filteredHistory.length === 0) {
     return (
       <div className="empty-state">
-        <Clipboard size={40} opacity={0.2} style={{ marginBottom: "12px" }} />
+        <Clipboard className="empty-state__icon" size={40} />
         {search ? (
           <p>{t("no_records")}</p>
         ) : (
           <>
-            <p
-              style={{
-                fontSize: "15px",
-                fontWeight: "bold",
-                color: "var(--text-primary)",
-                marginBottom: "4px"
-              }}
-            >
+            <p className="empty-state__title">
               {t("empty_title")}
             </p>
-            <p style={{ fontSize: "12px", opacity: 0.6 }}>{t("empty_desc")}</p>
+            <p className="empty-state__description">{t("empty_desc")}</p>
           </>
         )}
       </div>
@@ -259,7 +252,7 @@ const AppMainContent = ({
   return (
     <>
       {filteredHistory.length > 0 && (
-        <div className="history-list-container">
+        <div className="clipboard-list">
           <VirtualClipboardList
             ref={virtualListRef}
             items={unpinnedItems}
@@ -271,8 +264,7 @@ const AppMainContent = ({
                   axis="y"
                   values={orderedPinnedIds}
                   onReorder={handlePinnedIdsReorder}
-                  className={isDraggingPinned ? "pinned-reorder dragging" : "pinned-reorder"}
-                  style={{ listStyle: "none", padding: 0 }}
+                  className={isDraggingPinned ? "clipboard-list__pinned clipboard-list__pinned--dragging" : "clipboard-list__pinned"}
                 >
                   {orderedPinnedItems.map((item, index) => (
                     <SortableItem
@@ -292,7 +284,7 @@ const AppMainContent = ({
               const el = renderItemContent(item, pinnedItems.length + index, undefined, true);
               if (isFirst && pinnedItems.length === 0) {
                 return (
-                  <div className="first-virtual-item" style={{ height: "100%", paddingTop: "4px" }}>
+                  <div className="clipboard-list__first-item">
                     {el}
                   </div>
                 );
@@ -313,7 +305,7 @@ const AppMainContent = ({
           {showScrollTop && (
             <button
               type="button"
-              className="ui-button ui-button--icon scroll-top-button"
+              className="ui-button ui-button--icon clipboard-list__scroll-top"
               onClick={onScrollTop}
               aria-label={t("scroll_to_top")}
               title={t("scroll_to_top")}

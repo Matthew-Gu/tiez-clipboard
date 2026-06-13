@@ -124,24 +124,24 @@ body.theme-sticky-note {
   background-size: 100% 100%;
 }
 
-.theme-sticky-note .header-title {
+.theme-sticky-note .app-header__title {
   color: var(--text-primary);
 }
 
-.theme-sticky-note .history-item {
+.theme-sticky-note .clipboard-item {
   background: #fffde7;
   transform: rotate(var(--rotate, -0.6deg));
 }
 
-.theme-sticky-note .history-item:nth-child(even) {
+.theme-sticky-note .clipboard-item:nth-child(even) {
   --rotate: 0.9deg;
 }
 
-.theme-sticky-note .history-item:nth-child(3n) {
+.theme-sticky-note .clipboard-item:nth-child(3n) {
   --rotate: -1.1deg;
 }
 
-.theme-sticky-note .history-item:nth-child(5n) {
+.theme-sticky-note .clipboard-item:nth-child(5n) {
   --rotate: 0.4deg;
 }
 
@@ -157,7 +157,7 @@ body.theme-sticky-note {
   color: var(--accent-color);
 }
 
-.theme-sticky-note .item-meta {
+.theme-sticky-note .clipboard-item__meta {
   border-bottom-style: solid;
 }
 
@@ -202,7 +202,7 @@ body.theme-sticky-note {
     --data-panel-hover-background: rgba(255, 255, 255, 0.06);
   }
 
-  .theme-sticky-note:not(.light-mode) .history-item {
+  .theme-sticky-note:not(.light-mode) .clipboard-item {
     background: #3a3a3c;
   }
 }
@@ -247,7 +247,7 @@ body.dark-mode.theme-sticky-note {
   --data-panel-hover-background: rgba(255, 255, 255, 0.06);
 }
 
-body.dark-mode.theme-sticky-note .history-item {
+body.dark-mode.theme-sticky-note .clipboard-item {
   background: #3a3a3c;
 }
 

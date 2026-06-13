@@ -76,16 +76,16 @@ const AppHeader = ({
   };
 
   return (
-  <header className="window-drag-region">
-    <div className="header-top">
-      <div className="header-leading">
+  <header className="app-header window-drag-region">
+    <div className="app-header__top">
+      <div className="app-header__leading">
         {(showSettings || showTagManager) && (
           <button className="ui-button ui-button--icon window-no-drag" onClick={onBack}>
             <ChevronLeft size={18} />
           </button>
         )}
-        <div className="header-drag-region" data-tauri-drag-region>
-          <span className="header-title">
+        <div className="app-header__drag" data-tauri-drag-region>
+          <span className="app-header__title">
             {showTagManager && tagManagerEnabled
                 ? (t('tag_manager') || '标签管理')
                 : showSettings
@@ -94,10 +94,10 @@ const AppHeader = ({
           </span>
         </div>
       </div>
-      <div className="header-actions window-no-drag">
+      <div className="app-header__actions window-no-drag">
         {/* Pin Button - Always visible but single instance */}
         <button
-          className={`ui-button ui-button--icon ${isWindowPinned ? 'active' : ''}`}
+          className={`ui-button ui-button--icon ${isWindowPinned ? 'ui-button--active' : ''}`}
           title={t('pin')}
           onClick={() => {
             const newVal = !isWindowPinned;
@@ -145,13 +145,13 @@ const AppHeader = ({
             transition={{ duration: 0.2, ease: "circOut" }}
             style={{ flexShrink: 0 }}
           >
-            <div className="search-container window-no-drag">
-              <div style={{ position: 'relative' }}>
-                <Search size={14} className="search-icon" />
+            <div className="app-header__search window-no-drag">
+              <div className="app-header__search-field">
+                <Search size={14} className="app-header__search-icon" />
                 <input
                   ref={searchInputRef}
                   type="text"
-                  className={`ui-input ${showTagFilter && allTags.length > 0 ? 'dropdown-open' : ''}`}
+                  className={`ui-input ${showTagFilter && allTags.length > 0 ? 'ui-input--menu-open' : ''}`}
                   placeholder={t('search_placeholder')}
                   value={search}
                   onCompositionStart={() => setIsComposing(true)}
@@ -181,9 +181,9 @@ const AppHeader = ({
                   style={{ color: colorMode === 'dark' ? '#ffffff' : undefined }}
                 />
                 {showTagFilter && searchIsFocused && allTags.length > 0 && (
-                  <div className="tags-dropdown">
-                    <div className="tags-label">{t('tags') || "Tags"}</div>
-                    <div className="tags-list">
+                  <div className="app-header__tag-menu">
+                    <div className="app-header__tag-menu-label">{t('tags') || "Tags"}</div>
+                    <div className="app-header__tag-menu-list">
                       {allTags.map(tag => {
                         const tagBackground = getTagColor(tag, theme);
                         return (
@@ -207,15 +207,7 @@ const AppHeader = ({
                 )}
               </div>
               <div
-                className="ui-scroll--hidden"
-                style={{
-                  display: 'flex',
-                  gap: '6px',
-                  padding: '8px 0 0 0',
-                  overflowX: 'auto',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none'
-                }}
+                className="app-header__filters ui-scroll--hidden"
                 onWheel={(e) => {
                   if (e.deltaY !== 0) {
                     e.currentTarget.scrollLeft += e.deltaY;
@@ -225,17 +217,8 @@ const AppHeader = ({
                 {['text', 'image', 'file', 'url', 'code', 'video'].map(t => (
                   <button
                     key={t}
-                    className={`ui-button ui-button--icon ${typeFilter === t ? 'active' : ''}`}
+                    className={`ui-button ui-button--icon app-header__filter ${typeFilter === t ? 'app-header__filter--active' : ''}`}
                     onClick={() => setTypeFilter(typeFilter === t ? null : t)}
-                    style={{
-                      width: 'auto',
-                      padding: '4px 8px',
-                      fontSize: '11px',
-                      borderRadius: '4px',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      opacity: typeFilter === t ? 1 : 0.7
-                    }}
                     title={getTypeName(t)}
                   >
                     {getTypeName(t)}

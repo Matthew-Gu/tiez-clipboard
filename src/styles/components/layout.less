@@ -1,4 +1,4 @@
-header {
+.app-header {
   padding: 6px 0;
   background: var(--bg-toolbar);
   border-bottom: var(--toolbar-border);
@@ -21,7 +21,7 @@ header {
   app-region: no-drag;
 }
 
-.header-top {
+.app-header__top {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,7 +30,7 @@ header {
   min-height: 20px;
 }
 
-.header-leading {
+.app-header__leading {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
@@ -38,7 +38,7 @@ header {
   min-width: 0;
 }
 
-.header-drag-region {
+.app-header__drag {
   display: flex;
   align-items: center;
   flex: 1;
@@ -47,11 +47,11 @@ header {
   cursor: grab;
 }
 
-.header-drag-region:active {
+.app-header__drag:active {
   cursor: grabbing;
 }
 
-.header-title {
+.app-header__title {
   font-family: var(--title-font-family);
   font-weight: var(--title-font-weight);
   text-transform: var(--title-transform);
@@ -69,24 +69,24 @@ header {
   white-space: nowrap;
 }
 
-.header-actions {
+.app-header__actions {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.header-actions .ui-button--icon,
-.header-leading > .ui-button--icon {
+.app-header__actions .ui-button--icon,
+.app-header__leading > .ui-button--icon {
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
 }
 
-.header-actions .ui-button--icon:hover,
-.header-leading > .ui-button--icon:hover {
+.app-header__actions .ui-button--icon:hover,
+.app-header__leading > .ui-button--icon:hover {
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 
-.header-actions .ui-button--icon:active,
-.header-leading > .ui-button--icon:active {
+.app-header__actions .ui-button--icon:active,
+.app-header__leading > .ui-button--icon:active {
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
 }
 
@@ -98,12 +98,39 @@ header {
   box-sizing: border-box;
 }
 
-.search-container {
+.app-header__search {
   position: relative;
   width: 100%;
   margin-top: 2px;
   overflow: visible;
   padding: 0 var(--spacing-md);
+}
+
+.app-header__search-field {
+  position: relative;
+}
+
+.app-header__filters {
+  display: flex;
+  gap: 6px;
+  padding-top: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.app-header__filter {
+  width: auto;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.app-header__filter--active {
+  opacity: 1;
 }
 
 .ui-input {
@@ -146,7 +173,7 @@ select.ui-input option {
   box-shadow: var(--input-focus-shadow);
 }
 
-.search-icon {
+.app-header__search-icon {
   position: absolute;
   left: 12px;
   top: 50%;
@@ -154,7 +181,7 @@ select.ui-input option {
   color: var(--text-secondary);
 }
 
-.main-content {
+.app-shell__main {
   flex: 1;
   overflow-y: hidden;
   padding: 6px 0 12px 0;
@@ -165,12 +192,12 @@ select.ui-input option {
   width: 100%;
 }
 
-.main-content.main-content-chat-mode {
+.app-shell__main.app-shell__main--chat {
   padding-bottom: 0;
   gap: 0;
 }
 
-.virtual-list-wrapper {
+.clipboard-list__virtual {
   width: 100%;
   height: 100%;
   flex: 1;
@@ -178,14 +205,24 @@ select.ui-input option {
   margin-right: 0;
 }
 
-.history-list-container {
+.clipboard-list {
   position: relative;
   width: 100%;
   height: 100%;
   flex: 1;
 }
 
-.scroll-top-button {
+.clipboard-list__pinned {
+  list-style: none;
+  padding: 0;
+}
+
+.clipboard-list__first-item {
+  height: 100%;
+  padding-top: 4px;
+}
+
+.clipboard-list__scroll-top {
   position: absolute;
   right: 16px;
   bottom: 16px;
@@ -194,7 +231,7 @@ select.ui-input option {
   padding: 8px;
 }
 
-.virtual-list-wrapper .virtuoso-scroller {
+.clipboard-list__virtual .virtuoso-scroller {
   width: calc(100% + var(--scrollbar-overlay-width, 10px));
   margin-right: calc(var(--scrollbar-overlay-width, 10px) * -1);
   padding: 0 8px;
@@ -202,7 +239,7 @@ select.ui-input option {
   overflow-x: hidden;
 }
 
-.history-item {
+.clipboard-item {
   position: relative;
   padding: 10px 12px 8px 12px;
   background: var(--bg-element);
@@ -224,30 +261,30 @@ select.ui-input option {
   box-sizing: border-box;
 }
 
-.history-item:hover {
+.clipboard-item:hover {
   transform: var(--card-hover-transform);
   box-shadow: var(--card-hover-shadow);
   background: var(--bg-input);
   border-color: var(--card-hover-border-color);
 }
 
-.history-item:active {
+.clipboard-item:active {
   transform: var(--card-active-transform);
   box-shadow: var(--card-active-shadow);
 }
 
-.pinned-reorder.dragging .history-item,
-.pinned-reorder.dragging .history-item:hover,
-.pinned-reorder.dragging .history-item:active {
+.clipboard-list__pinned--dragging .clipboard-item,
+.clipboard-list__pinned--dragging .clipboard-item:hover,
+.clipboard-list__pinned--dragging .clipboard-item:active {
   transform: none;
   box-shadow: none;
 }
 
-.pinned-reorder.dragging .history-item {
+.clipboard-list__pinned--dragging .clipboard-item {
   transition: none;
 }
 
-.drag-handle {
+.clipboard-item__drag-handle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -256,17 +293,17 @@ select.ui-input option {
   color: var(--text-secondary);
 }
 
-.drag-handle:hover {
+.clipboard-item__drag-handle:hover {
   opacity: 1;
   color: var(--accent-color);
   background: rgba(var(--accent-color-rgb), 0.08);
 }
 
-.drag-handle:active {
+.clipboard-item__drag-handle:active {
   cursor: grabbing;
 }
 
-.history-item[data-reordering="true"] {
+.clipboard-item[data-reordering="true"] {
   z-index: 9999;
   box-shadow: var(--card-selected-shadow);
   background: var(--card-selected-background);

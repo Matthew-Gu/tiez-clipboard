@@ -70,14 +70,14 @@ const ClipboardItem = ({
             const t = e.target as HTMLElement;
 
             if (root.contains(t)) {
-                if (t.closest(".tag-edit-anchor")) return;
-                if (t.closest(".item-tags-container .tag-chip")) return;
+                if (t.closest(".clipboard-item__tag-editor")) return;
+                if (t.closest(".clipboard-item__tags .tag-chip")) return;
                 if (
                     t.closest("button") ||
                     t.closest("input") ||
                     t.closest("textarea") ||
                     t.closest('[role="button"]') ||
-                    t.closest(".drag-handle")
+                    t.closest(".clipboard-item__drag-handle")
                 ) {
                     return;
                 }
@@ -190,15 +190,15 @@ const ClipboardItem = ({
             animate={{ marginBottom: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.1 }}
-            className={`history-item ${isSelected ? "selected" : ""} ${item.is_pinned ? "pinned" : ""} ${className || ''}`}
+            className={`clipboard-item ${isSelected ? "clipboard-item--selected" : ""} ${item.is_pinned ? "clipboard-item--pinned" : ""} ${className || ''}`}
             onMouseDown={(e) => {
                 const target = e.target as HTMLElement;
                 if (e.button !== 0) return;
 
                 if (isEditingTags) {
-                    if (target.closest(".tag-edit-anchor")) return;
-                    if (target.closest(".item-tags-container .tag-chip")) return;
-                    if (target.closest('button, input, textarea, [role="button"], .drag-handle')) {
+                    if (target.closest(".clipboard-item__tag-editor")) return;
+                    if (target.closest(".clipboard-item__tags .tag-chip")) return;
+                    if (target.closest('button, input, textarea, [role="button"], .clipboard-item__drag-handle')) {
                         return;
                     }
                     if (target.closest('a')) return;
@@ -208,7 +208,7 @@ const ClipboardItem = ({
                     return;
                 }
 
-                if (target.closest('button, input, textarea, [role="button"], .drag-handle')) {
+                if (target.closest('button, input, textarea, [role="button"], .clipboard-item__drag-handle')) {
                     return;
                 }
                 if (target.closest('a')) {
@@ -234,7 +234,7 @@ const ClipboardItem = ({
             onContextMenu={(e) => {
                 const target = e.target as HTMLElement;
                 if (isEditingTags) {
-                    if (target.closest(".tag-edit-anchor")) return;
+                    if (target.closest(".clipboard-item__tag-editor")) return;
                     e.preventDefault();
                     e.stopPropagation();
                     onTagEditCancel?.();

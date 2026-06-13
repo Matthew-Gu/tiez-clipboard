@@ -94,11 +94,11 @@ const FileContent = ({
 }: Pick<ClipboardItemContentProps, "item" | "t" | "filePaths" | "fileIcon">) => {
     if (item.file_preview_exists === false) {
         return (
-            <div className="file-thumbnail-card error-bg" title={t('file_deleted') || "File Deleted"}>
-                <div className="file-icon-wrapper error-icon"><FileQuestion size={24} /></div>
-                <div className="file-info-wrapper">
-                    <div className="file-name error-text">{t('file_deleted') || "Deleted"}</div>
-                    <div className="file-hint error-text">{item.content}</div>
+            <div className="clipboard-item__file-card clipboard-item__file-card--error" title={t('file_deleted') || "File Deleted"}>
+                <div className="clipboard-item__file-icon clipboard-item__file-icon--error"><FileQuestion size={24} /></div>
+                <div className="clipboard-item__file-info">
+                    <div className="clipboard-item__file-name clipboard-item__file-text--error">{t('file_deleted') || "Deleted"}</div>
+                    <div className="clipboard-item__file-hint clipboard-item__file-text--error">{item.content}</div>
                 </div>
             </div>
         );
@@ -106,11 +106,11 @@ const FileContent = ({
 
     if (filePaths.length > 1) {
         return (
-            <div className="file-thumbnail-card" title={item.content}>
-                <div className="file-icon-wrapper"><Files size={24} /></div>
-                <div className="file-info-wrapper">
-                    <div className="file-name">{filePaths.length} {t('items')}</div>
-                    <div className="file-hint">{filePaths[0].split(/[\\/]/).pop()} ...</div>
+            <div className="clipboard-item__file-card" title={item.content}>
+                <div className="clipboard-item__file-icon"><Files size={24} /></div>
+                <div className="clipboard-item__file-info">
+                    <div className="clipboard-item__file-name">{filePaths.length} {t('items')}</div>
+                    <div className="clipboard-item__file-hint">{filePaths[0].split(/[\\/]/).pop()} ...</div>
                 </div>
             </div>
         );
@@ -119,11 +119,11 @@ const FileContent = ({
     const filePath = filePaths[0];
     if (!filePath) {
         return (
-            <div className="file-thumbnail-card" title={item.content}>
-                <div className="file-icon-wrapper"><File size={24} /></div>
-                <div className="file-info-wrapper">
-                    <div className="file-name">{t('file') || "File"}</div>
-                    <div className="file-hint">{item.content}</div>
+            <div className="clipboard-item__file-card" title={item.content}>
+                <div className="clipboard-item__file-icon"><File size={24} /></div>
+                <div className="clipboard-item__file-info">
+                    <div className="clipboard-item__file-name">{t('file') || "File"}</div>
+                    <div className="clipboard-item__file-hint">{item.content}</div>
                 </div>
             </div>
         );
@@ -132,15 +132,15 @@ const FileContent = ({
     const fileName = filePath.split(/[\\/]/).pop();
     const dirPath = filePath.split(/[\\/]/).slice(0, -1).join('\\');
     return (
-        <div className="file-thumbnail-card" title={item.content}>
-            <div className={`file-icon-wrapper${fileIcon ? " file-icon-wrapper-system" : ""}`}>
+        <div className="clipboard-item__file-card" title={item.content}>
+            <div className={`clipboard-item__file-icon${fileIcon ? " clipboard-item__file-icon--system" : ""}`}>
                 {fileIcon
-                    ? <img src={fileIcon} alt={`${fileName || "file"} icon`} className="file-icon-image" loading="lazy" />
+                    ? <img src={fileIcon} alt={`${fileName || "file"} icon`} className="clipboard-item__file-icon-image" loading="lazy" />
                     : getFallbackFileIcon(filePath)}
             </div>
-            <div className="file-info-wrapper">
-                <div className="file-name">{fileName}</div>
-                <div className="file-hint">{dirPath}</div>
+            <div className="clipboard-item__file-info">
+                <div className="clipboard-item__file-name">{fileName}</div>
+                <div className="clipboard-item__file-hint">{dirPath}</div>
             </div>
         </div>
     );
@@ -156,16 +156,16 @@ const ClipboardItemContent = ({
     standaloneColorValue
 }: ClipboardItemContentProps) => {
     return (
-        <div className="content-preview-shell">
-            <div className={`content-preview ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}>
+        <div className="clipboard-item__preview-shell">
+            <div className={`clipboard-item__preview ${item.content_type === 'file' ? 'clipboard-item__preview--file' : ''} ${isSensitiveHidden ? 'clipboard-item__preview--sensitive' : ''}`}>
                 {item.content_type === "image" ? (
                     <div style={{ position: 'relative' }}>
                         {!item.content ? (
-                            <div className="image-preview error-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '72px', fontSize: '12px' }}>
+                            <div className="clipboard-item__image clipboard-item__error-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '72px', fontSize: '12px' }}>
                                 {item.preview}
                             </div>
                         ) : item.is_external && item.file_preview_exists === false ? (
-                            <div className="image-preview error-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '100px', fontSize: '12px' }}>
+                            <div className="clipboard-item__image clipboard-item__error-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', height: '100px', fontSize: '12px' }}>
                                 <ImageOff size={24} style={{ marginBottom: '8px', opacity: 0.5 }} />
                                 <span>{t('image_deleted') || 'Image Deleted'}</span>
                             </div>
@@ -175,12 +175,12 @@ const ClipboardItemContent = ({
                                     ? item.content
                                     : (toTauriLocalImageSrc(item.content) || (item.is_external ? convertFileSrc(item.content) : item.content))}
                                 alt={t('image_preview')}
-                                className="image-preview"
+                                className="clipboard-item__image"
                                 loading="lazy"
                                 style={isSensitiveHidden ? { filter: 'blur(8px)' } : {}}
                                 onError={(event) => {
                                     event.currentTarget.style.display = 'none';
-                                    event.currentTarget.parentElement?.classList.add('image-load-error');
+                                    event.currentTarget.parentElement?.classList.add('clipboard-item__image-wrap--error');
                                 }}
                             />
                         )}
@@ -191,28 +191,28 @@ const ClipboardItemContent = ({
                         )}
                     </div>
                 ) : item.content_type === "video" ? (
-                    <div className="video-thumbnail-card">
-                        <div className="video-thumbnail-wrapper">
+                    <div className="clipboard-item__video-card">
+                        <div className="clipboard-item__video-thumbnail">
                             <video
                                 src={item.content.startsWith("data:") ? item.content : (toTauriLocalImageSrc(item.content) || item.content)}
                                 preload="metadata"
                                 muted
                                 playsInline
-                                className="video-thumbnail-element"
+                                className="clipboard-item__video-element"
                                 onLoadedMetadata={(event) => seekVideoPreviewFrame(event.currentTarget)}
                             />
-                            <div className="video-play-overlay"><Video size={16} /></div>
+                            <div className="clipboard-item__video-play"><Video size={16} /></div>
                         </div>
-                        <div className="video-info-wrapper">
-                            <div className="video-name">{item.content.split(/[\\/]/).pop()}</div>
+                        <div className="clipboard-item__video-info">
+                            <div className="clipboard-item__video-name">{item.content.split(/[\\/]/).pop()}</div>
                         </div>
                     </div>
                 ) : item.content_type === "file" ? (
                     <FileContent item={item} t={t} filePaths={filePaths} fileIcon={fileIcon} />
                 ) : standaloneColorValue && !isSensitiveHidden ? (
-                    <div className="color-code-preview">
-                        <span className="color-code-swatch" style={{ background: standaloneColorValue }} aria-hidden="true" />
-                        <span className="color-code-value">{standaloneColorValue}</span>
+                    <div className="clipboard-item__color">
+                        <span className="clipboard-item__color-swatch" style={{ background: standaloneColorValue }} aria-hidden="true" />
+                        <span className="clipboard-item__color-value">{standaloneColorValue}</span>
                     </div>
                 ) : (
                     isSensitiveHidden

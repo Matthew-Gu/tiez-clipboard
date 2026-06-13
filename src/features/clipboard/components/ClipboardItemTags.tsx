@@ -73,7 +73,7 @@ const ClipboardItemTags = ({
 
     return (
         <div
-            className={`item-tags-container${isEditing ? ' tag-edit-active' : ''}`}
+            className={`clipboard-item__tags${isEditing ? ' clipboard-item__tags--editing' : ''}`}
             style={{ marginTop: '6px', display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: '4px', paddingTop: '0' }}
         >
             {tags?.map((tag) => {
@@ -101,8 +101,8 @@ const ClipboardItemTags = ({
             })}
 
             {isEditing && (
-                <div className="tag-edit-anchor">
-                    <div className="tag-edit-input-row">
+                <div className="clipboard-item__tag-editor">
+                    <div className="clipboard-item__tag-editor-row">
                         <input
                             ref={inputRef}
                             type="text"
@@ -153,7 +153,7 @@ const ClipboardItemTags = ({
                                     }
                                 }
                             }}
-                            className="tag-input"
+                            className="clipboard-item__tag-input"
                             aria-autocomplete="list"
                             aria-controls={pickableSuggestions.length > 0 && onTagPick ? `tag-suggest-list-${itemId}` : undefined}
                             aria-activedescendant={suggestionIndex >= 0 && pickableSuggestions.length > 0 && onTagPick ? `tag-suggest-opt-${itemId}-${suggestionIndex}` : undefined}
@@ -177,7 +177,7 @@ const ClipboardItemTags = ({
                         <div
                             ref={suggestionListRef}
                             id={`tag-suggest-list-${itemId}`}
-                            className="tag-edit-suggestions-popover ui-scroll--hidden"
+                            className="clipboard-item__tag-suggestions ui-scroll--hidden"
                             role="listbox"
                             aria-label={t('find_tags')}
                             onMouseDown={(event) => event.stopPropagation()}
@@ -191,7 +191,7 @@ const ClipboardItemTags = ({
                                         role="option"
                                         id={`tag-suggest-opt-${itemId}-${index}`}
                                         aria-selected={suggestionIndex === index}
-                                        className={`tag-suggest-item${suggestionIndex === index ? ' tag-suggest-item--active' : ''}`}
+                                        className={`clipboard-item__tag-suggestion${suggestionIndex === index ? ' clipboard-item__tag-suggestion--active' : ''}`}
                                         onMouseEnter={() => setSuggestionIndex(index)}
                                         onClick={(event) => {
                                             event.stopPropagation();
@@ -200,7 +200,7 @@ const ClipboardItemTags = ({
                                             setSuggestionIndex(-1);
                                         }}
                                     >
-                                        <span className="tag-suggest-pill" style={{ background, color: getTagTextColor(background) }}>{tag}</span>
+                                        <span className="clipboard-item__tag-suggestion-pill" style={{ background, color: getTagTextColor(background) }}>{tag}</span>
                                     </button>
                                 );
                             })}
