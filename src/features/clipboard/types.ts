@@ -70,6 +70,7 @@ export interface VirtualClipboardListProps {
   firstItemIndex?: number;
   restoreStateFrom?: StateSnapshot;
   onStateSnapshot?: (snapshot: StateSnapshot) => void;
+  scrollToTopRequest?: number;
 }
 
 export interface VirtualClipboardListHandle {

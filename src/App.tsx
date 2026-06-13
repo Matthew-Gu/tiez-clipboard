@@ -50,7 +50,7 @@ import { useSearchFetchTrigger } from "./shared/hooks/useSearchFetchTrigger";
 import { useScrollToSelection } from "./shared/hooks/useScrollToSelection";
 import { useClipboardItemRenderer } from "./shared/hooks/useClipboardItemRenderer";
 import { useOverlays } from "./shared/hooks/useOverlays";
-import type { ClipboardEntry } from "./shared/types";
+import type { ClipboardEntry, ClipboardEntrySummary } from "./shared/types";
 import type { QuickPasteHint, VirtualClipboardListHandle } from "./features/clipboard/types";
 
 import type { QuickPasteModifier } from "./features/app/types";
@@ -179,6 +179,7 @@ const App = () => {
   const tagColors = useTagColors();
   const virtualListRef = useRef<VirtualClipboardListHandle | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollToTopRequest, setScrollToTopRequest] = useState(0);
   const [tagManagerPage, setTagManagerPage] = useState<TwoLevelPage>("list");
   const [advancedSettingsPage, setAdvancedSettingsPage] = useState<TwoLevelPage>("list");
   const [quickPasteHintsById, setQuickPasteHintsById] = useState<Record<number, QuickPasteHint>>(
@@ -194,7 +195,7 @@ const App = () => {
     hasNewer,
     prefetchVisibleRange,
     prefetchDetails,
-    handleSummaryUpdated,
+    handleClipboardCaptured,
     handleRemoved
   } = useHistoryFetch({
     debouncedSearch,
@@ -410,15 +411,12 @@ const App = () => {
 
   useCustomBackground({ customBackground, customBackgroundOpacity, theme });
 
-  const handleClipboardUpdated = useCallback((entry: Parameters<typeof handleSummaryUpdated>[0]) => {
-    const isNewEntry = !history.some((item) => item.id === entry.id);
-    handleSummaryUpdated(entry);
+  const handleClipboardUpdated = useCallback((entry: ClipboardEntrySummary) => {
+    const isNewEntry = handleClipboardCaptured(entry);
 
-    if (!isNewEntry || showSettings || effectiveShowTagManager) return;
-    requestAnimationFrame(() => {
-      virtualListRef.current?.scrollToTop();
-    });
-  }, [effectiveShowTagManager, handleSummaryUpdated, history, showSettings]);
+    if (!isNewEntry) return;
+    setScrollToTopRequest((request) => request + 1);
+  }, [handleClipboardCaptured]);
 
   useClipboardEvents({
     onUpdated: handleClipboardUpdated,
@@ -675,6 +673,7 @@ const App = () => {
           firstItemIndex={firstItemIndex}
           showScrollTop={showScrollTopVisible}
           onScrollTop={handleScrollTop}
+          scrollToTopRequest={scrollToTopRequest}
         />
       </main>
 

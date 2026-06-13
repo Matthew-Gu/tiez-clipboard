@@ -50,7 +50,8 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
             header,
             firstItemIndex = 0,
             restoreStateFrom,
-            onStateSnapshot
+            onStateSnapshot,
+            scrollToTopRequest
         } = props;
 
         const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -80,6 +81,21 @@ const VirtualClipboardList = React.forwardRef<VirtualClipboardListHandle, Virtua
                 virtuosoRef.current?.getState(onStateSnapshot);
             };
         }, [onStateSnapshot]);
+
+        React.useLayoutEffect(() => {
+            if (!scrollToTopRequest) return;
+            let secondFrame = 0;
+            const firstFrame = requestAnimationFrame(() => {
+                virtuosoRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+                secondFrame = requestAnimationFrame(() => {
+                    virtuosoRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+                });
+            });
+            return () => {
+                cancelAnimationFrame(firstFrame);
+                if (secondFrame) cancelAnimationFrame(secondFrame);
+            };
+        }, [scrollToTopRequest]);
 
         // Keep keyboard selection visible even when the item is only in overscan
         React.useEffect(() => {

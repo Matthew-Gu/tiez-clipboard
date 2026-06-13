@@ -45,6 +45,7 @@ interface AppMainContentProps {
   firstItemIndex: number;
   showScrollTop: boolean;
   onScrollTop: () => void;
+  scrollToTopRequest: number;
 }
 
 const SortableItem = ({
@@ -108,7 +109,8 @@ const AppMainContent = ({
   isLoadingMore,
   firstItemIndex,
   showScrollTop,
-  onScrollTop
+  onScrollTop,
+  scrollToTopRequest
 }: AppMainContentProps) => {
   const search = useUiStore((state) => state.search);
   const selectedIndex = useUiStore((state) => state.selectedIndex);
@@ -292,6 +294,7 @@ const AppMainContent = ({
             firstItemIndex={firstItemIndex}
             restoreStateFrom={homeListSnapshotRef.current ?? undefined}
             onStateSnapshot={handleHomeListSnapshot}
+            scrollToTopRequest={scrollToTopRequest}
           />
           {showScrollTop && (
             <button

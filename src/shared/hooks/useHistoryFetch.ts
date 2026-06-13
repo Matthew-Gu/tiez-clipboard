@@ -60,9 +60,15 @@ export const useHistoryFetch = ({
   const detailCacheRef = useRef<Record<number, ClipboardEntryDetail>>({});
   const detailLruRef = useRef<number[]>([]);
   const detailLoadingRef = useRef(new Set<number>());
+  const pendingCapturedIdsRef = useRef(new Set<number>());
 
   useEffect(() => {
     historyRef.current = history;
+    pendingCapturedIdsRef.current.forEach((id) => {
+      if (history.some((item) => item.id === id)) {
+        pendingCapturedIdsRef.current.delete(id);
+      }
+    });
   }, [history]);
 
   useEffect(() => {
@@ -304,6 +310,37 @@ export const useHistoryFetch = ({
     [invalidateDetail, setHistory]
   );
 
+  const handleClipboardCaptured = useCallback(
+    (summary: ClipboardEntrySummary) => {
+      const existed = historyRef.current.some((item) => item.id === summary.id)
+        || pendingCapturedIdsRef.current.has(summary.id);
+      if (existed) {
+        handleSummaryUpdated(summary);
+        return false;
+      }
+
+      pendingCapturedIdsRef.current.add(summary.id);
+      invalidateDetail(summary.id);
+      const entry = summaryToEntry(summary);
+      if (!entry.is_pinned) {
+        setFirstItemIndex((prev) => Math.max(1, prev - 1));
+      }
+      setHasNewer(false);
+      setHistory((prev) => {
+        const without = prev.filter((item) => item.id !== entry.id);
+        const pinned = without.filter((item) => item.is_pinned);
+        let unpinned = without.filter((item) => !item.is_pinned);
+        if (entry.is_pinned) pinned.push(entry);
+        else unpinned.unshift(entry);
+        pinned.sort((a, b) => (b.pinned_order || 0) - (a.pinned_order || 0));
+        unpinned = capHistoryWindow(unpinned, "newest").items;
+        return [...pinned, ...unpinned];
+      });
+      return true;
+    },
+    [handleSummaryUpdated, invalidateDetail, setHistory]
+  );
+
   const handleRemoved = useCallback(
     (id: number) => {
       invalidateDetail(id);
@@ -322,6 +359,7 @@ export const useHistoryFetch = ({
     prefetchVisibleRange,
     prefetchDetails,
     invalidateDetail,
+    handleClipboardCaptured,
     handleSummaryUpdated,
     handleRemoved
   };
