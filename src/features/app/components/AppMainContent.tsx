@@ -313,7 +313,7 @@ const AppMainContent = ({
           {showScrollTop && (
             <button
               type="button"
-              className="btn-icon scroll-top-button"
+              className="ui-button ui-button--icon scroll-top-button"
               onClick={onScrollTop}
               aria-label={t("scroll_to_top")}
               title={t("scroll_to_top")}

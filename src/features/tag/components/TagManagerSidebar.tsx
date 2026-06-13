@@ -79,7 +79,7 @@ const TagManagerSidebar = ({
                 ) : null}
         </div>
 
-        <div className="tag-scroll custom-scrollbar">
+        <div className="tag-scroll ui-scroll">
             {filteredTags.map((tag) => (
                 <div key={tag.name} className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`} onClick={() => openTag(tag.name)} title={tag.name}>
                     <div className="tag-color-wrapper" onClick={(event) => event.stopPropagation()}>

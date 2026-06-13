@@ -46,7 +46,7 @@ const DefaultAppsSettingsGroup = ({
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                                 <span className="item-label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{getTypeName(type)}</span>
                                 <button
-                                    className="btn-icon"
+                                    className="ui-button ui-button--icon"
                                     onClick={() => setShowAppSelector(type)}
                                     title={t('change_app')}
                                     style={{ width: 'auto', padding: '4px 12px', fontSize: '10px', textTransform: 'uppercase', height: '24px' }}

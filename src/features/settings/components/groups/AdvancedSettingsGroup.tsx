@@ -331,7 +331,7 @@ const AdvancedSettingsGroup = ({
                 <section className="advanced-list-page">
                     <div className="advanced-sidebar-search">
                         <input
-                            className="search-input advanced-search-input"
+                            className="ui-input advanced-ui-input"
                             placeholder={t("search_apps_placeholder")}
                             value={searchText}
                             onFocus={focusEditorWindow}
@@ -398,7 +398,7 @@ const AdvancedSettingsGroup = ({
                         {showInlineBack && (
                             <button
                                 type="button"
-                                className="btn-icon advanced-back-btn"
+                                className="ui-button ui-button--icon advanced-back-btn"
                                 onClick={() => onPageChange(transitionTwoLevelPage(page, "show-list"))}
                                 title={t("back")}
                             >
@@ -414,7 +414,7 @@ const AdvancedSettingsGroup = ({
                             </div>
                         </div>
                         {selectedTarget?.kind === "global" || (appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore") ? (
-                            <button type="button" className="btn-icon advanced-add-rule-btn" onClick={addRule}>
+                            <button type="button" className="ui-button ui-button--icon advanced-add-rule-btn" onClick={addRule}>
                                 <Plus size={14} />
                                 <span>{t("advanced_add_rule")}</span>
                             </button>
@@ -492,7 +492,7 @@ const AdvancedSettingsGroup = ({
                                                         <label>{t("advanced_rule_label_name")}</label>
                                                         <input
                                                             type="text"
-                                                            className="search-input advanced-rule-input"
+                                                            className="ui-input advanced-rule-input"
                                                             value={rule.label ?? ""}
                                                             placeholder={`${t("advanced_rule_label")} ${index + 1}`}
                                                             onFocus={focusEditorWindow}
@@ -502,7 +502,7 @@ const AdvancedSettingsGroup = ({
                                                     <div className="advanced-rule-field">
                                                         <label>{t("advanced_match_label")}</label>
                                                         <textarea
-                                                            className="search-input advanced-rule-textarea"
+                                                            className="ui-input advanced-rule-textarea"
                                                             value={rule.match}
                                                             placeholder={t("advanced_match_placeholder")}
                                                             onFocus={focusEditorWindow}
@@ -534,7 +534,7 @@ const AdvancedSettingsGroup = ({
                                                         <div className="advanced-rule-field">
                                                             <label>{t("advanced_replace_label")}</label>
                                                             <textarea
-                                                                className="search-input advanced-rule-textarea"
+                                                                className="ui-input advanced-rule-textarea"
                                                                 value={rule.replace}
                                                                 placeholder={t("advanced_replace_placeholder")}
                                                                 onFocus={focusEditorWindow}
@@ -546,7 +546,7 @@ const AdvancedSettingsGroup = ({
                                                     <div className="advanced-rule-actions">
                                                         <button
                                                             type="button"
-                                                            className="btn-icon advanced-delete-btn"
+                                                            className="ui-button ui-button--icon advanced-delete-btn"
                                                             onClick={() => deleteRule(index)}
                                                         >
                                                             <Trash2 size={14} />

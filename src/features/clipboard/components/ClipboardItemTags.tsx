@@ -167,7 +167,7 @@ const ClipboardItemTags = ({
                                 event.stopPropagation();
                                 onTagAdd();
                             }}
-                            className="btn-icon"
+                            className="ui-button ui-button--icon"
                             style={{ padding: '2px', height: '16px', width: '16px' }}
                         >
                             <Plus size={10} />
@@ -177,7 +177,7 @@ const ClipboardItemTags = ({
                         <div
                             ref={suggestionListRef}
                             id={`tag-suggest-list-${itemId}`}
-                            className="tag-edit-suggestions-popover hide-scrollbar"
+                            className="tag-edit-suggestions-popover ui-scroll--hidden"
                             role="listbox"
                             aria-label={t('find_tags')}
                             onMouseDown={(event) => event.stopPropagation()}

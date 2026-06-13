@@ -22,7 +22,7 @@ const DataSettingsGroup = ({ t, collapsed, onToggle, dataPath }: DataSettingsGro
                         <span className="item-label" style={{ textTransform: 'uppercase', fontSize: '11px', opacity: 0.8 }}>{t('data_path')}</span>
                         <div style={{ display: 'flex', gap: '8px' }}>
                             <button
-                                className="btn-icon"
+                                className="ui-button ui-button--icon"
                                 onClick={() => {
                                     open({
                                         directory: true,
@@ -69,7 +69,7 @@ const DataSettingsGroup = ({ t, collapsed, onToggle, dataPath }: DataSettingsGro
                                 {t('change_app')}
                             </button>
                             <button
-                                className="btn-icon"
+                                className="ui-button ui-button--icon"
                                 onClick={() => invoke("open_data_folder").catch(console.error)}
                                 title={t('open_folder') || "Open"}
                                 style={{ width: 'auto', padding: '4px 12px', fontSize: '10px', textTransform: 'uppercase', height: '24px' }}

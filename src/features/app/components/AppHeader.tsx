@@ -80,7 +80,7 @@ const AppHeader = ({
     <div className="header-top">
       <div className="header-leading">
         {(showSettings || showTagManager) && (
-          <button className="btn-icon window-no-drag" onClick={onBack}>
+          <button className="ui-button ui-button--icon window-no-drag" onClick={onBack}>
             <ChevronLeft size={18} />
           </button>
         )}
@@ -97,7 +97,7 @@ const AppHeader = ({
       <div className="header-actions window-no-drag">
         {/* Pin Button - Always visible but single instance */}
         <button
-          className={`btn-icon ${isWindowPinned ? 'active' : ''}`}
+          className={`ui-button ui-button--icon ${isWindowPinned ? 'active' : ''}`}
           title={t('pin')}
           onClick={() => {
             const newVal = !isWindowPinned;
@@ -110,20 +110,20 @@ const AppHeader = ({
 
         {!showSettings && !showTagManager && (
           <>
-            <button className="btn-icon" title={t('clear_history')} onClick={clearHistory}>
+            <button className="ui-button ui-button--icon" title={t('clear_history')} onClick={clearHistory}>
               <Trash2 size={16} />
             </button>
             {tagManagerEnabled && (
-              <button className="btn-icon" title={t('tag_manager') || '标签管理'} onClick={onOpenTagManager}>
+              <button className="ui-button ui-button--icon" title={t('tag_manager') || '标签管理'} onClick={onOpenTagManager}>
                 <Tag size={16} />
               </button>
             )}
-            <button className="btn-icon" title={t('settings')} onClick={onOpenSettings}>
+            <button className="ui-button ui-button--icon" title={t('settings')} onClick={onOpenSettings}>
               <SettingsIcon size={16} />
             </button>
           </>
         )}
-        <button className="btn-icon" title={t('hide')} onClick={async () => {
+        <button className="ui-button ui-button--icon" title={t('hide')} onClick={async () => {
           invoke("hide_window_cmd").catch(console.error);
         }}>
           <X size={16} />
@@ -151,7 +151,7 @@ const AppHeader = ({
                 <input
                   ref={searchInputRef}
                   type="text"
-                  className={`search-input ${showTagFilter && allTags.length > 0 ? 'dropdown-open' : ''}`}
+                  className={`ui-input ${showTagFilter && allTags.length > 0 ? 'dropdown-open' : ''}`}
                   placeholder={t('search_placeholder')}
                   value={search}
                   onCompositionStart={() => setIsComposing(true)}
@@ -207,7 +207,7 @@ const AppHeader = ({
                 )}
               </div>
               <div
-                className="hide-scrollbar"
+                className="ui-scroll--hidden"
                 style={{
                   display: 'flex',
                   gap: '6px',
@@ -225,7 +225,7 @@ const AppHeader = ({
                 {['text', 'image', 'file', 'url', 'code', 'video'].map(t => (
                   <button
                     key={t}
-                    className={`btn-icon ${typeFilter === t ? 'active' : ''}`}
+                    className={`ui-button ui-button--icon ${typeFilter === t ? 'active' : ''}`}
                     onClick={() => setTypeFilter(typeFilter === t ? null : t)}
                     style={{
                       width: 'auto',

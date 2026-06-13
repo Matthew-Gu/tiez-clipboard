@@ -398,7 +398,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
-                                className="btn-icon"
+                                className="ui-button ui-button--icon"
                                 onClick={() => props.setPrivacyKindsOpen(!props.privacyKindsOpen)}
                                 style={{ width: '24px', height: '24px' }}
                             >
@@ -450,7 +450,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
-                                className="btn-icon"
+                                className="ui-button ui-button--icon"
                                 onClick={() => props.setPrivacyRulesOpen(!props.privacyRulesOpen)}
                                 style={{ width: '24px', height: '24px' }}
                             >
@@ -464,7 +464,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         </div>
                         {props.privacyRulesOpen && (
                             <textarea
-                                className="search-input"
+                                className="ui-input"
                                 style={{ width: 'calc(100% - 30px)', maxWidth: '100%', minHeight: '80px', padding: '8px', borderRadius: '0', marginLeft: '30px', boxSizing: 'border-box' }}
                                 placeholder={props.t('privacy_protection_custom_rules_placeholder')}
                                 value={props.privacyProtectionCustomRules}
@@ -485,7 +485,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <button
                                 type="button"
-                                className="btn-icon"
+                                className="ui-button ui-button--icon"
                                 onClick={() => setMaskSettingsOpen(!maskSettingsOpen)}
                                 style={{ width: '24px', height: '24px' }}
                             >
@@ -499,7 +499,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     <span className="item-label">{props.t('sensitive_mask_prefix_visible')}</span>
                                     <input
                                         type="number"
-                                        className="search-input"
+                                        className="ui-input"
                                         style={{ width: '60px', padding: '4px 8px', textAlign: 'center' }}
                                         min={0}
                                         max={20}
@@ -515,7 +515,7 @@ const ClipboardSettingsGroup = (props: ClipboardSettingsGroupProps) => {
                                     <span className="item-label">{props.t('sensitive_mask_suffix_visible')}</span>
                                     <input
                                         type="number"
-                                        className="search-input"
+                                        className="ui-input"
                                         style={{ width: '60px', padding: '4px 8px', textAlign: 'center' }}
                                         min={0}
                                         max={20}

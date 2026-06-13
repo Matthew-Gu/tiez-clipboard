@@ -1,7 +1,7 @@
 /* Acrylic Theme */
 :root.theme-acrylic,
 body.theme-acrylic {
-  background-color: transparent !important;
+  background-color: transparent;
   --bg-window: rgba(252, 252, 252, calc(0.56 * var(--surface-opacity-scale, 1)));
   --bg-content: transparent;
   --bg-toolbar: transparent;
@@ -210,15 +210,15 @@ body.dark-mode.theme-acrylic {
 body.windows-10.theme-acrylic #root,
 body.windows-10.dark-mode.theme-acrylic #root,
 body.windows-10:not(.light-mode).theme-acrylic #root {
-  background: rgba(252, 252, 252, calc(0.78 * var(--surface-opacity-scale, 1))) !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  background: rgba(252, 252, 252, calc(0.78 * var(--surface-opacity-scale, 1)));
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 body.windows-10.dark-mode.theme-acrylic #root,
 body.windows-10:not(.light-mode).theme-acrylic #root {
-  background: rgba(20, 20, 20, calc(0.76 * var(--surface-opacity-scale, 1))) !important;
+  background: rgba(20, 20, 20, calc(0.76 * var(--surface-opacity-scale, 1)));
 }
 
 body.windows-10.theme-acrylic,
@@ -241,5 +241,5 @@ body.windows-10:not(.light-mode).theme-acrylic::before,
 body.windows-10.theme-acrylic #root::before,
 body.windows-10.dark-mode.theme-acrylic #root::before,
 body.windows-10:not(.light-mode).theme-acrylic #root::before {
-  display: none !important;
+  display: none;
 }

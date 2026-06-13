@@ -7,7 +7,7 @@
 /* --- Light Mode --- */
 :root.theme-sakura,
 body.theme-sakura {
-  background-color: transparent !important;
+  background-color: transparent;
   --bg-window: rgba(255, 252, 253, calc(0.65 * var(--surface-opacity-scale, 1)));
   --bg-content: transparent;
   --bg-toolbar: rgba(255, 255, 255, 0.3);
@@ -185,7 +185,7 @@ body.theme-sakura #root > * {
 @media (prefers-color-scheme: dark) {
   :root.theme-sakura:not(.light-mode),
   body.theme-sakura:not(.light-mode) {
-    background-color: transparent !important;
+    background-color: transparent;
     --bg-window: rgba(36, 26, 30, calc(0.85 * var(--surface-opacity-scale, 1)));
     --bg-content: transparent;
     --bg-toolbar: rgba(255, 255, 255, 0.03);
@@ -243,7 +243,7 @@ body.theme-sakura #root > * {
 
 :root.dark-mode.theme-sakura,
 body.dark-mode.theme-sakura {
-  background-color: transparent !important;
+  background-color: transparent;
   --bg-window: rgba(30, 22, 26, calc(0.88 * var(--surface-opacity-scale, 1)));
   --bg-content: transparent;
   --bg-toolbar: transparent;

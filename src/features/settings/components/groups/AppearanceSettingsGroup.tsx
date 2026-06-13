@@ -106,7 +106,7 @@ const AppearanceSettingsGroup = ({
                                     setTheme(themeItem.id);
                                     saveAppSetting('theme', themeItem.id);
                                 }}
-                                className={`btn-icon theme-choice-btn ${theme === themeItem.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon theme-choice-btn ${theme === themeItem.id ? 'active' : ''}`}
                                 type="button"
                             >
                                 <span className="theme-choice-title">
@@ -134,7 +134,7 @@ const AppearanceSettingsGroup = ({
                                     setColorMode(modeItem.id);
                                     saveAppSetting('color_mode', modeItem.id);
                                 }}
-                                className={`btn-icon settings-inline-choice-btn ${colorMode === modeItem.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon settings-inline-choice-btn ${colorMode === modeItem.id ? 'active' : ''}`}
                             >
                                 {modeItem.name}
                             </button>
@@ -158,7 +158,7 @@ const AppearanceSettingsGroup = ({
                                     setLanguage(lang.id as Locale);
                                     saveAppSetting('language', lang.id);
                                 }}
-                                className={`btn-icon settings-inline-choice-btn ${language === lang.id ? 'active' : ''}`}
+                                className={`ui-button ui-button--icon settings-inline-choice-btn ${language === lang.id ? 'active' : ''}`}
                             >
                                 {lang.name}
                             </button>
@@ -276,7 +276,7 @@ const AppearanceSettingsGroup = ({
                                             }
                                         } catch (err) { console.error(err); }
                                     }}
-                                    className="btn-icon"
+                                    className="ui-button ui-button--icon"
                                     style={{ flex: 1, height: '36px', fontSize: '12px', fontWeight: 'bold' }}
                                 >
                                     {customBackground ? (t('change_background') || '更换背景') : (t('choose_background') || '选择背景')}
@@ -287,7 +287,7 @@ const AppearanceSettingsGroup = ({
                                             setCustomBackground('');
                                             saveAppSetting('custom_background', '');
                                         }}
-                                        className="btn-icon"
+                                        className="ui-button ui-button--icon"
                                         style={{ height: '36px', fontSize: '12px', fontWeight: 'bold', padding: '0 12px' }}
                                         title={t('clear_background') || '清除背景'}
                                     >

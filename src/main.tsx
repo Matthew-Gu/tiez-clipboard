@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 import AdvancedSettingsWindow from "./features/settings/components/AdvancedSettingsWindow";
-import "./index.css";
+import "./index.less";
 import "./styles/components/index.less";
 import "./styles/themes/load";
 import "./features/tag/styles/index.less";

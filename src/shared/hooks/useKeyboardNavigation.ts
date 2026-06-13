@@ -79,7 +79,7 @@ export const useKeyboardNavigation = ({
 
       const target = e.target as HTMLElement;
       const tagName = target.tagName;
-      const isSearchInput = target.classList.contains("search-input");
+      const isSearchInput = target.classList.contains("ui-input");
       const isAnyInput = tagName === "INPUT" || tagName === "TEXTAREA";
       const isEditable = isAnyInput || target.isContentEditable === true;
 

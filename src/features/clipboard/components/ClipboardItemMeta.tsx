@@ -88,18 +88,18 @@ const ClipboardItemMeta = ({
         <div className="item-meta-right">
             <div className="item-actions">
                 {hasSensitiveTag(item.tags) && (
-                    <button className={`btn-icon ${isRevealed ? "active" : ""}`} onClick={onToggleReveal} title={isRevealed ? t('hide') : t('reveal')}>
+                    <button className={`ui-button ui-button--icon ${isRevealed ? "active" : ""}`} onClick={onToggleReveal} title={isRevealed ? t('hide') : t('reveal')}>
                         {isRevealed ? <EyeOff size={12} /> : <Eye size={12} />}
                     </button>
                 )}
-                <button className="btn-icon" onClick={onOpen} title={t('open')}><ExternalLink size={12} /></button>
-                <button className={`btn-icon ${item.is_pinned ? "active" : ""}`} onClick={onTogglePin} title={item.is_pinned ? t('unpin') : t('pin')}>
+                <button className="ui-button ui-button--icon" onClick={onOpen} title={t('open')}><ExternalLink size={12} /></button>
+                <button className={`ui-button ui-button--icon ${item.is_pinned ? "active" : ""}`} onClick={onTogglePin} title={item.is_pinned ? t('unpin') : t('pin')}>
                     {item.is_pinned ? <PinOff size={12} /> : <Pin size={12} />}
                 </button>
-                <button className={`btn-icon ${item.tags && item.tags.length > 0 ? "active" : ""}`} onClick={onToggleTagEditor} title="Tags">
+                <button className={`ui-button ui-button--icon ${item.tags && item.tags.length > 0 ? "active" : ""}`} onClick={onToggleTagEditor} title="Tags">
                     <Tag size={12} />
                 </button>
-                <button className="btn-icon" onClick={onDelete} title={t('delete')}><X size={12} /></button>
+                <button className="ui-button ui-button--icon" onClick={onDelete} title={t('delete')}><X size={12} /></button>
             </div>
             <div className="item-meta-right-info">
                 {quickPasteHint && item.is_pinned && (

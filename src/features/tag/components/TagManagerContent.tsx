@@ -108,13 +108,13 @@ const TagManagerContent = ({
                     </div>
                 )}
                 <div className="view-toggle">
-                    <button type="button" className={`toggle-btn btn-icon ${viewMode === 'list' ? 'active' : ''}`} title="列表视图" onClick={() => setViewMode('list')}><List size={14} /></button>
-                    <button type="button" className={`toggle-btn btn-icon ${viewMode === 'grid' ? 'active' : ''}`} title="卡片视图" onClick={() => setViewMode('grid')}><LayoutGrid size={14} /></button>
+                    <button type="button" className={`toggle-btn ui-button ui-button--icon ${viewMode === 'list' ? 'active' : ''}`} title="列表视图" onClick={() => setViewMode('list')}><List size={14} /></button>
+                    <button type="button" className={`toggle-btn ui-button ui-button--icon ${viewMode === 'grid' ? 'active' : ''}`} title="卡片视图" onClick={() => setViewMode('grid')}><LayoutGrid size={14} /></button>
                 </div>
             </div>
         </div>
 
-        <div className="items-area custom-scrollbar">
+        <div className="items-area ui-scroll">
             {loading ? <div className="status-msg">{t('processing')}</div> : sortedItems.length === 0 ? (
                 <div className="status-msg">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</div>
             ) : (

@@ -36,7 +36,7 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                         <h3 className="modal-title">{t('select_app_title')}</h3>
-                        <button className="btn-icon" onClick={onClose} style={{ border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                        <button className="ui-button ui-button--icon" onClick={onClose} style={{ border: 'none', background: 'transparent', boxShadow: 'none' }}>
                             <X size={18} />
                         </button>
                     </div>
@@ -57,7 +57,7 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
 
                     <div style={{ display: 'flex', gap: '12px' }}>
                         <button
-                            className="btn-icon"
+                            className="ui-button ui-button--icon"
                             onClick={async () => {
                                 try {
                                     const selected = await open({
@@ -78,7 +78,7 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                             {t('browse_file')}
                         </button>
                         <button
-                            className="btn-icon"
+                            className="ui-button ui-button--icon"
                             onClick={onClose}
                             style={{ flex: 1, height: '36px', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', background: '#ff4d4f', color: '#fff', border: '2px solid #333' }}
                         >
