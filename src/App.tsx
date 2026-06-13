@@ -517,7 +517,7 @@ const App = () => {
     fetchHistory
   });
 
-  /* 
+  /*
   const updateItemContent = async (id: number, newContent: string) => {
     try {
       await invoke("update_item_content", { id, newContent });
@@ -632,8 +632,8 @@ const App = () => {
       />
 
       <main
-        className={`app-shell__main${effectiveShowTagManager ? " tag-manager-mode" : ""}`}
-        style={{ 
+        className={`app-shell__main${effectiveShowTagManager ? " app-shell__main--tag-manager" : ""}`}
+        style={{
           overflowY: (showSettings || effectiveShowTagManager) ? 'auto' : 'hidden',
           padding: effectiveShowTagManager ? '0' : undefined
         }}

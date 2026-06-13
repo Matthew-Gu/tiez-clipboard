@@ -1,14 +1,14 @@
                 /* Modern Theme Polishes */
-                .theme-mica.themed-tag-manager,
-                .theme-acrylic.themed-tag-manager {
+                .theme-mica.tag-manager,
+                .theme-acrylic.tag-manager {
                     gap: 14px;
                     padding: 14px;
                     background: transparent;
                     overflow: hidden;
                 }
 
-                .theme-mica .tag-sidebar,
-                .theme-acrylic .tag-sidebar {
+                .theme-mica .tag-manager__list-page,
+                .theme-acrylic .tag-manager__list-page {
                     width: clamp(196px, 24%, 248px);
                     border: var(--panel-border);
                     border-radius: 24px;
@@ -17,23 +17,23 @@
                     overflow: hidden;
                 }
 
-                .theme-mica .sidebar-header,
-                .theme-acrylic .sidebar-header {
+                .theme-mica .tag-manager__list-header,
+                .theme-acrylic .tag-manager__list-header {
                     min-height: 88px;
                     padding: 24px 24px 18px;
                     background: transparent;
                     border-bottom: 1px solid var(--panel-divider-color);
                 }
 
-                .theme-mica .header-label,
-                .theme-acrylic .header-label {
+                .theme-mica .tag-manager__list-title,
+                .theme-acrylic .tag-manager__list-title {
                     font-size: 18px;
                     font-weight: 700;
                     letter-spacing: 0;
                 }
 
-                .theme-mica .tag-search-box,
-                .theme-acrylic .tag-search-box {
+                .theme-mica .tag-manager__search,
+                .theme-acrylic .tag-manager__search {
                     margin: 18px 16px;
                     min-height: 56px;
                     padding: 0 16px;
@@ -44,33 +44,33 @@
                     box-shadow: var(--input-shadow);
                 }
 
-                .theme-mica .tag-search-box .app-header__search-icon-placeholder,
-                .theme-acrylic .tag-search-box .app-header__search-icon-placeholder {
+                .theme-mica .tag-manager__search .app-header__tag-manager__search-icon,
+                .theme-acrylic .tag-manager__search .app-header__tag-manager__search-icon {
                     opacity: 0.78;
                     color: var(--text-secondary);
                 }
 
-                .theme-mica .tag-search-box input,
-                .theme-acrylic .tag-search-box input {
+                .theme-mica .tag-manager__search input,
+                .theme-acrylic .tag-manager__search input {
                     padding: 0;
                     font-size: 15px;
                     font-weight: 600;
                 }
 
-                .theme-mica .tag-search-box input::placeholder,
-                .theme-acrylic .tag-search-box input::placeholder {
+                .theme-mica .tag-manager__search input::placeholder,
+                .theme-acrylic .tag-manager__search input::placeholder {
                     font-size: 15px;
                     font-style: normal;
                     opacity: 0.72;
                 }
 
-                .theme-mica .action-icons,
-                .theme-acrylic .action-icons {
+                .theme-mica .tag-manager__search-actions,
+                .theme-acrylic .tag-manager__search-actions {
                     gap: 8px;
                 }
 
-                .theme-mica .action-icon,
-                .theme-acrylic .action-icon {
+                .theme-mica .tag-manager__search-action,
+                .theme-acrylic .tag-manager__search-action {
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -82,20 +82,20 @@
                     opacity: 1;
                 }
 
-                .theme-mica .action-icon:hover,
-                .theme-acrylic .action-icon:hover {
+                .theme-mica .tag-manager__search-action:hover,
+                .theme-acrylic .tag-manager__search-action:hover {
                     background: rgba(var(--accent-color-rgb), 0.14);
                     color: var(--accent-color);
                     transform: none;
                 }
 
-                .theme-mica .tag-scroll,
-                .theme-acrylic .tag-scroll {
+                .theme-mica .tag-manager__tag-list,
+                .theme-acrylic .tag-manager__tag-list {
                     padding: 4px 12px 16px;
                 }
 
-                .theme-mica .tag-item,
-                .theme-acrylic .tag-item {
+                .theme-mica .tag-manager__tag,
+                .theme-acrylic .tag-manager__tag {
                     min-height: 60px;
                     padding: 14px 16px;
                     margin-bottom: 6px;
@@ -104,41 +104,41 @@
                     background: transparent;
                 }
 
-                .theme-mica .tag-item:hover,
-                .theme-acrylic .tag-item:hover {
+                .theme-mica .tag-manager__tag:hover,
+                .theme-acrylic .tag-manager__tag:hover {
                     background: rgba(var(--accent-color-rgb), 0.06);
                     border-color: rgba(var(--accent-color-rgb), 0.12);
                 }
 
-                .theme-mica .tag-item.active,
-                .theme-acrylic .tag-item.active {
+                .theme-mica .tag-manager__tag--active,
+                .theme-acrylic .tag-manager__tag--active {
                     background: rgba(var(--accent-color-rgb), 0.12);
                     border-color: rgba(var(--accent-color-rgb), 0.16);
                     box-shadow: none;
                 }
 
-                .theme-mica .tag-color-dot,
-                .theme-acrylic .tag-color-dot {
+                .theme-mica .tag-manager__color,
+                .theme-acrylic .tag-manager__color {
                     width: 14px;
                     height: 14px;
                     border: none;
                     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
                 }
 
-                .theme-mica .tag-name,
-                .theme-acrylic .tag-name {
+                .theme-mica .tag-manager__tag-name,
+                .theme-acrylic .tag-manager__tag-name {
                     font-size: 15px;
                     font-weight: 700;
                 }
 
-                .theme-mica .tag-hover-actions,
-                .theme-acrylic .tag-hover-actions {
+                .theme-mica .tag-manager__tag-actions,
+                .theme-acrylic .tag-manager__tag-actions {
                     gap: 6px;
                     color: var(--text-secondary);
                 }
 
-                .theme-mica .tag-hover-actions > span,
-                .theme-acrylic .tag-hover-actions > span {
+                .theme-mica .tag-manager__tag-actions > span,
+                .theme-acrylic .tag-manager__tag-actions > span {
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -147,20 +147,20 @@
                     border-radius: 999px;
                 }
 
-                .theme-mica .tag-hover-actions > span:hover,
-                .theme-acrylic .tag-hover-actions > span:hover {
+                .theme-mica .tag-manager__tag-actions > span:hover,
+                .theme-acrylic .tag-manager__tag-actions > span:hover {
                     background: rgba(var(--accent-color-rgb), 0.12);
                     color: var(--accent-color);
                 }
 
-                .theme-mica .tag-item.active .tag-hover-actions > span:hover,
-                .theme-acrylic .tag-item.active .tag-hover-actions > span:hover {
+                .theme-mica .tag-manager__tag--active .tag-manager__tag-actions > span:hover,
+                .theme-acrylic .tag-manager__tag--active .tag-manager__tag-actions > span:hover {
                     background: rgba(var(--accent-color-rgb), 0.14);
                     color: var(--accent-color);
                 }
 
-                .theme-mica .tag-badge,
-                .theme-acrylic .tag-badge {
+                .theme-mica .tag-manager__tag-count,
+                .theme-acrylic .tag-manager__tag-count {
                     margin-left: auto;
                     min-width: 34px;
                     height: 30px;
@@ -176,14 +176,14 @@
                     opacity: 1;
                 }
 
-                .theme-mica .tag-item.active .tag-badge,
-                .theme-acrylic .tag-item.active .tag-badge {
+                .theme-mica .tag-manager__tag--active .tag-manager__tag-count,
+                .theme-acrylic .tag-manager__tag--active .tag-manager__tag-count {
                     background: var(--accent-color);
                     color: #ffffff;
                 }
 
-                .theme-mica .tag-content,
-                .theme-acrylic .tag-content {
+                .theme-mica .tag-manager__detail-page,
+                .theme-acrylic .tag-manager__detail-page {
                     min-width: 0;
                     border: var(--panel-border);
                     border-radius: 28px;
@@ -191,37 +191,37 @@
                     box-shadow: var(--panel-shadow);
                 }
 
-                .theme-mica .content-toolbar,
-                .theme-acrylic .content-toolbar {
+                .theme-mica .tag-manager__toolbar,
+                .theme-acrylic .tag-manager__toolbar {
                     min-height: 88px;
                     padding: 20px 28px;
                     border-bottom: 1px solid var(--panel-divider-color);
                     background: transparent;
                 }
 
-                .theme-mica .toolbar-left,
-                .theme-mica .toolbar-right,
-                .theme-acrylic .toolbar-left,
-                .theme-acrylic .toolbar-right {
+                .theme-mica .tag-manager__toolbar-main,
+                .theme-mica .tag-manager__toolbar-actions,
+                .theme-acrylic .tag-manager__toolbar-main,
+                .theme-acrylic .tag-manager__toolbar-actions {
                     display: flex;
                     align-items: center;
                     gap: 14px;
                 }
 
-                .theme-mica .toolbar-right,
-                .theme-acrylic .toolbar-right {
+                .theme-mica .tag-manager__toolbar-actions,
+                .theme-acrylic .tag-manager__toolbar-actions {
                     margin-left: auto;
                 }
 
-                .theme-mica .toolbar-divider,
-                .theme-acrylic .toolbar-divider {
+                .theme-mica .tag-manager__toolbar-divider,
+                .theme-acrylic .tag-manager__toolbar-divider {
                     width: 1px;
                     height: 28px;
                     background: var(--panel-divider-color);
                 }
 
-                .theme-mica .selected-tag-indicator,
-                .theme-acrylic .selected-tag-indicator {
+                .theme-mica .tag-manager__selection,
+                .theme-acrylic .tag-manager__selection {
                     padding: 8px 16px;
                     border-radius: var(--radius-pill);
                     background: rgba(var(--accent-color-rgb), 0.12);
@@ -233,20 +233,20 @@
                     opacity: 1;
                 }
 
-                .theme-mica .breadcrumb-text,
-                .theme-acrylic .breadcrumb-text {
+                .theme-mica .tag-manager__selection-text,
+                .theme-acrylic .tag-manager__selection-text {
                     color: var(--text-primary);
                 }
 
-                .theme-mica .sort-group,
-                .theme-acrylic .sort-group {
+                .theme-mica .tag-manager__sort,
+                .theme-acrylic .tag-manager__sort {
                     gap: 10px;
                     padding-left: 0;
                     border-left: none;
                 }
 
-                .theme-mica .sort-btn,
-                .theme-acrylic .sort-btn {
+                .theme-mica .tag-manager__sort-button,
+                .theme-acrylic .tag-manager__sort-button {
                     min-height: 40px;
                     padding: 0 16px;
                     border: 1px solid rgba(var(--accent-color-rgb), 0.14);
@@ -260,28 +260,28 @@
                     gap: 8px;
                 }
 
-                .theme-mica .sort-btn span,
-                .theme-acrylic .sort-btn span {
+                .theme-mica .tag-manager__sort-button span,
+                .theme-acrylic .tag-manager__sort-button span {
                     font-size: 13px;
                     font-weight: 500;
                 }
 
-                .theme-mica .sort-btn:hover,
-                .theme-acrylic .sort-btn:hover {
+                .theme-mica .tag-manager__sort-button:hover,
+                .theme-acrylic .tag-manager__sort-button:hover {
                     background: rgba(var(--accent-color-rgb), 0.08);
                     color: var(--text-primary);
                 }
 
-                .theme-mica .sort-btn.active,
-                .theme-acrylic .sort-btn.active {
+                .theme-mica .tag-manager__sort-button--active,
+                .theme-acrylic .tag-manager__sort-button--active {
                     background: var(--accent-color);
                     border-color: var(--accent-color);
                     color: #ffffff;
                     box-shadow: 0 12px 24px rgba(var(--accent-color-rgb), 0.24);
                 }
 
-                .theme-mica .add-item-btn,
-                .theme-acrylic .add-item-btn {
+                .theme-mica .tag-manager__add-item,
+                .theme-acrylic .tag-manager__add-item {
                     width: auto;
                     min-height: 40px;
                     padding: 0 18px;
@@ -295,19 +295,19 @@
                     font-weight: 600;
                 }
 
-                .theme-mica .add-item-btn span,
-                .theme-acrylic .add-item-btn span {
+                .theme-mica .tag-manager__add-item span,
+                .theme-acrylic .tag-manager__add-item span {
                     display: inline-block;
                 }
 
-                .theme-mica .add-item-btn:hover,
-                .theme-acrylic .add-item-btn:hover {
+                .theme-mica .tag-manager__add-item:hover,
+                .theme-acrylic .tag-manager__add-item:hover {
                     background: var(--accent-hover);
                     color: #ffffff;
                 }
 
-                .theme-mica .view-toggle,
-                .theme-acrylic .view-toggle {
+                .theme-mica .tag-manager__view-toggle,
+                .theme-acrylic .tag-manager__view-toggle {
                     padding: 4px;
                     gap: 4px;
                     border: 1px solid rgba(var(--accent-color-rgb), 0.12);
@@ -315,8 +315,8 @@
                     background: var(--bg-input);
                 }
 
-                .theme-mica .toggle-btn,
-                .theme-acrylic .toggle-btn {
+                .theme-mica .tag-manager__view-button,
+                .theme-acrylic .tag-manager__view-button {
                     width: 44px;
                     height: 44px;
                     padding: 0;
@@ -327,48 +327,48 @@
                     box-shadow: none;
                 }
 
-                .theme-mica .toggle-btn:hover,
-                .theme-acrylic .toggle-btn:hover {
+                .theme-mica .tag-manager__view-button:hover,
+                .theme-acrylic .tag-manager__view-button:hover {
                     background: rgba(var(--accent-color-rgb), 0.08);
                     color: var(--text-primary);
                 }
 
-                .theme-mica .toggle-btn.active,
-                .theme-acrylic .toggle-btn.active {
+                .theme-mica .tag-manager__view-button--active,
+                .theme-acrylic .tag-manager__view-button--active {
                     background: var(--accent-color);
                     color: #ffffff;
                     box-shadow: 0 10px 20px rgba(var(--accent-color-rgb), 0.2);
                 }
 
-                .theme-mica .items-area,
-                .theme-acrylic .items-area {
+                .theme-mica .tag-manager__items,
+                .theme-acrylic .tag-manager__items {
                     padding: 28px;
                     background: transparent;
                 }
 
-                .theme-mica .status-msg,
-                .theme-acrylic .status-msg {
+                .theme-mica .tag-manager__items-status,
+                .theme-acrylic .tag-manager__items-status {
                     padding: 36px 12px;
                     text-align: center;
                     color: var(--text-secondary);
                     font-size: 14px;
                 }
 
-                .theme-mica .items-grid,
-                .theme-acrylic .items-grid {
+                .theme-mica .tag-manager__items-grid,
+                .theme-acrylic .tag-manager__items-grid {
                     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
                     gap: 22px;
                 }
 
-                .theme-mica .items-list,
-                .theme-acrylic .items-list {
+                .theme-mica .tag-manager__items-list,
+                .theme-acrylic .tag-manager__items-list {
                     display: grid;
                     grid-template-columns: 1fr;
                     gap: 18px;
                 }
 
-                .theme-mica .themed-card,
-                .theme-acrylic .themed-card {
+                .theme-mica .tag-manager__card,
+                .theme-acrylic .tag-manager__card {
                     position: relative;
                     min-height: 244px;
                     padding: 24px 22px 18px;
@@ -381,21 +381,21 @@
                     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
                 }
 
-                .theme-mica .themed-card:hover,
-                .theme-acrylic .themed-card:hover {
+                .theme-mica .tag-manager__card:hover,
+                .theme-acrylic .tag-manager__card:hover {
                     transform: translateY(-2px);
                     border-color: rgba(var(--accent-color-rgb), 0.14);
                     box-shadow: 0 18px 34px rgba(15, 23, 42, 0.1);
                     background: var(--bg-input);
                 }
 
-                .theme-mica .items-list .themed-card,
-                .theme-acrylic .items-list .themed-card {
+                .theme-mica .tag-manager__items-list .tag-manager__card,
+                .theme-acrylic .tag-manager__items-list .tag-manager__card {
                     min-height: 180px;
                 }
 
-                .theme-mica .card-top-row,
-                .theme-acrylic .card-top-row {
+                .theme-mica .tag-manager__card-header,
+                .theme-acrylic .tag-manager__card-header {
                     position: absolute;
                     top: 14px;
                     right: 14px;
@@ -407,20 +407,20 @@
                     z-index: 1;
                 }
 
-                .theme-mica .themed-card:hover .card-top-row,
-                .theme-acrylic .themed-card:hover .card-top-row {
+                .theme-mica .tag-manager__card:hover .tag-manager__card-header,
+                .theme-acrylic .tag-manager__card:hover .tag-manager__card-header {
                     opacity: 1;
                 }
 
-                .theme-mica .card-actions-left,
-                .theme-acrylic .card-actions-left {
+                .theme-mica .tag-manager__card-actions,
+                .theme-acrylic .tag-manager__card-actions {
                     gap: 6px;
                 }
 
-                .theme-mica .card-action-btn,
-                .theme-mica .del-btn,
-                .theme-acrylic .card-action-btn,
-                .theme-acrylic .del-btn {
+                .theme-mica .tag-manager__card-action,
+                .theme-mica .tag-manager__card-delete,
+                .theme-acrylic .tag-manager__card-action,
+                .theme-acrylic .tag-manager__card-delete {
                     width: 28px;
                     height: 28px;
                     padding: 0;
@@ -432,16 +432,16 @@
                     opacity: 1;
                 }
 
-                .theme-mica .card-action-btn:hover,
-                .theme-mica .del-btn:hover,
-                .theme-acrylic .card-action-btn:hover,
-                .theme-acrylic .del-btn:hover {
+                .theme-mica .tag-manager__card-action:hover,
+                .theme-mica .tag-manager__card-delete:hover,
+                .theme-acrylic .tag-manager__card-action:hover,
+                .theme-acrylic .tag-manager__card-delete:hover {
                     background: rgba(var(--accent-color-rgb), 0.12);
                     color: var(--accent-color);
                 }
 
-                .theme-mica .card-body-text,
-                .theme-acrylic .card-body-text {
+                .theme-mica .tag-manager__card-body,
+                .theme-acrylic .tag-manager__card-body {
                     flex: 1;
                     padding-top: 12px;
                     font-size: 15px;
@@ -452,14 +452,14 @@
                     min-height: 122px;
                 }
 
-                .theme-mica .items-list .card-body-text,
-                .theme-acrylic .items-list .card-body-text {
+                .theme-mica .tag-manager__items-list .tag-manager__card-body,
+                .theme-acrylic .tag-manager__items-list .tag-manager__card-body {
                     -webkit-line-clamp: 3;
                     min-height: 84px;
                 }
 
-                .theme-mica .card-media,
-                .theme-acrylic .card-media {
+                .theme-mica .tag-manager__card-media,
+                .theme-acrylic .tag-manager__card-media {
                     flex: 1;
                     min-height: 190px;
                     margin-top: 14px;
@@ -469,23 +469,23 @@
                     align-items: center;
                 }
 
-                .theme-mica .card-media img,
-                .theme-acrylic .card-media img {
+                .theme-mica .tag-manager__card-media img,
+                .theme-acrylic .tag-manager__card-media img {
                     max-width: 100%;
                     max-height: 190px;
                     object-fit: contain;
                     border-radius: 14px;
                 }
 
-                .theme-mica .card-divider,
-                .theme-acrylic .card-divider {
+                .theme-mica .tag-manager__card-divider,
+                .theme-acrylic .tag-manager__card-divider {
                     height: 1px;
                     margin: 18px 0 14px;
                     background: var(--panel-divider-color);
                 }
 
-                .theme-mica .card-footer,
-                .theme-acrylic .card-footer {
+                .theme-mica .tag-manager__card-footer,
+                .theme-acrylic .tag-manager__card-footer {
                     margin-top: auto;
                     font-size: 13px;
                     font-weight: 600;
@@ -493,13 +493,13 @@
                     opacity: 1;
                 }
 
-                .theme-mica .meta-usage,
-                .theme-acrylic .meta-usage {
+                .theme-mica .tag-manager__card-usage,
+                .theme-acrylic .tag-manager__card-usage {
                     gap: 4px;
                 }
 
-                .theme-mica .inline-tag-edit,
-                .theme-acrylic .inline-tag-edit,
+                .theme-mica .tag-manager__tag-input,
+                .theme-acrylic .tag-manager__tag-input,
                 .theme-mica .modal-input-field input,
                 .theme-acrylic .modal-input-field input {
                     border: var(--input-border);
@@ -525,28 +525,28 @@
                     box-shadow: var(--button-shadow);
                 }
 
-                .dark-mode .theme-mica .tag-search-box,
-                .dark-mode .theme-acrylic .tag-search-box,
-                .dark-mode .theme-mica .tag-sidebar,
-                .dark-mode .theme-acrylic .tag-sidebar,
-                .dark-mode .theme-mica .tag-content,
-                .dark-mode .theme-acrylic .tag-content {
+                .dark-mode .theme-mica .tag-manager__search,
+                .dark-mode .theme-acrylic .tag-manager__search,
+                .dark-mode .theme-mica .tag-manager__list-page,
+                .dark-mode .theme-acrylic .tag-manager__list-page,
+                .dark-mode .theme-mica .tag-manager__detail-page,
+                .dark-mode .theme-acrylic .tag-manager__detail-page {
                     border-color: rgba(255, 255, 255, 0.08);
                 }
 
-                .dark-mode .theme-mica .card-action-btn,
-                .dark-mode .theme-mica .del-btn,
-                .dark-mode .theme-acrylic .card-action-btn,
-                .dark-mode .theme-acrylic .del-btn {
+                .dark-mode .theme-mica .tag-manager__card-action,
+                .dark-mode .theme-mica .tag-manager__card-delete,
+                .dark-mode .theme-acrylic .tag-manager__card-action,
+                .dark-mode .theme-acrylic .tag-manager__card-delete {
                     background: rgba(22, 28, 39, 0.92);
                     border-color: rgba(255, 255, 255, 0.08);
                 }
 
-                .dark-mode .theme-mica .tag-badge,
-                .dark-mode .theme-acrylic .tag-badge {
+                .dark-mode .theme-mica .tag-manager__tag-count,
+                .dark-mode .theme-acrylic .tag-manager__tag-count {
                     background: rgba(255, 255, 255, 0.08);
                 }
-                
+
                 .ui-scroll::-webkit-scrollbar { width: var(--scrollbar-size-thin); }
                 .ui-scroll::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb-color); border-radius: var(--scrollbar-radius); }
 

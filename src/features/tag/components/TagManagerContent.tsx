@@ -51,37 +51,37 @@ const TagManagerContent = ({
     setIsCreatingItem,
     copyItem
 }: TagManagerContentProps) => (
-    <div className="tag-content">
-        <div className="content-toolbar">
-            <div className="toolbar-left">
-                <div className="selected-tag-indicator">
-                    <span className="breadcrumb-marker">#</span>
-                    <span className="breadcrumb-text">{selectedTag || t('tags')}</span>
+    <div className="tag-manager__detail-page">
+        <div className="tag-manager__toolbar">
+            <div className="tag-manager__toolbar-main">
+                <div className="tag-manager__selection">
+                    <span className="tag-manager__selection-marker">#</span>
+                    <span className="tag-manager__selection-text">{selectedTag || t('tags')}</span>
                 </div>
-                <div className="toolbar-divider" />
-                <div className="sort-group">
-                    <button className={`sort-btn ${sortBy === 'time' ? 'active' : ''}`} title={t('sort_time') || '按时间'} onClick={() => setSortBy('time')}>
+                <div className="tag-manager__toolbar-divider" />
+                <div className="tag-manager__sort">
+                    <button className={`tag-manager__sort-button ${sortBy === 'time' ? 'tag-manager__sort-button--active' : ''}`} title={t('sort_time') || '按时间'} onClick={() => setSortBy('time')}>
                         <Clock size={12} /><span>{t('sort_time') || '时间'}</span>
                     </button>
-                    <button className={`sort-btn ${sortBy === 'count' ? 'active' : ''}`} title={t('sort_usage') || '按频率'} onClick={() => setSortBy('count')}>
+                    <button className={`tag-manager__sort-button ${sortBy === 'count' ? 'tag-manager__sort-button--active' : ''}`} title={t('sort_usage') || '按频率'} onClick={() => setSortBy('count')}>
                         <MousePointer2 size={12} /><span>{t('sort_usage') || '频率'}</span>
                     </button>
                 </div>
             </div>
-            <div className="toolbar-right">
+            <div className="tag-manager__toolbar-actions">
                 {selectedTag && (
                     <div className="toolbar-actions">
                         {isManageMode ? (
                             <>
-                                <button className="sort-btn" onClick={() => {
+                                <button className="tag-manager__sort-button" onClick={() => {
                                     setIsManageMode(false);
                                     setSelectedItemIds(new Set());
                                 }}>{t('cancel') || '取消'}</button>
-                                <button className="sort-btn danger" disabled={selectedItemIds.size === 0} onClick={() => setItemDeleteId(-1)}>
+                                <button className="tag-manager__sort-button tag-manager__sort-button--danger" disabled={selectedItemIds.size === 0} onClick={() => setItemDeleteId(-1)}>
                                     <Trash2 size={14} /><span>{t('delete_selected') || '删除选中'}</span>
                                 </button>
                                 <button
-                                    className="sort-btn active"
+                                    className="tag-manager__sort-button tag-manager__sort-button--active"
                                     disabled={selectedItemIds.size === 0}
                                     onClick={async () => {
                                         const selectedItems = tagItems.filter((item) => selectedItemIds.has(item.id));
@@ -101,28 +101,28 @@ const TagManagerContent = ({
                                 </button>
                             </>
                         ) : (
-                            <button className="sort-btn manage-btn" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
+                            <button className="tag-manager__sort-button manage-btn" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
                                 <CheckSquare size={14} /><span>{t('manage') || '管理'}</span>
                             </button>
                         )}
                     </div>
                 )}
-                <div className="view-toggle">
-                    <button type="button" className={`toggle-btn ui-button ui-button--icon ${viewMode === 'list' ? 'active' : ''}`} title="列表视图" onClick={() => setViewMode('list')}><List size={14} /></button>
-                    <button type="button" className={`toggle-btn ui-button ui-button--icon ${viewMode === 'grid' ? 'active' : ''}`} title="卡片视图" onClick={() => setViewMode('grid')}><LayoutGrid size={14} /></button>
+                <div className="tag-manager__view-toggle">
+                    <button type="button" className={`tag-manager__view-button ui-button ui-button--icon ${viewMode === 'list' ? 'tag-manager__view-button--active' : ''}`} title="列表视图" onClick={() => setViewMode('list')}><List size={14} /></button>
+                    <button type="button" className={`tag-manager__view-button ui-button ui-button--icon ${viewMode === 'grid' ? 'tag-manager__view-button--active' : ''}`} title="卡片视图" onClick={() => setViewMode('grid')}><LayoutGrid size={14} /></button>
                 </div>
             </div>
         </div>
 
-        <div className="items-area ui-scroll">
-            {loading ? <div className="status-msg">{t('processing')}</div> : sortedItems.length === 0 ? (
-                <div className="status-msg">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</div>
+        <div className="tag-manager__items ui-scroll">
+            {loading ? <div className="tag-manager__items-status">{t('processing')}</div> : sortedItems.length === 0 ? (
+                <div className="tag-manager__items-status">{selectedTag ? t('no_items') : t('select_tag_to_begin')}</div>
             ) : (
-                <div className={`items-${viewMode} ${isManageMode ? 'manage-mode' : ''}`}>
+                <div className={`tag-manager__items-${viewMode} ${isManageMode ? 'tag-manager__items--managing' : ''}`}>
                     {sortedItems.map((item) => (
                         <div
                             key={item.id}
-                            className={`themed-card ${selectedItemIds.has(item.id) ? 'selected' : ''}`}
+                            className={`tag-manager__card ${selectedItemIds.has(item.id) ? 'tag-manager__card--selected' : ''}`}
                             onClick={() => {
                                 if (isManageMode) {
                                     setSelectedItemIds((previous) => {
@@ -136,20 +136,20 @@ const TagManagerContent = ({
                                 }
                             }}
                         >
-                            <div className="card-top-row">
-                                <div className="card-actions-left">
+                            <div className="tag-manager__card-header">
+                                <div className="tag-manager__card-actions">
                                     {isManageMode ? (
-                                        <div className={`selection-indicator ${selectedItemIds.has(item.id) ? 'checked' : ''}`}><div className="inner-check" /></div>
+                                        <div className={`tag-manager__selection-control ${selectedItemIds.has(item.id) ? 'tag-manager__selection-control--checked' : ''}`}><div className="tag-manager__selection-check" /></div>
                                     ) : (
                                         <>
                                             {(item.content_type === 'text' || item.content_type === 'code') && (
-                                                <button className="card-action-btn" title="编辑" onClick={(event) => {
+                                                <button className="tag-manager__card-action" title="编辑" onClick={(event) => {
                                                     event.stopPropagation();
                                                     setEditingItem({ id: item.id, content: item.content });
                                                 }}><Edit2 size={10} /></button>
                                             )}
                                             <button
-                                                className="card-action-btn"
+                                                className="tag-manager__card-action"
                                                 onClick={(event) => {
                                                     event.stopPropagation();
                                                     openContent({ id: item.id, content: item.content, contentType: item.content_type });
@@ -160,7 +160,7 @@ const TagManagerContent = ({
                                     )}
                                 </div>
                                 {!isManageMode && (
-                                    <button className="del-btn" title="删除" onClick={(event) => {
+                                    <button className="tag-manager__card-delete" title="删除" onClick={(event) => {
                                         event.stopPropagation();
                                         setItemDeleteId(item.id);
                                     }}><X size={10} /></button>
@@ -168,17 +168,17 @@ const TagManagerContent = ({
                             </div>
 
                             {item.content_type === 'image' ? (
-                                <div className="card-media">
-                                    <img src={item.content.startsWith('data:') ? item.content : convertFileSrc(item.content)} alt="" className="image-preview" loading="lazy" />
+                                <div className="tag-manager__card-media">
+                                    <img src={item.content.startsWith('data:') ? item.content : convertFileSrc(item.content)} alt="" className="tag-manager__card-image" loading="lazy" />
                                 </div>
                             ) : (
-                                <div className="card-body-text">{item.preview || item.content}</div>
+                                <div className="tag-manager__card-body">{item.preview || item.content}</div>
                             )}
 
-                            <div className="card-divider" />
-                            <div className="card-footer">
-                                <span className="meta-time">{formatItemDate(item.timestamp)}</span>
-                                <div className="meta-usage"><MousePointer2 size={8} /> {item.use_count || 0}</div>
+                            <div className="tag-manager__card-divider" />
+                            <div className="tag-manager__card-footer">
+                                <span className="tag-manager__card-time">{formatItemDate(item.timestamp)}</span>
+                                <div className="tag-manager__card-usage"><MousePointer2 size={8} /> {item.use_count || 0}</div>
                             </div>
                         </div>
                     ))}
@@ -186,7 +186,7 @@ const TagManagerContent = ({
             )}
         </div>
         {selectedTag && !isManageMode && (
-            <button className="fab-add-btn" onClick={(event) => {
+            <button className="tag-manager__fab" onClick={(event) => {
                 event.stopPropagation();
                 setIsCreatingItem(true);
             }} title={t('add_item')}><Plus size={24} /></button>

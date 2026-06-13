@@ -128,7 +128,7 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
 
     return (
         <div
-            className={`themed-tag-manager theme-${theme} tag-manager-${page}-page`}
+            className={`tag-manager theme-${theme} tag-manager--${page}`}
             onMouseDown={() => activateWindowFocus().catch(console.error)}
         >
             {page === "list" ? (

@@ -190,9 +190,9 @@ const AdvancedSettingsGroup = ({
         const nextPolicies = appCleanupPolicies.filter(p => (
             p.id !== target.policyId && (p.appPath !== target.appPath || !target.appPath)
         ));
-        
+
         persistAppPolicies(nextPolicies);
-        
+
         // If the deleted target was selected, switch back to global
         if (selectedSourceId === target.id) {
             setSelectedSourceId("global");
@@ -282,7 +282,7 @@ const AdvancedSettingsGroup = ({
         const existingIndex = appCleanupPolicies.findIndex((policy) => (
             selectedTarget.policyId ? policy.id === selectedTarget.policyId : policy.appPath === (selectedTarget.appPath ?? "")
         ));
-        
+
         if (existingIndex < 0) return;
 
         const nextPolicies = [...appCleanupPolicies];
@@ -432,8 +432,8 @@ const AdvancedSettingsGroup = ({
                                     }
                                 </span>
                             </div>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 className={`advanced-settings__capture-switch ${appCleanupPolicies.find(p => p.id === selectedTarget.policyId || p.appPath === selectedTarget.appPath)?.action !== "ignore" ? "advanced-settings__capture-switch--active" : ""}`}
                                 onClick={toggleTargetAction}
                             >
@@ -513,15 +513,15 @@ const AdvancedSettingsGroup = ({
                                                     <div className="advanced-settings__rule-field">
                                                         <label>命中后动作</label>
                                                         <div className="advanced-settings__action-tabs">
-                                                            <button 
-                                                                type="button" 
+                                                            <button
+                                                                type="button"
                                                                 className={`advanced-settings__action-tab ${rule.actionType === "replace" ? "advanced-settings__action-tab--active" : ""}`}
                                                                 onClick={() => updateRule(index, { actionType: "replace" })}
                                                             >
                                                                 {t("advanced_replace_label")}
                                                             </button>
-                                                            <button 
-                                                                type="button" 
+                                                            <button
+                                                                type="button"
                                                                 className={`advanced-settings__action-tab ${rule.actionType === "ignore" ? "advanced-settings__action-tab--active" : ""}`}
                                                                 onClick={() => updateRule(index, { actionType: "ignore" })}
                                                             >

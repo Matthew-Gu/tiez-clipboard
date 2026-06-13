@@ -198,7 +198,7 @@ const AppMainContent = ({
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        style={{ height: "100%" }}
+        className="settings-page settings-page--tag-manager"
       >
         <TagManager
           t={t}

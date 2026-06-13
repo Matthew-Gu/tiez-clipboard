@@ -47,13 +47,13 @@ const TagManagerSidebar = ({
     openTag,
     setTagColor
 }: TagManagerSidebarProps) => (
-    <div className="tag-sidebar">
-        <div className="sidebar-header">
-            <span className="header-label">{t('tags')}</span>
+    <div className="tag-manager__list-page">
+        <div className="tag-manager__list-header">
+            <span className="tag-manager__list-title">{t('tags')}</span>
         </div>
 
-        <div className="tag-search-box">
-                <Search size={16} className="search-icon-placeholder" />
+        <div className="tag-manager__search">
+                <Search size={16} className="tag-manager__search-icon" />
                 <input
                     placeholder={t('find_or_create')}
                     value={tagSearch}
@@ -68,23 +68,23 @@ const TagManagerSidebar = ({
                     }}
                 />
                 {tagSearch ? (
-                    <div className="action-icons">
+                    <div className="tag-manager__search-actions">
                         {canCreateTag && (
-                            <span title={t('create_new_tag_tooltip')} className="action-icon create" onClick={() => createTag(tagSearch)}>
+                            <span title={t('create_new_tag_tooltip')} className="tag-manager__search-action tag-manager__search-action--create" onClick={() => createTag(tagSearch)}>
                                 <Plus size={12} />
                             </span>
                         )}
-                        <X size={12} className="action-icon clear" onClick={() => setTagSearch('')} />
+                        <X size={12} className="tag-manager__search-action tag-manager__search-action--clear" onClick={() => setTagSearch('')} />
                     </div>
                 ) : null}
         </div>
 
-        <div className="tag-scroll ui-scroll">
+        <div className="tag-manager__tag-list ui-scroll">
             {filteredTags.map((tag) => (
-                <div key={tag.name} className={`tag-item ${selectedTag === tag.name ? 'active' : ''}`} onClick={() => openTag(tag.name)} title={tag.name}>
-                    <div className="tag-color-wrapper" onClick={(event) => event.stopPropagation()}>
+                <div key={tag.name} className={`tag-manager__tag ${selectedTag === tag.name ? 'tag-manager__tag--active' : ''}`} onClick={() => openTag(tag.name)} title={tag.name}>
+                    <div className="tag-manager__color-control" onClick={(event) => event.stopPropagation()}>
                         <div
-                            className="tag-color-dot"
+                            className="tag-manager__color"
                             style={{ background: tagColors[tag.name] || getTagColor(tag.name, theme) }}
                             onClick={() => document.getElementById(`color-picker-${tag.name}`)?.click()}
                         />
@@ -98,7 +98,7 @@ const TagManagerSidebar = ({
                     </div>
                     {editingTag === tag.name ? (
                         <input
-                            className="inline-tag-edit"
+                            className="tag-manager__tag-input"
                             value={newTagName}
                             onMouseDown={() => activateWindowFocus().catch(console.error)}
                             onFocus={() => activateWindowFocus().catch(console.error)}
@@ -113,8 +113,8 @@ const TagManagerSidebar = ({
                         />
                     ) : (
                         <>
-                            <span className="tag-name">{tag.name}</span>
-                            <div className="tag-hover-actions">
+                            <span className="tag-manager__tag-name">{tag.name}</span>
+                            <div className="tag-manager__tag-actions">
                                 {!isSensitiveTag(tag.name) && (
                                     <span
                                         title="重命名"
@@ -142,16 +142,16 @@ const TagManagerSidebar = ({
                                     </span>
                                 )}
                             </div>
-                            <span className="tag-badge">{tag.count}</span>
+                            <span className="tag-manager__tag-count">{tag.count}</span>
                         </>
                     )}
                 </div>
             ))}
-            {filteredTags.length === 0 && !tagSearch.trim() && <div className="sidebar-status">{t('no_tags')}</div>}
+            {filteredTags.length === 0 && !tagSearch.trim() && <div className="tag-manager__status">{t('no_tags')}</div>}
             {canCreateTag && filteredTags.length === 0 && (
-                <div className="tag-item create-hint" onClick={() => createTag(tagSearch)}>
-                    <div className="tag-color-dot" style={{ border: '1px dashed currentColor', background: 'transparent' }} />
-                    <span className="tag-name" style={{ opacity: 0.7 }}>{t('create_tag_hint').replace('{tag}', tagSearch.trim())}</span>
+                <div className="tag-manager__tag tag-manager__tag--create-hint" onClick={() => createTag(tagSearch)}>
+                    <div className="tag-manager__color" style={{ border: '1px dashed currentColor', background: 'transparent' }} />
+                    <span className="tag-manager__tag-name" style={{ opacity: 0.7 }}>{t('create_tag_hint').replace('{tag}', tagSearch.trim())}</span>
                     <Plus size={10} />
                 </div>
             )}
