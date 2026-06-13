@@ -173,20 +173,30 @@
                     box-shadow: 0 0 0 3px var(--accent-soft);
                 }
 
-/* Actions group: Hidden by default, Flex on hover */
+/* Keep the trailing slot stable while swapping count and actions on hover. */
                 .tag-manager__tag-actions {
-                    display: none;
+                    position: absolute;
+                    right: 12px;
+                    display: flex;
                     gap: 4px;
                     align-items: center;
-                    margin-left: auto;
                     flex-shrink: 0;
+                    opacity: 0;
+                    visibility: hidden;
+                    pointer-events: none;
+                    transition: opacity 0.15s;
                 }
 
-.tag-manager__tag:hover .tag-manager__tag-actions { display: flex; }
+.tag-manager__tag:hover .tag-manager__tag-actions {
+                    opacity: 1;
+                    visibility: visible;
+                    pointer-events: auto;
+                }
 
-.tag-manager__tag:hover .tag-manager__tag-count { display: none; }
+.tag-manager__tag:hover .tag-manager__tag-count { opacity: 0; }
 
 .tag-manager__tag-count {
+                    margin-left: auto;
                     font-size: 11px;
                     font-weight: 600;
                     color: var(--text-secondary);
@@ -195,6 +205,7 @@
                     border-radius: 10px;
                     min-width: auto;
                     text-align: center;
+                    transition: opacity 0.15s;
                 }
 
 .tag-manager__tag--active .tag-manager__tag-count {
