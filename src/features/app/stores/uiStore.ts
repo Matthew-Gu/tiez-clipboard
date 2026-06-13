@@ -8,6 +8,7 @@ export interface UiState {
   search: string;
   isComposing: boolean;
   showTagFilter: boolean;
+  selectedTagFilter: string | null;
   typeFilter: string | null;
   selectedIndex: number;
   isKeyboardMode: boolean;
@@ -21,6 +22,7 @@ interface UiActions {
   setSearch: UiSetter<string>;
   setIsComposing: UiSetter<boolean>;
   setShowTagFilter: UiSetter<boolean>;
+  setSelectedTagFilter: UiSetter<string | null>;
   setTypeFilter: UiSetter<string | null>;
   setSelectedIndex: UiSetter<number>;
   setIsKeyboardMode: UiSetter<boolean>;
@@ -44,6 +46,7 @@ export const createUiInitialState = (): UiState => ({
   search: "",
   isComposing: false,
   showTagFilter: false,
+  selectedTagFilter: null,
   typeFilter: null,
   selectedIndex: 0,
   isKeyboardMode: false,
@@ -61,6 +64,7 @@ export const useUiStore = create<UiStore>((set) => ({
   setSearch: (value) => set((state) => ({ search: resolveUpdate(value, state.search) })),
   setIsComposing: (value) => set((state) => ({ isComposing: resolveUpdate(value, state.isComposing) })),
   setShowTagFilter: (value) => set((state) => ({ showTagFilter: resolveUpdate(value, state.showTagFilter) })),
+  setSelectedTagFilter: (value) => set((state) => ({ selectedTagFilter: resolveUpdate(value, state.selectedTagFilter) })),
   setTypeFilter: (value) => set((state) => ({ typeFilter: resolveUpdate(value, state.typeFilter) })),
   setSelectedIndex: (value) => set((state) => ({ selectedIndex: resolveUpdate(value, state.selectedIndex) })),
   setIsKeyboardMode: (value) => set((state) => ({ isKeyboardMode: resolveUpdate(value, state.isKeyboardMode) })),
@@ -71,6 +75,7 @@ export const useUiStore = create<UiStore>((set) => ({
 }));
 
 export const selectSearch = (state: UiStore) => state.search;
+export const selectSelectedTagFilter = (state: UiStore) => state.selectedTagFilter;
 export const selectTypeFilter = (state: UiStore) => state.typeFilter;
 export const selectSelectedIndex = (state: UiStore) => state.selectedIndex;
 export const selectIsKeyboardMode = (state: UiStore) => state.isKeyboardMode;

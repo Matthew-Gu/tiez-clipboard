@@ -13,6 +13,7 @@ import { useSettingsStore } from "./features/app/stores/settingsStore";
 import {
   selectIsKeyboardMode,
   selectSearch,
+  selectSelectedTagFilter,
   selectSelectedIndex,
   selectTypeFilter,
   useUiStore
@@ -115,6 +116,7 @@ const App = () => {
   const setSearch = useUiStore((state) => state.setSearch);
   const isComposing = useUiStore((state) => state.isComposing);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
+  const selectedTagFilter = useUiStore(selectSelectedTagFilter);
   const typeFilter = useUiStore(selectTypeFilter);
   const setCollapsedGroups = useUiStore((state) => state.setCollapsedGroups);
   const editingTagsId = useUiStore((state) => state.editingTagsId);
@@ -196,6 +198,7 @@ const App = () => {
     handleRemoved
   } = useHistoryFetch({
     debouncedSearch,
+    selectedTagFilter,
     typeFilter,
     persistentLimitEnabled,
     persistentLimit,
@@ -297,7 +300,7 @@ const App = () => {
 
   // Compute all tags when tag manager / tag filter is open, or while editing an item's tags (quick-pick list)
   const allTags = useMemo(() => {
-    if (!effectiveShowTagManager && !showTagFilter && editingTagsId === null) return [];
+    if (!effectiveShowTagManager && !showTagFilter && !selectedTagFilter && editingTagsId === null) return [];
 
     const set = new Set<string>();
     for (const tag of BUILTIN_SENSITIVE_TAG_NAMES) {
@@ -307,7 +310,7 @@ const App = () => {
       (item.tags || []).forEach((tag) => set.add(tag));
     });
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [history, effectiveShowTagManager, showTagFilter, editingTagsId]);
+  }, [history, effectiveShowTagManager, showTagFilter, selectedTagFilter, editingTagsId]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -528,6 +531,7 @@ const App = () => {
   const filteredHistory = useFilteredHistory({
     history: hydratedHistory,
     search,
+    selectedTagFilter,
     typeFilter
   });
 
@@ -541,7 +545,7 @@ const App = () => {
 
   useListSelectionReset({ filteredHistory, setSelectedIndex });
 
-  useSearchFetchTrigger({ debouncedSearch, isComposing, typeFilter, fetchHistory });
+  useSearchFetchTrigger({ debouncedSearch, isComposing, selectedTagFilter, typeFilter, fetchHistory });
 
   useScrollToSelection({
     filteredHistory,

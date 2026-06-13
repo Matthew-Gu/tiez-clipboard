@@ -14,7 +14,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { activateWindowFocus } from "../../../shared/ipc/commands";
 import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
 import { useUiStore } from "../stores/uiStore";
-import { createTagSearch, getActiveTagSearch } from "../../tag/tagManagerUi";
 
 interface AppHeaderProps {
   t: (key: string) => string;
@@ -58,10 +57,11 @@ const AppHeader = ({
   const setIsComposing = useUiStore((state) => state.setIsComposing);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
   const setShowTagFilter = useUiStore((state) => state.setShowTagFilter);
+  const selectedTagFilter = useUiStore((state) => state.selectedTagFilter);
+  const setSelectedTagFilter = useUiStore((state) => state.setSelectedTagFilter);
   const typeFilter = useUiStore((state) => state.typeFilter);
   const setTypeFilter = useUiStore((state) => state.setTypeFilter);
   const setEditingTagsId = useUiStore((state) => state.setEditingTagsId);
-  const activeTagSearch = getActiveTagSearch(search);
   const tagFilterButtonRef = useRef<HTMLDivElement | null>(null);
   const tagFilterMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -195,6 +195,21 @@ const AppHeader = ({
                   }
                 }}
               >
+                {tagManagerEnabled && (
+                  <div className="app-header__tag-filter" ref={tagFilterButtonRef}>
+                    <button
+                      className={`ui-button ui-button--icon app-header__filter ${selectedTagFilter !== null ? 'app-header__filter--active' : ''}`}
+                      title={t('filter_by_tag')}
+                      onClick={() => {
+                        setShowTagFilter((open) => !open);
+                        setEditingTagsId(null);
+                      }}
+                    >
+                      <Tag size={13} />
+                      <span>{selectedTagFilter || t('tags')}</span>
+                    </button>
+                  </div>
+                )}
                 {['text', 'image', 'file', 'url', 'code', 'video'].map(t => (
                   <button
                     key={t}
@@ -205,40 +220,33 @@ const AppHeader = ({
                     {getTypeName(t)}
                   </button>
                 ))}
-                {tagManagerEnabled && (
-                  <div className="app-header__tag-filter" ref={tagFilterButtonRef}>
-                    <button
-                      className={`ui-button ui-button--icon app-header__filter ${activeTagSearch !== null ? 'app-header__filter--active' : ''}`}
-                      title={t('filter_by_tag')}
-                      onClick={() => {
-                        if (activeTagSearch !== null) {
-                          setSearch("");
-                          setShowTagFilter(false);
-                        } else {
-                          setShowTagFilter((open) => !open);
-                        }
-                        setEditingTagsId(null);
-                      }}
-                    >
-                      <Tag size={13} />
-                      <span>{activeTagSearch || t('tags')}</span>
-                    </button>
-                  </div>
-                )}
               </div>
-              {showTagFilter && allTags.length > 0 && (
+              {showTagFilter && (
                 <div className="app-header__tag-menu app-header__tag-menu--filter" ref={tagFilterMenuRef}>
                   <div className="app-header__tag-menu-label">{t('filter_by_tag')}</div>
                   <div className="app-header__tag-menu-list">
+                    {selectedTagFilter && (
+                      <button
+                        type="button"
+                        className="tag-chip app-header__tag-clear"
+                        onClick={() => {
+                          setSelectedTagFilter(null);
+                          setShowTagFilter(false);
+                        }}
+                      >
+                        <X size={11} />
+                        {t('clear_selection')}
+                      </button>
+                    )}
                     {allTags.map(tag => {
                       const tagBackground = getTagColor(tag, theme);
                       return (
                         <button
                           type="button"
-                          className="tag-chip"
+                          className={`tag-chip ${selectedTagFilter === tag ? 'tag-chip--active' : ''}`}
                           key={tag}
                           onClick={() => {
-                            setSearch(createTagSearch(tag));
+                            setSelectedTagFilter(selectedTagFilter === tag ? null : tag);
                             setShowTagFilter(false);
                           }}
                           data-tag={tag}

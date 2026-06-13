@@ -3,6 +3,7 @@ import {
   createUiInitialState,
   selectIsKeyboardMode,
   selectSearch,
+  selectSelectedTagFilter,
   selectSelectedIndex,
   selectTypeFilter,
   useUiStore
@@ -22,6 +23,7 @@ describe("ui store", () => {
     store.setSearch("tag:work");
     store.setIsComposing(true);
     store.setShowTagFilter(true);
+    store.setSelectedTagFilter("work");
     store.setTypeFilter("image");
     store.setSelectedIndex((previous) => previous + 2);
     store.setIsKeyboardMode(true);
@@ -34,6 +36,7 @@ describe("ui store", () => {
       search: "tag:work",
       isComposing: true,
       showTagFilter: true,
+      selectedTagFilter: "work",
       typeFilter: "image",
       selectedIndex: 2,
       isKeyboardMode: true,
@@ -59,6 +62,7 @@ describe("ui store", () => {
   it("exposes atomic selectors", () => {
     const state = useUiStore.getState();
     expect(selectSearch(state)).toBe("");
+    expect(selectSelectedTagFilter(state)).toBeNull();
     expect(selectTypeFilter(state)).toBeNull();
     expect(selectSelectedIndex(state)).toBe(0);
     expect(selectIsKeyboardMode(state)).toBe(false);

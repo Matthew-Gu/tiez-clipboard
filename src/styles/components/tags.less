@@ -1,9 +1,6 @@
 /* --- Base Layout --- */
 .app-header__tag-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    z-index: 100000;
+    position: static;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -14,9 +11,10 @@
     max-height: min(280px, 50vh);
     overflow-y: auto;
     overflow-x: hidden;
-    width: min(320px, calc(100vw - 48px));
+    width: 100%;
+    margin-top: 6px;
     padding: 10px 10px 12px;
-    background: var(--bg-element);
+    background: var(--bg-input);
     border: var(--tags-border);
     border-radius: var(--tags-radius);
     box-shadow: var(--tags-shadow);
@@ -30,8 +28,7 @@
 }
 
 .app-header__tag-menu--filter {
-    top: calc(100% + 6px);
-    right: var(--spacing-md);
+    border-radius: var(--radius-control);
 }
 
 .app-header__tag-menu-label {
@@ -74,6 +71,16 @@
 .tag-chip:active {
     transform: var(--tag-chip-active-transform);
     box-shadow: var(--tag-chip-active-shadow);
+}
+
+.tag-chip--active {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 1px;
+}
+
+.app-header__tag-clear {
+    background: var(--bg-button);
+    color: var(--text-primary);
 }
 
 /* Inline tag editor: input + floating suggestion list (same column width) */

@@ -21,6 +21,7 @@ const DETAIL_LIMIT = 48;
 
 interface UseHistoryFetchOptions {
   debouncedSearch: string;
+  selectedTagFilter: string | null;
   typeFilter: string | null;
   persistentLimitEnabled: boolean;
   persistentLimit: number;
@@ -38,6 +39,7 @@ interface UseHistoryFetchOptions {
 
 export const useHistoryFetch = ({
   debouncedSearch,
+  selectedTagFilter,
   typeFilter,
   pageSize,
   history,
@@ -161,20 +163,19 @@ export const useHistoryFetch = ({
     async (reset = false) => {
       const seq = ++fetchSeqRef.current;
       const hasSearch = !!debouncedSearch?.trim();
+      const hasTagFilter = !!selectedTagFilter;
       try {
-        if (hasSearch) {
-          let term = debouncedSearch.trim();
-          let tagOnly = false;
-          if (term.startsWith("tag:")) {
-            term = term.slice(4);
-            tagOnly = true;
-          }
+        if (hasSearch || hasTagFilter) {
+          const term = hasSearch ? debouncedSearch.trim() : selectedTagFilter || "";
+          const tagOnly = !hasSearch && hasTagFilter;
           const summaries = await invoke<ClipboardEntrySummary[]>(
             TAURI_COMMANDS.searchClipboardHistorySummaries,
             { searchTerm: term, limit: 200, tagOnly }
           );
           if (seq !== fetchSeqRef.current) return;
-          const entries = summaries.map(summaryToEntry);
+          const entries = summaries
+            .filter((summary) => !selectedTagFilter || summary.tags.includes(selectedTagFilter))
+            .map(summaryToEntry);
           setHistory(entries);
           setHasMore(false);
           setHasNewer(false);
@@ -201,6 +202,7 @@ export const useHistoryFetch = ({
     },
     [
       debouncedSearch,
+      selectedTagFilter,
       prefetchVisibleRange,
       requestPage,
       setCurrentOffset,

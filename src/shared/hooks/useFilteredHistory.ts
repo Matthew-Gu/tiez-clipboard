@@ -4,12 +4,14 @@ import type { ClipboardEntry } from "../types";
 interface UseFilteredHistoryOptions {
   history: ClipboardEntry[];
   search: string;
+  selectedTagFilter: string | null;
   typeFilter: string | null;
 }
 
 export const useFilteredHistory = ({
   history,
   search,
+  selectedTagFilter,
   typeFilter
 }: UseFilteredHistoryOptions) => {
   return useMemo(() => {
@@ -20,24 +22,16 @@ export const useFilteredHistory = ({
         return false;
       }
 
-      if (lowerSearch) return true;
-
-      let effectiveSearch = lowerSearch;
-      const isTagSearch = effectiveSearch.startsWith("tag:");
-      if (isTagSearch) {
-        effectiveSearch = effectiveSearch.slice(4);
+      if (selectedTagFilter && !item.tags?.some((tag) => tag === selectedTagFilter)) {
+        return false;
       }
 
-      if (!effectiveSearch) return true;
-
-      if (isTagSearch) {
-        return item.tags?.some((tag) => tag.toLowerCase().includes(effectiveSearch)) ?? false;
-      }
+      if (!lowerSearch) return true;
 
       return (
-        item.content?.toLowerCase().includes(effectiveSearch) ||
-        item.source_app?.toLowerCase().includes(effectiveSearch) ||
-        item.tags?.some((tag) => tag.toLowerCase().includes(effectiveSearch))
+        item.content?.toLowerCase().includes(lowerSearch) ||
+        item.source_app?.toLowerCase().includes(lowerSearch) ||
+        item.tags?.some((tag) => tag.toLowerCase().includes(lowerSearch))
       );
     });
 
@@ -53,5 +47,5 @@ export const useFilteredHistory = ({
       }
       return b.timestamp - a.timestamp;
     });
-  }, [history, search, typeFilter]);
+  }, [history, search, selectedTagFilter, typeFilter]);
 };
