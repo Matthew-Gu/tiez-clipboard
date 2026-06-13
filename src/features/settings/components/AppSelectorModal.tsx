@@ -23,20 +23,11 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
                     className="dialog dialog--selector"
-                    style={{
-                        width: '92%',
-                        maxWidth: '500px',
-                        gap: '12px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        maxHeight: '90vh',
-                        overflowY: 'auto'
-                    }}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div className="dialog__header">
                         <h3 className="dialog__title">{t('select_app_title')}</h3>
-                        <button className="ui-button ui-button--icon" onClick={onClose} style={{ border: 'none', background: 'transparent', boxShadow: 'none' }}>
+                        <button className="ui-button ui-button--icon dialog__close" onClick={onClose}>
                             <X size={18} />
                         </button>
                     </div>
@@ -55,9 +46,9 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                         />
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className="dialog__selector-actions">
                         <button
-                            className="ui-button ui-button--icon"
+                            className="ui-button ui-button--icon dialog__selector-action"
                             onClick={async () => {
                                 try {
                                     const selected = await open({
@@ -73,14 +64,12 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                                     }
                                 } catch (err) { console.error(err); }
                             }}
-                            style={{ flex: 1, height: '36px', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase' }}
                         >
                             {t('browse_file')}
                         </button>
                         <button
-                            className="ui-button ui-button--icon"
+                            className="ui-button ui-button--icon dialog__selector-action dialog__button--danger"
                             onClick={onClose}
-                            style={{ flex: 1, height: '36px', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', background: '#ff4d4f', color: '#fff', border: '2px solid #333' }}
                         >
                             {t('cancel')}
                         </button>

@@ -1,16 +1,16 @@
 /* Multi-selection Management Styles */
-                .toolbar-actions {
+.tag-manager__management-actions {
                     display: flex;
                     align-items: center;
                     gap: 8px;
                 }
 
-.manage-btn {
+.tag-manager__manage-button {
                     margin-left: 12px;
                 }
 
 @media (max-width: 500px) {
-.manage-btn span {
+.tag-manager__manage-button span {
                         display: none;
                     }
 
@@ -32,13 +32,13 @@
 .tag-manager__selection-control {
                     width: 20px;
                     height: 20px;
-                    border: 2px solid var(--border);
+                    border: 2px solid var(--line-soft);
                     border-radius: 6px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     transition: all 0.2s;
-                    background: var(--bg-main);
+                    background: var(--bg-input);
                 }
 
 .tag-manager__selection-control--checked {
@@ -62,19 +62,19 @@
                 }
 
 .tag-manager__items--managing .tag-manager__card {
-                    border-color: var(--border);
+                    border-color: var(--line-soft);
                 }
 
 .tag-manager__items--managing .tag-manager__card:hover {
-                    border-color: var(--accent-light);
+                    border-color: var(--accent-soft);
                     transform: none;
                     box-shadow: none;
                 }
 
 .tag-manager__items--managing .tag-manager__card--selected {
-                    background: rgba(var(--accent-color-rgb), 0.05);
-                    border-color: var(--accent-color);
-                    box-shadow: 0 0 0 1px var(--accent-color);
+                    background: var(--card-selected-background);
+                    border-color: var(--card-selected-border-color);
+                    box-shadow: var(--card-selected-shadow);
                 }
 
 /* Ensure card top row shows up in manage mode to hold selection indicator */

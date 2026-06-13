@@ -73,6 +73,18 @@
   align-items: center;
   justify-content: center;
   text-align: left;
+  border: 1px solid var(--line-strong);
+}
+
+.settings-page__theme-choice--active,
+.settings-page__theme-choice--active:hover,
+.settings-page__theme-choice--active:focus-visible {
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  border-color: var(--button-active-filled-border-color);
+  box-shadow:
+    var(--button-active-filled-shadow),
+    0 0 0 2px var(--accent-soft);
 }
 
 .settings-page__theme-title {
@@ -297,7 +309,16 @@
 }
 
 .ui-segmented__item--active {
-  background: var(--segment-active-background);
-  color: var(--segment-active-color);
-  box-shadow: var(--segment-active-shadow);
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  box-shadow: var(--button-active-filled-shadow);
+}
+
+.ui-segmented__item--active:hover,
+.ui-segmented__item--active:focus-visible {
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  box-shadow:
+    var(--button-active-filled-shadow),
+    0 0 0 2px var(--accent-soft);
 }

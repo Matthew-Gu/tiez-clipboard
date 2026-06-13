@@ -70,7 +70,7 @@ const TagManagerContent = ({
             </div>
             <div className="tag-manager__toolbar-actions">
                 {selectedTag && (
-                    <div className="toolbar-actions">
+                    <div className="tag-manager__management-actions">
                         {isManageMode ? (
                             <>
                                 <button className="tag-manager__sort-button" onClick={() => {
@@ -101,7 +101,7 @@ const TagManagerContent = ({
                                 </button>
                             </>
                         ) : (
-                            <button className="tag-manager__sort-button manage-btn" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
+                            <button className="tag-manager__sort-button tag-manager__manage-button" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
                                 <CheckSquare size={14} /><span>{t('manage') || '管理'}</span>
                             </button>
                         )}

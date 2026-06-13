@@ -147,9 +147,10 @@
 }
 
 .advanced-settings__target--active {
-  background: var(--card-selected-background);
-  border-color: rgba(var(--accent-color-rgb), 0.22);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb), 0.12);
+  background: var(--button-active-filled-background);
+  border-color: var(--button-active-filled-border-color);
+  color: var(--button-active-filled-color);
+  box-shadow: var(--button-active-filled-shadow);
 }
 
 .advanced-settings__target-meta {
@@ -168,6 +169,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.advanced-settings__target--active .advanced-settings__target-name,
+.advanced-settings__target--active .advanced-settings__target-detail {
+  color: var(--button-active-filled-color);
 }
 
 .advanced-settings__target-detail {
@@ -395,6 +401,95 @@
   display: flex;
   justify-content: flex-end;
   gap: 6px;
+}
+
+.advanced-settings__capture {
+  margin: 0 24px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: var(--panel-border);
+  border-radius: var(--panel-radius);
+  background: var(--bg-panel);
+}
+
+.advanced-settings__capture-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.advanced-settings__capture-label {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.advanced-settings__capture-hint {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.advanced-settings__capture-switch,
+.advanced-settings__action-tab {
+  border: var(--button-border);
+  border-radius: var(--button-radius);
+  background: var(--bg-button);
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow: var(--button-shadow);
+}
+
+.advanced-settings__capture-switch {
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.advanced-settings__capture-track {
+  width: 24px;
+  height: 14px;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--line-strong);
+}
+
+.advanced-settings__capture-thumb {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.18s ease;
+}
+
+.advanced-settings__capture-switch--active,
+.advanced-settings__action-tab--active {
+  background: var(--button-active-filled-background);
+  border-color: var(--button-active-filled-border-color);
+  color: var(--button-active-filled-color);
+  box-shadow: var(--button-active-filled-shadow);
+}
+
+.advanced-settings__capture-switch--active .advanced-settings__capture-track {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.advanced-settings__capture-switch--active .advanced-settings__capture-thumb {
+  transform: translateX(10px);
+}
+
+.advanced-settings__action-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.advanced-settings__action-tab {
+  min-height: 32px;
+  padding: 0 14px;
 }
 
 .advanced-settings__delete-rule,

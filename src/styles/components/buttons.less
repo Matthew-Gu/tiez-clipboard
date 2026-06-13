@@ -36,3 +36,13 @@
   border-color: var(--button-active-filled-border-color);
   box-shadow: var(--button-active-filled-shadow);
 }
+
+.ui-button--icon.ui-button--active:hover,
+.ui-button--icon.ui-button--active:focus-visible {
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  border-color: var(--button-active-filled-border-color);
+  box-shadow:
+    var(--button-active-filled-shadow),
+    0 0 0 2px var(--accent-soft);
+}

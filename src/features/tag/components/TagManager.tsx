@@ -177,7 +177,6 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
 
             <TagManagerDialogs
                 t={t}
-                theme={theme}
                 deleteConfirmation={deleteConfirmation}
                 itemDeleteConfirmation={itemDeleteConfirmation}
                 isCreatingItem={isCreatingItem}

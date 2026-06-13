@@ -36,12 +36,6 @@
                     letter-spacing: 0.5px;
                 }
 
-.app-header__actions { display: flex; align-items: center; gap: 8px; }
-
-.action-btn { background: transparent; border: none; color: inherit; cursor: pointer; padding: 2px; opacity: 0.7; transition: opacity 0.2s; }
-
-.action-btn:hover { opacity: 1; }
-
 /* Tag Search Box */
                 .tag-manager__search {
                     padding: 12px 16px;
@@ -53,27 +47,27 @@
                     position: relative;
                 }
 
-.tag-manager__search .app-header__tag-manager__search-icon { opacity: 0.3; color: var(--text-primary); flex-shrink: 0; }
+.tag-manager__search .tag-manager__search-icon { opacity: 0.3; color: var(--text-primary); flex-shrink: 0; }
 
 .tag-manager__search input {
                     width: 100%;
-                    background: var(--bg-main);
-                    border: 1px solid var(--border);
+                    background: var(--bg-input);
+                    border: 1px solid var(--line-soft);
                     outline: none;
                     font-size: 13px;
                     font-weight: 500;
                     color: var(--text-primary);
-                    padding: 10px 12px 10px 36px;
+                    padding: 10px 12px;
                     flex: 1;
                     min-width: 0;
-                    border-radius: var(--radius-sm);
+                    border-radius: var(--radius-control);
                     transition: all 0.2s;
                 }
 
 .tag-manager__search input:focus {
                     border-color: var(--accent-color);
                     background: var(--bg-panel);
-                    box-shadow: 0 0 0 3px var(--accent-light);
+                    box-shadow: 0 0 0 3px var(--accent-soft);
                 }
 
 .tag-manager__search input::placeholder { color: var(--text-muted); opacity: 0.7; font-style: normal; font-size: 13px; }
@@ -99,24 +93,29 @@
                     cursor: pointer;
                     margin-bottom: 2px;
                     border: 1px solid transparent;
-                    border-radius: var(--radius-sm);
+                    border-radius: var(--radius-control);
                     transition: all 0.15s;
                     position: relative;
                     overflow: hidden;
                     width: 100%;
                 }
 
-.tag-manager__tag:hover { background: var(--bg-main); }
+.tag-manager__tag:hover { background: var(--bg-input); }
 
 .tag-manager__tag--active {
-                    background: var(--accent-light);
-                    border-color: transparent;
-                    box-shadow: none;
+                    background: var(--button-active-filled-background);
+                    border-color: var(--button-active-filled-border-color);
+                    color: var(--button-active-filled-color);
+                    box-shadow: var(--button-active-filled-shadow);
                 }
 
-.tag-manager__tag--create-hint { border: 1px dashed var(--border); opacity: 0.8; }
+.tag-manager__tag--active .tag-manager__tag-name {
+                    color: var(--button-active-filled-color);
+                }
 
-.tag-manager__tag--create-hint:hover { background: var(--bg-main); border-style: solid; }
+.tag-manager__tag--create-hint { border: 1px dashed var(--line-soft); opacity: 0.8; }
+
+.tag-manager__tag--create-hint:hover { background: var(--bg-input); border-style: solid; }
 
 .tag-manager__color-control { display: flex; align-items: center; justify-content: center; }
 
@@ -146,16 +145,16 @@
 /* Inline Edit Input */
                 .tag-manager__tag-input {
                     flex: 1;
-                    border: 1px solid var(--border);
-                    background: var(--bg-main);
+                    border: 1px solid var(--line-soft);
+                    background: var(--bg-input);
                     color: var(--text-primary);
                     font-size: 13px;
                     font-weight: 500;
                     padding: 6px 10px;
-                    border-radius: var(--radius-sm);
+                    border-radius: var(--radius-control);
                     min-width: 0;
                     outline: none;
-                    box-shadow: 0 0 0 3px var(--accent-light);
+                    box-shadow: 0 0 0 3px var(--accent-soft);
                 }
 
 /* Actions group: Hidden by default, Flex on hover */
@@ -175,7 +174,7 @@
                     font-size: 11px;
                     font-weight: 600;
                     color: var(--text-secondary);
-                    background: var(--bg-main);
+                    background: var(--bg-input);
                     padding: 2px 8px;
                     border-radius: 10px;
                     min-width: auto;

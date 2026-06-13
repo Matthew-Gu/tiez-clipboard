@@ -386,10 +386,10 @@
   display: flex;
   gap: 8px;
   width: 100%;
-  background: rgba(var(--bg-panel-rgb), 0.5);
+  background: var(--bg-element);
   padding: 4px;
   border-radius: 10px;
-  border: 1px solid rgba(var(--accent-color-rgb), 0.04);
+  border: 1px solid var(--line-strong);
 }
 
 .settings-page__choice {
@@ -399,21 +399,33 @@
   font-size: 13px;
   font-weight: 600;
   border-radius: 6px;
-  border: none;
-  background: transparent;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-button);
   color: var(--text-secondary);
   transition: all 0.2s ease;
 }
 
-.settings-page__choice--primary {
-  background: var(--accent-color);
-  color: white;
-  box-shadow: 0 2px 8px rgba(var(--accent-color-rgb), 0.25);
+.settings-page__choice--active {
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  border-color: var(--button-active-filled-border-color);
+  box-shadow: var(--button-active-filled-shadow);
 }
 
-.settings-page__choice:not(.settings-page__choice--primary):hover {
+.settings-page__choice:not(.settings-page__choice--active):hover {
   background: rgba(var(--accent-color-rgb), 0.08);
   color: var(--text-primary);
+  border-color: var(--button-hover-border-color);
+}
+
+.settings-page__choice--active:hover,
+.settings-page__choice--active:focus-visible {
+  background: var(--button-active-filled-background);
+  color: var(--button-active-filled-color);
+  border-color: var(--button-active-filled-border-color);
+  box-shadow:
+    var(--button-active-filled-shadow),
+    0 0 0 2px var(--accent-soft);
 }
 
 .settings-page__nav-note {
