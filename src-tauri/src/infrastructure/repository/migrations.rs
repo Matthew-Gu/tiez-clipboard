@@ -40,7 +40,6 @@ pub fn run_migrations(conn: &Connection) -> Result<()> {
         CREATE INDEX IF NOT EXISTS idx_entry_tags_tag ON entry_tags (tag);
         CREATE INDEX IF NOT EXISTS idx_entry_tags_entry ON entry_tags (entry_id);
         INSERT OR IGNORE INTO saved_tags (name) VALUES ('sensitive');
-        INSERT OR IGNORE INTO saved_tags (name) VALUES ('密码');
         INSERT OR IGNORE INTO saved_tags (name) VALUES ('password');
         ",
     )
@@ -79,5 +78,14 @@ mod tests {
             )
             .unwrap();
         assert_eq!(index_count, 1);
+
+        let saved_tags: Vec<String> = conn
+            .prepare("SELECT name FROM saved_tags ORDER BY name")
+            .unwrap()
+            .query_map([], |row| row.get(0))
+            .unwrap()
+            .filter_map(Result::ok)
+            .collect();
+        assert_eq!(saved_tags, vec!["password", "sensitive"]);
     }
 }

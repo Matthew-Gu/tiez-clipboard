@@ -17,7 +17,7 @@ pub struct DbState {
     pub tag_repo: SqliteTagRepository,
 }
 
-pub const SENSITIVE_TAGS: &[&str] = &["sensitive", "密码", "password"];
+pub const SENSITIVE_TAGS: &[&str] = &["sensitive", "password"];
 
 pub fn has_sensitive_tag(tags: &[String]) -> bool {
     tags.iter()
@@ -292,9 +292,10 @@ mod tests {
 
     #[test]
     fn sensitive_tags_include_password_case_insensitively() {
-        for tag in ["sensitive", "SENSITIVE", "密码", "password", "PASSWORD"] {
+        for tag in ["sensitive", "SENSITIVE", "password", "PASSWORD"] {
             assert!(has_sensitive_tag(&[tag.to_string()]));
         }
+        assert!(!has_sensitive_tag(&["密码".to_string()]));
         assert!(!has_sensitive_tag(&["work".to_string()]));
     }
     use crate::infrastructure::repository::clipboard_repo::{

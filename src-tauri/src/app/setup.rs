@@ -16,7 +16,6 @@ use crate::infrastructure::repository::settings_repo::{
 use crate::infrastructure::repository::tag_repo::SqliteTagRepository;
 use crate::infrastructure::windows_ext::WindowExt;
 use crate::services::encryption_queue::init_encryption_queue;
-use crate::services::sensitive_align::spawn_sensitive_alignment;
 use std::ptr::null_mut;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Mutex, OnceLock};
@@ -78,7 +77,6 @@ pub fn init(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     app.manage(EncryptionQueueState(init_encryption_queue(
         app_handle.clone(),
     )));
-    spawn_sensitive_alignment(app_handle.clone());
 
     // 6. Window Initialization (Pinned/Focus)
     setup_main_window(app, &settings);

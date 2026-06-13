@@ -7,15 +7,15 @@ import {
 
 describe("sensitive tags", () => {
   it("includes every built-in sensitive tag", () => {
-    expect(BUILTIN_SENSITIVE_TAG_NAMES).toEqual(["sensitive", "密码", "password"]);
+    expect(BUILTIN_SENSITIVE_TAG_NAMES).toEqual(["sensitive", "password"]);
   });
 
   it("matches built-in tags case-insensitively", () => {
     expect(isSensitiveTag("sensitive")).toBe(true);
     expect(isSensitiveTag("SENSITIVE")).toBe(true);
-    expect(isSensitiveTag("密码")).toBe(true);
     expect(isSensitiveTag("password")).toBe(true);
     expect(isSensitiveTag("PASSWORD")).toBe(true);
+    expect(isSensitiveTag("密码")).toBe(false);
   });
 
   it("does not match ordinary tags", () => {
