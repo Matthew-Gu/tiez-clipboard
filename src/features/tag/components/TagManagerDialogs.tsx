@@ -52,16 +52,16 @@ const TagManagerDialogs = ({
 }: TagManagerDialogsProps) => (
     <>
         {deleteConfirmation.show && (
-            <div className="modal-overlay" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>
-                <div className={`confirm-dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
+            <div className="dialog-backdrop" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>
+                <div className={`dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
                     <h3>{t('confirm_delete')}</h3>
                     <p>
                         {t('confirm_delete_tag')}<br />
                         <span className="tag-manager__highlight" style={{ marginTop: '8px', display: 'inline-block' }}>{deleteConfirmation.tagName}</span>
                     </p>
-                    <div className="confirm-dialog-buttons">
-                        <button className="confirm-dialog-button" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>{t('cancel')}</button>
-                        <button className="confirm-dialog-button primary" onClick={() => {
+                    <div className="dialog__actions">
+                        <button className="dialog__button" onClick={() => setDeleteConfirmation({ show: false, tagName: null })}>{t('cancel')}</button>
+                        <button className="dialog__button dialog__button--primary" onClick={() => {
                             if (deleteConfirmation.tagName) onDeleteTag(deleteConfirmation.tagName);
                             setDeleteConfirmation({ show: false, tagName: null });
                         }}>{t('delete')}</button>
@@ -71,13 +71,13 @@ const TagManagerDialogs = ({
         )}
 
         {itemDeleteConfirmation.show && (
-            <div className="modal-overlay" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>
-                <div className={`confirm-dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
+            <div className="dialog-backdrop" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>
+                <div className={`dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
                     <h3>{t('confirm_delete')}</h3>
                     <p>{t('confirm_delete_desc') || "确定要删除这条记录吗？"}</p>
-                    <div className="confirm-dialog-buttons">
-                        <button className="confirm-dialog-button" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>{t('cancel')}</button>
-                        <button className="confirm-dialog-button primary" onClick={async () => {
+                    <div className="dialog__actions">
+                        <button className="dialog__button" onClick={() => setItemDeleteConfirmation({ show: false, id: null })}>{t('cancel')}</button>
+                        <button className="dialog__button dialog__button--primary" onClick={async () => {
                             if (itemDeleteConfirmation.id) await onDeleteItems(itemDeleteConfirmation.id);
                             setItemDeleteConfirmation({ show: false, id: null });
                         }}>{t('delete')}</button>
@@ -87,10 +87,10 @@ const TagManagerDialogs = ({
         )}
 
         {isCreatingItem && (
-            <div className="modal-overlay" onClick={() => setIsCreatingItem(false)}>
-                <div className={`confirm-dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
+            <div className="dialog-backdrop" onClick={() => setIsCreatingItem(false)}>
+                <div className={`dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
                     <h3>{t('add_item')}</h3>
-                    <div className="modal-input-field">
+                    <div className="dialog__field">
                         <textarea
                             className="tag-manager__textarea"
                             value={newItemContent}
@@ -99,19 +99,19 @@ const TagManagerDialogs = ({
                             autoFocus
                         />
                     </div>
-                    <div className="confirm-dialog-buttons">
-                        <button className="confirm-dialog-button" onClick={() => setIsCreatingItem(false)}>{t('cancel')}</button>
-                        <button className="confirm-dialog-button primary" onClick={onAddItem}>{t('confirm')}</button>
+                    <div className="dialog__actions">
+                        <button className="dialog__button" onClick={() => setIsCreatingItem(false)}>{t('cancel')}</button>
+                        <button className="dialog__button dialog__button--primary" onClick={onAddItem}>{t('confirm')}</button>
                     </div>
                 </div>
             </div>
         )}
 
         {editingItem && (
-            <div className="modal-overlay" onClick={() => setEditingItem(null)}>
-                <div className={`confirm-dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
+            <div className="dialog-backdrop" onClick={() => setEditingItem(null)}>
+                <div className={`dialog tag-manager__dialog theme-${theme}`} onClick={(event) => event.stopPropagation()}>
                     <h3>{t('edit_item')}</h3>
-                    <div className="modal-input-field">
+                    <div className="dialog__field">
                         <textarea
                             className="tag-manager__textarea"
                             value={editingItem.content}
@@ -119,9 +119,9 @@ const TagManagerDialogs = ({
                             autoFocus
                         />
                     </div>
-                    <div className="confirm-dialog-buttons">
-                        <button className="confirm-dialog-button" onClick={() => setEditingItem(null)}>{t('cancel')}</button>
-                        <button className="confirm-dialog-button primary" onClick={onUpdateItem}>{t('save')}</button>
+                    <div className="dialog__actions">
+                        <button className="dialog__button" onClick={() => setEditingItem(null)}>{t('cancel')}</button>
+                        <button className="dialog__button dialog__button--primary" onClick={onUpdateItem}>{t('save')}</button>
                     </div>
                 </div>
             </div>

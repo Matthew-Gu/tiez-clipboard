@@ -167,41 +167,6 @@
     outline-offset: -1px;
 }
 
-.clipboard-item:has(.clipboard-item__tags.clipboard-item__tags--editing) {
-    z-index: 48;
-}
-
 .ui-scroll--hidden::-webkit-scrollbar {
     display: none;
-}
-
-/* --- Retro-specific accents --- */
-.theme-retro .tag-chip {
-    font-weight: 800;
-}
-
-/* --- Modern Styles (Mica / Acrylic) --- */
-.theme-mica .ui-input.ui-input--menu-open,
-.theme-acrylic .ui-input.ui-input--menu-open {
-    border-radius: 10px;
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    box-shadow: none;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-
-:root.dark-mode .theme-mica .ui-input.ui-input--menu-open,
-:root.dark-mode .theme-acrylic .ui-input.ui-input--menu-open {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* --- Global Fix for Search Input Accessibility in Dark Mode --- */
-:root.dark-mode .ui-input {
-    color: #ffffff;
-}
-
-:root.dark-mode .ui-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
 }

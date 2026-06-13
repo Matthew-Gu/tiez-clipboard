@@ -1,3 +1,7 @@
+/* Theme tokens only. Component styles live in their BEM blocks. */
+
+/* Theme tokens only. Component styles live in their BEM blocks. */
+
 /* Paper & Quill Theme (纸质书感) */
 :root.theme-paper,
 body.theme-paper {
@@ -102,74 +106,6 @@ body.theme-paper {
 
   --content-font-family: var(--font-main);
   --content-line-height: 1.6;
-}
-
-/* Texture effect */
-body.theme-paper::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.theme-paper .clipboard-item {
-  background-color: transparent;
-  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px);
-  background-size: 100% 1.6em;
-  background-attachment: local;
-  padding: 12px;
-  border-bottom: 2px solid #d5c4a1;
-  position: relative;
-}
-
-.theme-paper .clipboard-item:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.theme-paper .item-content {
-  margin-left: 0;
-  font-family: var(--font-main);
-}
-
-.theme-paper .clipboard-item--selected {
-  background-color: #fbf1c7;
-}
-
-/* Dark Mode Overrides for Paper */
-@media (prefers-color-scheme: dark) {
-  :root.theme-paper:not(.light-mode),
-  body.theme-paper:not(.light-mode) {
-    --bg-body: #282828;
-    --bg-window: #32302f;
-    --bg-content: #32302f;
-    --bg-toolbar: rgba(40, 40, 40, 0.95);
-    --bg-panel: rgba(50, 48, 47, 0.8);
-    --bg-input: #1d2021;
-    --bg-element: #3c3836;
-    --bg-button: rgba(213, 196, 161, 0.1);
-
-    --text-primary: #ebdbb2;
-    --text-secondary: #a89984;
-    --text-muted: #928374;
-
-    --accent-color: #d79921;
-    --accent-color-rgb: 215, 153, 33;
-    --border-dark: #504945;
-    --border-light: rgba(80, 73, 69, 0.4);
-    --shadow-color: rgba(0, 0, 0, 0.3);
-
-    --line-soft: rgba(213, 196, 161, 0.08);
-    --panel-header-background: #3c3836;
-    --panel-divider-color: #504945;
-
-    --card-selected-background: rgba(215, 153, 33, 0.15);
-    --card-selected-border-color: rgba(215, 153, 33, 0.3);
-    --settings-group__data-panel-border: 1px solid #504945;
-    --settings-group__data-panel-hover-background: #3c3836;
-  }
 }
 
 :root.dark-mode.theme-paper,

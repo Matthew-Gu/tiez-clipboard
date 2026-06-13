@@ -22,15 +22,15 @@ const ConfirmDialog = ({
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className={`confirm-dialog theme-${theme}`} onClick={(e) => e.stopPropagation()}>
-        <div className="confirm-dialog-title">{title}</div>
-        <div className="confirm-dialog-message">{message}</div>
-        <div className="confirm-dialog-buttons">
-          <button className="confirm-dialog-button" onClick={onClose}>
+    <div className="dialog-backdrop" onClick={onClose}>
+      <div className={`dialog theme-${theme}`} onClick={(e) => e.stopPropagation()}>
+        <div className="dialog__title">{title}</div>
+        <div className="dialog__message">{message}</div>
+        <div className="dialog__actions">
+          <button className="dialog__button" onClick={onClose}>
             {cancelLabel}
           </button>
-          <button className="confirm-dialog-button primary" onClick={onConfirm}>
+          <button className="dialog__button dialog__button--primary" onClick={onConfirm}>
             {confirmLabel}
           </button>
         </div>

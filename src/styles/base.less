@@ -160,14 +160,14 @@
   --modal-border: 1px solid var(--line-soft);
   --modal-radius: 20px;
   --modal-shadow: var(--shadow-lg);
-  --modal-title-background: transparent;
-  --modal-title-color: var(--text-primary);
-  --modal-title-border: none;
-  --modal-title-shadow: none;
-  --modal-title-padding: 0;
-  --modal-title-transform: none;
-  --modal-title-letter-spacing: 0;
-  --modal-title-font-weight: 700;
+  --dialog__title-background: transparent;
+  --dialog__title-color: var(--text-primary);
+  --dialog__title-border: none;
+  --dialog__title-shadow: none;
+  --dialog__title-padding: 0;
+  --dialog__title-transform: none;
+  --dialog__title-letter-spacing: 0;
+  --dialog__title-font-weight: 700;
   --dialog-button-border: 1px solid var(--line-soft);
   --dialog-button-radius: 12px;
   --dialog-button-shadow: var(--shadow-xs);
@@ -227,7 +227,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not(.light-mode) {
+:root:not(.light-mode) {
     --bg-body: #131720;
     --bg-window: rgba(22, 27, 38, 0.94);
     --bg-content: linear-gradient(180deg, #171d28 0%, #131720 100%);
@@ -257,6 +257,7 @@
     --switch-thumb-border: 1px solid rgba(255, 255, 255, 0.08);
     --settings-group__data-panel-hover-background: rgba(34, 40, 52, 0.98);
   }
+
 }
 
 :root.dark-mode,

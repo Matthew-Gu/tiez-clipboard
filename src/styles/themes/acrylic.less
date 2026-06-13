@@ -1,3 +1,7 @@
+/* Theme tokens only. Component styles live in their BEM blocks. */
+
+/* Theme tokens only. Component styles live in their BEM blocks. */
+
 /* Acrylic Theme */
 :root.theme-acrylic,
 body.theme-acrylic {
@@ -82,103 +86,6 @@ body.theme-acrylic {
   --queue-shadow: 0 20px 42px rgba(15, 23, 42, 0.16);
 }
 
-body.theme-acrylic {
-  position: relative;
-  isolation: isolate;
-}
-
-body.theme-acrylic::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  background-image: var(--custom-bg-image, none);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 0;
-  opacity: 0.18;
-  pointer-events: none;
-  border-radius: calc(var(--shell-radius) + 1px);
-}
-
-body.has-custom-bg.theme-acrylic::before {
-  opacity: var(--custom-bg-opacity, 0.45);
-}
-
-body.theme-acrylic:not(.has-custom-bg)::before {
-  background-image:
-    radial-gradient(120% 120% at 8% 8%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.08) 52%, rgba(255, 255, 255, 0.02) 100%),
-    linear-gradient(160deg, rgba(170, 190, 220, 0.12) 0%, rgba(210, 220, 236, 0.06) 45%, rgba(180, 195, 215, 0.11) 100%);
-  opacity: 0.42;
-}
-
-body.theme-acrylic #root {
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  isolation: isolate;
-  background-clip: padding-box;
-}
-
-body.theme-acrylic #root::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    radial-gradient(140% 110% at 0% 0%, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.03) 60%, transparent 100%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
-}
-
-body.theme-acrylic #root > * {
-  position: relative;
-  z-index: 1;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root.theme-acrylic:not(.light-mode),
-  body.theme-acrylic:not(.light-mode) {
-    --bg-window: rgba(20, 20, 20, calc(0.52 * var(--surface-opacity-scale, 1)));
-    --bg-panel: rgba(28, 28, 28, 0.38);
-    --bg-input: rgba(255, 255, 255, 0.12);
-    --bg-element: rgba(45, 45, 45, 0.42);
-    --bg-button: rgba(255, 255, 255, 0.06);
-
-    --text-primary: #e8e8e8;
-    --text-secondary: #b2b2b2;
-    --text-muted: #8f8f8f;
-
-    --line-soft: rgba(255, 255, 255, 0.14);
-    --line-strong: rgba(255, 255, 255, 0.2);
-    --shadow-xs: 0 4px 12px rgba(0, 0, 0, 0.18);
-    --shadow-sm: 0 10px 24px rgba(0, 0, 0, 0.22);
-    --shadow-md: 0 18px 36px rgba(0, 0, 0, 0.28);
-    --shadow-lg: 0 22px 44px rgba(0, 0, 0, 0.32);
-    --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-    --shell-background: rgba(20, 20, 20, calc(0.52 * var(--surface-opacity-scale, 1)));
-    --shell-border: 1px solid rgba(255, 255, 255, 0.12);
-    --shell-backdrop-filter: blur(30px) saturate(145%);
-    --toolbar-border: 1px solid rgba(255, 255, 255, 0.08);
-    --panel-border: 1px solid rgba(255, 255, 255, 0.1);
-    --menu-border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  body.theme-acrylic:not(.light-mode) #root::before {
-    background:
-      radial-gradient(140% 120% at 0% 0%, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 55%, transparent 100%),
-      linear-gradient(160deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-  }
-
-  body.theme-acrylic:not(.light-mode):not(.has-custom-bg)::before {
-    background-image:
-      radial-gradient(120% 120% at 10% 8%, rgba(120, 138, 164, 0.2) 0%, rgba(74, 86, 108, 0.08) 48%, rgba(48, 56, 72, 0.18) 100%),
-      linear-gradient(150deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.07) 100%);
-    opacity: 0.5;
-  }
-}
-
 :root.dark-mode.theme-acrylic,
 body.dark-mode.theme-acrylic {
   --bg-window: rgba(20, 20, 20, calc(0.52 * var(--surface-opacity-scale, 1)));
@@ -207,20 +114,6 @@ body.dark-mode.theme-acrylic {
   --menu-border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-body.windows-10.theme-acrylic #root,
-body.windows-10.dark-mode.theme-acrylic #root,
-body.windows-10:not(.light-mode).theme-acrylic #root {
-  background: rgba(252, 252, 252, calc(0.78 * var(--surface-opacity-scale, 1)));
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-body.windows-10.dark-mode.theme-acrylic #root,
-body.windows-10:not(.light-mode).theme-acrylic #root {
-  background: rgba(20, 20, 20, calc(0.76 * var(--surface-opacity-scale, 1)));
-}
-
 body.windows-10.theme-acrylic,
 body.windows-10.dark-mode.theme-acrylic,
 body.windows-10:not(.light-mode).theme-acrylic {
@@ -233,13 +126,4 @@ body.windows-10:not(.light-mode).theme-acrylic {
   --button-active-filled-shadow: none;
   --card-hover-shadow: none;
   --card-selected-shadow: none;
-}
-
-body.windows-10.theme-acrylic::before,
-body.windows-10.dark-mode.theme-acrylic::before,
-body.windows-10:not(.light-mode).theme-acrylic::before,
-body.windows-10.theme-acrylic #root::before,
-body.windows-10.dark-mode.theme-acrylic #root::before,
-body.windows-10:not(.light-mode).theme-acrylic #root::before {
-  display: none;
 }

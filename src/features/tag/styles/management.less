@@ -1,37 +1,35 @@
-                /* Multi-selection Management Styles */
+/* Multi-selection Management Styles */
                 .toolbar-actions {
                     display: flex;
                     align-items: center;
                     gap: 8px;
                 }
 
-                .manage-btn {
+.manage-btn {
                     margin-left: 12px;
                 }
-                @media (max-width: 500px) {
-                    .manage-btn span {
+
+@media (max-width: 500px) {
+.manage-btn span {
                         display: none;
                     }
-                }
 
+}
 
-                .tag-manager__sort-button--danger {
+.tag-manager__sort-button--danger {
                     color: #ff4d4f;
                 }
-                .tag-manager__sort-button--danger:hover:not(:disabled) {
+
+.tag-manager__sort-button--danger:hover:not(:disabled) {
                     background: rgba(255, 77, 79, 0.1);
                 }
-                .tag-manager__sort-button:disabled {
+
+.tag-manager__sort-button:disabled {
                     opacity: 0.4;
                     cursor: not-allowed;
                 }
 
-                .theme-mica .tag-manager__sort-button--danger:hover:not(:disabled),
-                .theme-acrylic .tag-manager__sort-button--danger:hover:not(:disabled) {
-                    background: rgba(255, 77, 79, 0.15);
-                }
-
-                .tag-manager__selection-control {
+.tag-manager__selection-control {
                     width: 20px;
                     height: 20px;
                     border: 2px solid var(--border);
@@ -42,11 +40,13 @@
                     transition: all 0.2s;
                     background: var(--bg-main);
                 }
-                .tag-manager__selection-control--checked {
+
+.tag-manager__selection-control--checked {
                     background: var(--accent-color);
                     border-color: var(--accent-color);
                 }
-                .tag-manager__selection-check {
+
+.tag-manager__selection-check {
                     width: 7px;
                     height: 4px;
                     border-left: 2px solid white;
@@ -56,64 +56,42 @@
                     transition: opacity 0.2s;
                     margin-top: -2px;
                 }
-                .tag-manager__selection-control--checked .tag-manager__selection-check {
+
+.tag-manager__selection-control--checked .tag-manager__selection-check {
                     opacity: 1;
                 }
 
-                .tag-manager__items--managing .tag-manager__card {
+.tag-manager__items--managing .tag-manager__card {
                     border-color: var(--border);
                 }
-                .tag-manager__items--managing .tag-manager__card:hover {
+
+.tag-manager__items--managing .tag-manager__card:hover {
                     border-color: var(--accent-light);
                     transform: none;
                     box-shadow: none;
                 }
-                .tag-manager__items--managing .tag-manager__card--selected {
+
+.tag-manager__items--managing .tag-manager__card--selected {
                     background: rgba(var(--accent-color-rgb), 0.05);
                     border-color: var(--accent-color);
                     box-shadow: 0 0 0 1px var(--accent-color);
                 }
 
-                /* Ensure card top row shows up in manage mode to hold selection indicator */
+/* Ensure card top row shows up in manage mode to hold selection indicator */
                 .tag-manager__items--managing .tag-manager__card .tag-manager__card-header {
                     opacity: 1;
                 }
-                .tag-manager__items--managing .tag-manager__card-actions {
+
+.tag-manager__items--managing .tag-manager__card-actions {
                     display: flex;
                 }
-                .tag-manager__items--managing .tag-manager__card-header {
+
+.tag-manager__items--managing .tag-manager__card-header {
                     right: auto;
                     left: 14px;
                 }
 
-                /* Premium adjustments for modern themes */
-                .theme-mica .manage-btn, .theme-acrylic .manage-btn {
-                    min-height: 40px;
-                    border-radius: 14px;
-                    padding: 0 16px;
-                    background: var(--bg-input);
-                    margin-left: 0;
-                }
-
-                .theme-mica .action-btn-primary, .theme-acrylic .action-btn-primary,
-                .theme-mica .action-btn-danger, .theme-acrylic .action-btn-danger,
-                .theme-mica .action-btn-secondary, .theme-acrylic .action-btn-secondary {
-                    min-height: 40px;
-                    border-radius: 14px;
-                }
-
-                .theme-mica .tag-manager__selection-control, .theme-acrylic .tag-manager__selection-control {
-                    border-radius: 8px;
-                    border-color: rgba(var(--accent-color-rgb), 0.2);
-                }
-
-                .theme-mica .tag-manager__items--managing .tag-manager__card--selected,
-                .theme-acrylic .tag-manager__items--managing .tag-manager__card--selected {
-                    background: rgba(var(--accent-color-rgb), 0.08);
-                    box-shadow: 0 12px 28px rgba(var(--accent-color-rgb), 0.15);
-                }
-
-                .tag-manager__fab {
+.tag-manager__fab {
                     position: absolute;
                     bottom: 20px;
                     right: 20px;
@@ -132,26 +110,19 @@
                     z-index: 100;
                     opacity: 0.85;
                 }
-                .tag-manager__fab:hover {
+
+.tag-manager__fab:hover {
                     background: var(--accent-hover);
                     transform: scale(1.08) translateY(-2px);
                     box-shadow: 0 12px 24px rgba(var(--accent-color-rgb), 0.4);
                     opacity: 1;
                 }
-                .tag-manager__fab:active {
+
+.tag-manager__fab:active {
                     transform: scale(0.95);
                 }
 
-                .theme-mica .tag-manager__fab, .theme-acrylic .tag-manager__fab {
-                    width: 48px;
-                    height: 48px;
-                    background: var(--accent-color);
-                    box-shadow: 0 10px 24px rgba(var(--accent-color-rgb), 0.4);
-                    border: 1px solid rgba(255, 255, 255, 0.25);
-                }
-
-                /* Ensure tag-manager__detail-page is the anchor for FAB */
+/* Ensure tag-manager__detail-page is the anchor for FAB */
                 .tag-manager__detail-page {
                     position: relative;
                 }
-

@@ -17,12 +17,12 @@ interface AppSelectorModalProps {
 const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, onSave }: AppSelectorModalProps) => (
     <AnimatePresence>
         {show && (
-            <div className="modal-overlay" onClick={onClose}>
+            <div className="dialog-backdrop" onClick={onClose}>
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
-                    className="modal-content"
+                    className="dialog dialog--selector"
                     style={{
                         width: '92%',
                         maxWidth: '500px',
@@ -35,7 +35,7 @@ const AppSelectorModal = ({ show, installedApps, theme, colorMode, t, onClose, o
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                        <h3 className="modal-title">{t('select_app_title')}</h3>
+                        <h3 className="dialog__title">{t('select_app_title')}</h3>
                         <button className="ui-button ui-button--icon" onClick={onClose} style={{ border: 'none', background: 'transparent', boxShadow: 'none' }}>
                             <X size={18} />
                         </button>

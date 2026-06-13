@@ -1,5 +1,5 @@
 /* Modal & App Selector Styles */
-.modal-overlay {
+.dialog-backdrop {
   position: fixed;
   inset: -6px;
   background: rgba(8, 12, 18, 0.56);
@@ -13,11 +13,7 @@
   border-radius: 0;
 }
 
-body:has(.modal-overlay) #root {
-  border-color: transparent;
-}
-
-.modal-content {
+.dialog--selector {
   background: var(--bg-window);
   padding: 16px;
   border: var(--modal-border);
@@ -27,16 +23,16 @@ body:has(.modal-overlay) #root {
   max-width: 500px;
 }
 
-.modal-title {
+.dialog__title {
   font-size: 14px;
-  font-weight: var(--modal-title-font-weight);
-  text-transform: var(--modal-title-transform);
-  letter-spacing: var(--modal-title-letter-spacing);
-  background: var(--modal-title-background);
-  color: var(--modal-title-color);
-  border: var(--modal-title-border);
-  box-shadow: var(--modal-title-shadow);
-  padding: var(--modal-title-padding);
+  font-weight: var(--dialog__title-font-weight);
+  text-transform: var(--dialog__title-transform);
+  letter-spacing: var(--dialog__title-letter-spacing);
+  background: var(--dialog__title-background);
+  color: var(--dialog__title-color);
+  border: var(--dialog__title-border);
+  box-shadow: var(--dialog__title-shadow);
+  padding: var(--dialog__title-padding);
   display: inline-block;
 }
 
@@ -49,7 +45,7 @@ body:has(.modal-overlay) #root {
 }
 
 /* Confirmation Dialog Styles */
-.confirm-dialog {
+.dialog {
   background: var(--bg-panel);
   padding: 24px;
   border: var(--modal-border);
@@ -60,16 +56,16 @@ body:has(.modal-overlay) #root {
   color: var(--text-primary);
 }
 
-.confirm-dialog-title {
+.dialog__title {
   font-size: 18px;
-  font-weight: var(--modal-title-font-weight);
+  font-weight: var(--dialog__title-font-weight);
   margin-bottom: 12px;
   color: var(--text-primary);
-  text-transform: var(--modal-title-transform);
-  letter-spacing: var(--modal-title-letter-spacing);
+  text-transform: var(--dialog__title-transform);
+  letter-spacing: var(--dialog__title-letter-spacing);
 }
 
-.confirm-dialog-message {
+.dialog__message {
   font-size: 14px;
   margin-bottom: 24px;
   line-height: 1.6;
@@ -77,13 +73,13 @@ body:has(.modal-overlay) #root {
   opacity: 0.8;
 }
 
-.confirm-dialog-buttons {
+.dialog__actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
 }
 
-.confirm-dialog-button {
+.dialog__button {
   padding: 10px 24px;
   font-size: 14px;
   font-weight: 700;
@@ -97,24 +93,24 @@ body:has(.modal-overlay) #root {
   text-transform: none;
 }
 
-.confirm-dialog-button:hover {
+.dialog__button:hover {
   background: var(--bg-input);
   transform: var(--dialog-button-hover-transform);
   box-shadow: var(--dialog-button-hover-shadow);
 }
 
-.confirm-dialog-button:active {
+.dialog__button:active {
   transform: var(--dialog-button-active-transform);
   box-shadow: var(--dialog-button-active-shadow);
 }
 
-.confirm-dialog-button.primary {
+.dialog__button--primary {
   background: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
   box-shadow: 0 12px 24px rgba(var(--accent-color-rgb), 0.26);
 }
 
-.confirm-dialog-button.primary:hover {
+.dialog__button--primary:hover {
   background: var(--accent-hover);
 }

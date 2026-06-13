@@ -1,5 +1,5 @@
-                /* Overlay */
-                .modal-overlay {
+/* Overlay */
+                .dialog-backdrop {
                     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
                     background: rgba(0, 0, 0, 0.4);
                     backdrop-filter: blur(4px);
@@ -7,9 +7,8 @@
                     z-index: 2000;
                 }
 
-
-                /* Confirm Dialog - Modern Style */
-                .modal-overlay .confirm-dialog {
+/* Confirm Dialog - Modern Style */
+                .dialog-backdrop .dialog {
                     background: var(--bg-panel);
                     padding: 24px;
                     border: 1px solid var(--border);
@@ -20,12 +19,12 @@
                     animation: modal-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                @keyframes modal-pop {
+@keyframes modal-pop {
                     0% { transform: scale(0.95); opacity: 0; }
                     100% { transform: scale(1); opacity: 1; }
                 }
 
-                .modal-overlay .confirm-dialog h3 {
+.dialog-backdrop .dialog h3 {
                     margin: 0 0 16px 0;
                     font-size: 17px;
                     font-weight: 600;
@@ -36,7 +35,7 @@
                     text-transform: none;
                 }
 
-                .modal-overlay .confirm-dialog p {
+.dialog-backdrop .dialog p {
                     margin: 12px 0 24px 0;
                     font-size: 14px;
                     font-weight: 400;
@@ -44,13 +43,13 @@
                     color: var(--text-secondary);
                 }
 
-                .modal-overlay .confirm-dialog-buttons {
+.dialog-backdrop .dialog__actions {
                     display: flex;
                     justify-content: flex-end;
                     gap: 8px;
                 }
 
-                .modal-overlay .confirm-dialog-button {
+.dialog-backdrop .dialog__button {
                     padding: 8px 16px;
                     font-size: 13px;
                     font-weight: 500;
@@ -62,86 +61,32 @@
                     transition: all 0.15s;
                     border-radius: var(--radius-sm);
                 }
-                .modal-overlay .confirm-dialog-button:hover {
+
+.dialog-backdrop .dialog__button:hover {
                     background: var(--border-light);
                 }
-                .modal-overlay .confirm-dialog-button:active {
+
+.dialog-backdrop .dialog__button:active {
                     transform: scale(0.98);
                     box-shadow: none;
                 }
 
-                .modal-overlay .confirm-dialog-button.primary {
+.dialog-backdrop .dialog__button--primary {
                     background: var(--accent-color);
                     color: #fff;
                     border: none;
                 }
-                .modal-overlay .confirm-dialog-button.primary:hover {
+
+.dialog-backdrop .dialog__button--primary:hover {
                     background: var(--accent-color-dark);
                 }
 
-                /* Modern Theme Polishes for Confirm Dialog */
-                .theme-mica .confirm-dialog,
-                .theme-acrylic .confirm-dialog {
-                    background: rgba(255, 255, 255, 0.8);
-                    backdrop-filter: blur(20px);
-                    padding: 24px;
-                    border-radius: 16px;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                    border: 1px solid rgba(255,255,255,0.4);
-                    animation: modal-pop-modern 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-                }
-
-                @keyframes modal-pop-modern {
+@keyframes modal-pop-modern {
                     0% { transform: scale(0.95); opacity: 0; }
                     100% { transform: scale(1); opacity: 1; }
                 }
 
-                .theme-mica .confirm-dialog h3,
-                .theme-acrylic .confirm-dialog h3 {
-                    background: transparent;
-                    color: var(--text-primary);
-                    font-size: 18px;
-                    font-weight: 700;
-                    text-transform: none;
-                    padding: 0;
-                }
-
-                .theme-mica .confirm-dialog-button,
-                .theme-acrylic .confirm-dialog-button {
-                    border-radius: 10px;
-                    border: none;
-                    box-shadow: none;
-                    font-weight: 600;
-                    background: rgba(0,0,0,0.05);
-                }
-                .theme-mica .confirm-dialog-button:active,
-                .theme-acrylic .confirm-dialog-button:active {
-                    transform: scale(0.95);
-                }
-
-                .theme-mica .confirm-dialog-button.primary,
-                .theme-acrylic .confirm-dialog-button.primary {
-                    background: var(--accent-color);
-                }
-
-                /* Dark Mode Adaptation */
-                .dark-mode .modal-overlay .confirm-dialog {
-                    background: #1f1f1f;
-                    border-color: #000;
-                }
-                .dark-mode .modal-overlay .confirm-dialog h3 {
-                    color: #fff;
-                }
-                .dark-mode .modal-overlay .confirm-dialog p {
-                    color: #d1d1d1;
-                }
-                .dark-mode .theme-mica .confirm-dialog,
-                .dark-mode .theme-acrylic .confirm-dialog {
-                    background: rgba(30,30,30,0.8);
-                    border-color: rgba(255,255,255,0.1);
-                }
-
-                .modal-input-field input {
+.dialog__field input {
                     width: 100%;
                     background: var(--bg-main);
                     border: 1px solid var(--border);
@@ -155,12 +100,15 @@
                     border-radius: var(--radius-sm);
                     transition: all 0.2s;
                 }
-                .modal-input-field input:focus {
+
+.dialog__field input:focus {
                     border-color: var(--accent-color);
                     box-shadow: 0 0 0 3px var(--accent-light);
                 }
-                .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; }
-                .modal-buttons button {
+
+.modal-buttons { display: flex; gap: 8px; justify-content: flex-end; }
+
+.modal-buttons button {
                     padding: 8px 16px;
                     cursor: pointer;
                     font-size: 13px;
@@ -172,7 +120,9 @@
                     transition: all 0.15s;
                     border-radius: var(--radius-sm);
                 }
-                .modal-buttons button:active { transform: scale(0.98); }
-                .btn-save { background: var(--accent-color); color: white; border: none; }
-                .btn-save:hover { background: var(--accent-color-dark); }
 
+.modal-buttons button:active { transform: scale(0.98); }
+
+.btn-save { background: var(--accent-color); color: white; border: none; }
+
+.btn-save:hover { background: var(--accent-color-dark); }
