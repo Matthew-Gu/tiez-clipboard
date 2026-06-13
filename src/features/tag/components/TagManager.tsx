@@ -6,6 +6,7 @@ import { useTagManagerData } from "../hooks/useTagManagerData";
 import TagManagerContent from "./TagManagerContent";
 import TagManagerDialogs from "./TagManagerDialogs";
 import TagManagerSidebar from "./TagManagerSidebar";
+import { normalizeHexColor, TAG_COLOR_PRESETS } from "../tagManagerUi";
 
 interface TagManagerProps {
     t: (key: string) => string;
@@ -35,6 +36,8 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
     const [newItemContent, setNewItemContent] = useState('');
     const [isManageMode, setIsManageMode] = useState(false);
     const [selectedItemIds, setSelectedItemIds] = useState<Set<number>>(new Set());
+    const [colorPicker, setColorPicker] = useState<{ tagName: string; value: string } | null>(null);
+    const [colorPickerError, setColorPickerError] = useState(false);
     const {
         tags,
         selectedTag,
@@ -113,6 +116,18 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
         if (selectedTag === tagName) onPageChange(transitionTwoLevelPage(page, "show-list"));
     };
 
+    const handleSaveColor = async () => {
+        if (!colorPicker) return;
+        const normalized = normalizeHexColor(colorPicker.value);
+        if (!normalized) {
+            setColorPickerError(true);
+            return;
+        }
+        await setTagColor(colorPicker.tagName, normalized);
+        setColorPicker(null);
+        setColorPickerError(false);
+    };
+
     const filteredTags = useMemo(() => {
         return tags.filter(t => t.name.toLowerCase().includes(tagSearch.toLowerCase()));
     }, [tags, tagSearch]);
@@ -148,10 +163,13 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
                     setEditingTag={setEditingTag}
                     setNewTagName={setNewTagName}
                     setDeleteTagName={(tagName) => setDeleteConfirmation({ show: true, tagName })}
+                    openColorPicker={(tagName, color) => {
+                        setColorPicker({ tagName, value: color });
+                        setColorPickerError(false);
+                    }}
                     createTag={createTag}
                     renameTag={handleRenameTag}
                     openTag={openTag}
-                    setTagColor={setTagColor}
                 />
             ) : (
                 <TagManagerContent
@@ -182,15 +200,21 @@ export default function TagManager({ t, theme, page, onPageChange }: TagManagerP
                 isCreatingItem={isCreatingItem}
                 newItemContent={newItemContent}
                 editingItem={editingItem}
+                colorPicker={colorPicker}
+                colorPickerError={colorPickerError}
                 setDeleteConfirmation={setDeleteConfirmation}
                 setItemDeleteConfirmation={setItemDeleteConfirmation}
                 setIsCreatingItem={setIsCreatingItem}
                 setNewItemContent={setNewItemContent}
                 setEditingItem={setEditingItem}
+                setColorPicker={setColorPicker}
+                setColorPickerError={setColorPickerError}
                 onDeleteTag={handleDeleteTag}
                 onDeleteItems={handleDeleteItems}
                 onAddItem={handleAddManualItem}
                 onUpdateItem={handleUpdateItemContent}
+                onSaveColor={handleSaveColor}
+                colorPresets={TAG_COLOR_PRESETS}
             />
         </div >
     );

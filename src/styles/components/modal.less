@@ -2,9 +2,9 @@
 .dialog-backdrop {
   position: fixed;
   inset: -6px;
-  background: rgba(8, 12, 18, 0.56);
-  backdrop-filter: blur(10px) saturate(115%);
-  -webkit-backdrop-filter: blur(10px) saturate(115%);
+  background: var(--dialog-backdrop-background);
+  backdrop-filter: var(--dialog-backdrop-filter);
+  -webkit-backdrop-filter: var(--dialog-backdrop-filter);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,7 +60,7 @@
 
 /* Confirmation Dialog Styles */
 .dialog {
-  background: var(--bg-panel);
+  background: var(--dialog-surface);
   padding: 24px;
   border: var(--modal-border);
   border-radius: var(--modal-radius);
@@ -127,6 +127,67 @@
 .dialog__textarea:focus {
   border-color: var(--input-focus-border-color);
   box-shadow: var(--input-focus-shadow);
+}
+
+.dialog__input--invalid,
+.dialog__input--invalid:focus {
+  border-color: #d83b3b;
+  box-shadow: 0 0 0 3px rgba(216, 59, 59, 0.16);
+}
+
+.dialog--color-picker {
+  max-width: 360px;
+}
+
+.dialog__color-presets {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.dialog__color-preset {
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.dialog__color-preset:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.dialog__color-preset--active {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.dialog__color-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.dialog__color-preview {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-xs);
+}
+
+.dialog__validation {
+  margin-bottom: 14px;
+  color: #d83b3b;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .dialog__actions {

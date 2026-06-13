@@ -9,3 +9,23 @@
                     }
 
 }
+
+@media (max-width: 520px) {
+    .tag-manager__toolbar--managing {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .tag-manager__batch-actions {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .tag-manager__batch-button {
+        padding: 7px;
+    }
+
+    .tag-manager__batch-button span {
+        display: none;
+    }
+}

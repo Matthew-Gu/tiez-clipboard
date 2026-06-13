@@ -7,7 +7,6 @@ export interface UiState {
   collapsedGroups: Record<string, boolean>;
   search: string;
   isComposing: boolean;
-  searchIsFocused: boolean;
   showTagFilter: boolean;
   typeFilter: string | null;
   selectedIndex: number;
@@ -21,7 +20,6 @@ interface UiActions {
   setCollapsedGroups: UiSetter<Record<string, boolean>>;
   setSearch: UiSetter<string>;
   setIsComposing: UiSetter<boolean>;
-  setSearchIsFocused: UiSetter<boolean>;
   setShowTagFilter: UiSetter<boolean>;
   setTypeFilter: UiSetter<string | null>;
   setSelectedIndex: UiSetter<number>;
@@ -45,7 +43,6 @@ export const createUiInitialState = (): UiState => ({
   },
   search: "",
   isComposing: false,
-  searchIsFocused: false,
   showTagFilter: false,
   typeFilter: null,
   selectedIndex: 0,
@@ -63,7 +60,6 @@ export const useUiStore = create<UiStore>((set) => ({
   setCollapsedGroups: (value) => set((state) => ({ collapsedGroups: resolveUpdate(value, state.collapsedGroups) })),
   setSearch: (value) => set((state) => ({ search: resolveUpdate(value, state.search) })),
   setIsComposing: (value) => set((state) => ({ isComposing: resolveUpdate(value, state.isComposing) })),
-  setSearchIsFocused: (value) => set((state) => ({ searchIsFocused: resolveUpdate(value, state.searchIsFocused) })),
   setShowTagFilter: (value) => set((state) => ({ showTagFilter: resolveUpdate(value, state.showTagFilter) })),
   setTypeFilter: (value) => set((state) => ({ typeFilter: resolveUpdate(value, state.typeFilter) })),
   setSelectedIndex: (value) => set((state) => ({ selectedIndex: resolveUpdate(value, state.selectedIndex) })),

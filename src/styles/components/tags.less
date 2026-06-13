@@ -1,8 +1,7 @@
 /* --- Base Layout --- */
 .app-header__tag-menu {
     position: absolute;
-    top: 100%;
-    left: 0;
+    top: calc(100% + 6px);
     right: 0;
     z-index: 100000;
     display: flex;
@@ -15,8 +14,7 @@
     max-height: min(280px, 50vh);
     overflow-y: auto;
     overflow-x: hidden;
-    width: 100%;
-    margin-top: 4px;
+    width: min(320px, calc(100vw - 48px));
     padding: 10px 10px 12px;
     background: var(--bg-element);
     border: var(--tags-border);
@@ -25,6 +23,15 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     box-sizing: border-box;
+}
+
+.app-header__tag-filter {
+    flex-shrink: 0;
+}
+
+.app-header__tag-menu--filter {
+    top: calc(100% + 6px);
+    right: var(--spacing-md);
 }
 
 .app-header__tag-menu-label {

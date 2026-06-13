@@ -114,7 +114,6 @@ const App = () => {
   const search = useUiStore(selectSearch);
   const setSearch = useUiStore((state) => state.setSearch);
   const isComposing = useUiStore((state) => state.isComposing);
-  const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
   const typeFilter = useUiStore(selectTypeFilter);
   const setCollapsedGroups = useUiStore((state) => state.setCollapsedGroups);
@@ -358,7 +357,6 @@ const App = () => {
     const unlisten = listen(TAURI_EVENTS.focusSearchInput, () => {
       navigate(MAIN_ROUTES.home);
       setShowSearchBox(true);
-      setSearchIsFocused(true);
       activateWindowFocus()
         .catch(console.error)
         .finally(() => {
@@ -374,7 +372,6 @@ const App = () => {
   }, [
     navigate,
     setShowSearchBox,
-    setSearchIsFocused,
     searchInputRef
   ]);
 

@@ -20,10 +20,10 @@ interface TagManagerSidebarProps {
     setEditingTag: (value: string | null) => void;
     setNewTagName: (value: string) => void;
     setDeleteTagName: (value: string) => void;
+    openColorPicker: (name: string, color: string) => void;
     createTag: (name: string) => Promise<void>;
     renameTag: (oldName: string) => Promise<void>;
     openTag: (tagName: string) => Promise<void>;
-    setTagColor: (name: string, color: string) => Promise<void>;
 }
 
 const TagManagerSidebar = ({
@@ -42,10 +42,10 @@ const TagManagerSidebar = ({
     setEditingTag,
     setNewTagName,
     setDeleteTagName,
+    openColorPicker,
     createTag,
     renameTag,
-    openTag,
-    setTagColor
+    openTag
 }: TagManagerSidebarProps) => (
     <div className="tag-manager__list-page">
         <div className="tag-manager__list-header">
@@ -86,14 +86,8 @@ const TagManagerSidebar = ({
                         <div
                             className="tag-manager__color"
                             style={{ background: tagColors[tag.name] || getTagColor(tag.name, theme) }}
-                            onClick={() => document.getElementById(`color-picker-${tag.name}`)?.click()}
-                        />
-                        <input
-                            type="color"
-                            id={`color-picker-${tag.name}`}
-                            style={{ display: 'none' }}
-                            value={tagColors[tag.name] || '#888888'}
-                            onChange={(event) => setTagColor(tag.name, event.target.value)}
+                            onClick={() => openColorPicker(tag.name, tagColors[tag.name] || getTagColor(tag.name, theme))}
+                            title={t('choose_color')}
                         />
                     </div>
                     {editingTag === tag.name ? (

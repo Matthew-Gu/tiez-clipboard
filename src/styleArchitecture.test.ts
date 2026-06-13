@@ -33,7 +33,8 @@ const styledPersistentModifiers = new Set([
   "tag-manager__view-button--active",
   "tag-manager__card--selected",
   "tag-manager__selection-control--checked",
-  "tag-manager__tag--active"
+  "tag-manager__tag--active",
+  "dialog__color-preset--active"
 ]);
 
 describe("style architecture", () => {
@@ -48,6 +49,11 @@ describe("style architecture", () => {
 
     expect(tagEntries).toHaveLength(1);
     expect(duplicateTagStyles).toEqual([]);
+  });
+
+  it("uses the in-app tag color picker", () => {
+    const tagSources = Object.entries(sourceFiles).filter(([path]) => path.includes("/features/tag/"));
+    expect(tagSources.filter(([, source]) => /type=["']color["']/.test(source))).toEqual([]);
   });
 
   it("does not use retired tag manager tokens", () => {

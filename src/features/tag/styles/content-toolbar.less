@@ -3,13 +3,22 @@
 
 .tag-manager__toolbar {
                     height: 48px; border-bottom: 1px solid var(--panel-divider-color);
-                    background: var(--bg-panel);
+                    background: var(--tag-page-toolbar-surface);
+                    backdrop-filter: var(--tag-page-backdrop-filter);
+                    -webkit-backdrop-filter: var(--tag-page-backdrop-filter);
                     display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
                 }
 
 .tag-manager__toolbar-main { display: flex; align-items: center; gap: 12px; }
 
 .tag-manager__toolbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.tag-manager__toolbar--managing {
+                    min-height: 56px;
+                    height: auto;
+                    gap: 12px;
+                    padding: 8px 12px;
+                }
 
 .tag-manager__selection { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: var(--text-primary); }
 
@@ -68,7 +77,7 @@
 .tag-manager__items-list { display: flex; flex-direction: column; gap: 8px; }
 
 .tag-manager__card {
-                    background: var(--bg-element);
+                    background: var(--tag-page-card-surface);
                     border: 1px solid var(--line-soft);
                     padding: 12px; cursor: pointer;
                     position: relative;

@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { CheckSquare, Clock, Copy, Edit2, ExternalLink, LayoutGrid, List, MousePointer2, Plus, Trash2, X } from "lucide-react";
 import { copyToClipboard, openContent } from "../../../shared/ipc/commands";
 import type { ClipboardEntry } from "../../../shared/types";
+import { toggleAllSelectedItems, toggleSelectedItem } from "../tagManagerUi";
 
 interface TagManagerContentProps {
     t: (key: string) => string;
@@ -52,7 +53,49 @@ const TagManagerContent = ({
     copyItem
 }: TagManagerContentProps) => (
     <div className="tag-manager__detail-page">
-        <div className="tag-manager__toolbar">
+        <div className={`tag-manager__toolbar ${isManageMode ? 'tag-manager__toolbar--managing' : ''}`}>
+            {isManageMode ? (
+                <>
+                    <div className="tag-manager__batch-summary">
+                        <CheckSquare size={15} />
+                        <span>{t('selected_count')} {selectedItemIds.size}</span>
+                    </div>
+                    <div className="tag-manager__batch-actions">
+                        <button className="tag-manager__batch-button" onClick={() => setSelectedItemIds((previous) => toggleAllSelectedItems(previous, sortedItems.map((item) => item.id)))}>
+                            <CheckSquare size={14} /><span>{selectedItemIds.size === sortedItems.length && sortedItems.length > 0 ? t('clear_selection') : t('select_all')}</span>
+                        </button>
+                        <button
+                            className="tag-manager__batch-button tag-manager__batch-button--primary"
+                            disabled={selectedItemIds.size === 0}
+                            onClick={async () => {
+                                const selectedItems = tagItems.filter((item) => selectedItemIds.has(item.id));
+                                if (selectedItems.length === 0) return;
+                                await copyToClipboard({
+                                    content: selectedItems.map((item) => item.content).join('\n'),
+                                    contentType: 'text',
+                                    paste: true,
+                                    id: -1,
+                                    deleteAfterUse: false
+                                });
+                                setIsManageMode(false);
+                                setSelectedItemIds(new Set());
+                            }}
+                        >
+                            <Copy size={14} /><span>{t('copy_selected') || '复制选中'}</span>
+                        </button>
+                        <button className="tag-manager__batch-button tag-manager__batch-button--danger" disabled={selectedItemIds.size === 0} onClick={() => setItemDeleteId(-1)}>
+                            <Trash2 size={14} /><span>{t('delete_selected') || '删除选中'}</span>
+                        </button>
+                        <button className="tag-manager__batch-button" onClick={() => {
+                            setIsManageMode(false);
+                            setSelectedItemIds(new Set());
+                        }}>
+                            <X size={14} /><span>{t('exit_manage')}</span>
+                        </button>
+                    </div>
+                </>
+            ) : (
+            <>
             <div className="tag-manager__toolbar-main">
                 <div className="tag-manager__selection">
                     <span className="tag-manager__selection-marker">#</span>
@@ -71,40 +114,9 @@ const TagManagerContent = ({
             <div className="tag-manager__toolbar-actions">
                 {selectedTag && (
                     <div className="tag-manager__management-actions">
-                        {isManageMode ? (
-                            <>
-                                <button className="tag-manager__sort-button" onClick={() => {
-                                    setIsManageMode(false);
-                                    setSelectedItemIds(new Set());
-                                }}>{t('cancel') || '取消'}</button>
-                                <button className="tag-manager__sort-button tag-manager__sort-button--danger" disabled={selectedItemIds.size === 0} onClick={() => setItemDeleteId(-1)}>
-                                    <Trash2 size={14} /><span>{t('delete_selected') || '删除选中'}</span>
-                                </button>
-                                <button
-                                    className="tag-manager__sort-button tag-manager__sort-button--active"
-                                    disabled={selectedItemIds.size === 0}
-                                    onClick={async () => {
-                                        const selectedItems = tagItems.filter((item) => selectedItemIds.has(item.id));
-                                        if (selectedItems.length === 0) return;
-                                        await copyToClipboard({
-                                            content: selectedItems.map((item) => item.content).join('\n'),
-                                            contentType: 'text',
-                                            paste: true,
-                                            id: -1,
-                                            deleteAfterUse: false
-                                        });
-                                        setIsManageMode(false);
-                                        setSelectedItemIds(new Set());
-                                    }}
-                                >
-                                    <Copy size={14} /><span>{t('copy_selected') || '复制选中'}</span>
-                                </button>
-                            </>
-                        ) : (
-                            <button className="tag-manager__sort-button tag-manager__manage-button" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
-                                <CheckSquare size={14} /><span>{t('manage') || '管理'}</span>
-                            </button>
-                        )}
+                        <button className="tag-manager__sort-button tag-manager__manage-button" onClick={() => setIsManageMode(true)} title={t('manage_items') || '管理条目'}>
+                            <CheckSquare size={14} /><span>{t('manage') || '管理'}</span>
+                        </button>
                     </div>
                 )}
                 <div className="tag-manager__view-toggle">
@@ -112,6 +124,8 @@ const TagManagerContent = ({
                     <button type="button" className={`tag-manager__view-button ui-button ui-button--icon ${viewMode === 'grid' ? 'tag-manager__view-button--active' : ''}`} title="卡片视图" onClick={() => setViewMode('grid')}><LayoutGrid size={14} /></button>
                 </div>
             </div>
+            </>
+            )}
         </div>
 
         <div className="tag-manager__items ui-scroll">
@@ -125,12 +139,7 @@ const TagManagerContent = ({
                             className={`tag-manager__card ${selectedItemIds.has(item.id) ? 'tag-manager__card--selected' : ''}`}
                             onClick={() => {
                                 if (isManageMode) {
-                                    setSelectedItemIds((previous) => {
-                                        const next = new Set(previous);
-                                        if (next.has(item.id)) next.delete(item.id);
-                                        else next.add(item.id);
-                                        return next;
-                                    });
+                                    setSelectedItemIds((previous) => toggleSelectedItem(previous, item.id));
                                 } else {
                                     copyItem(item.id, item.content, item.content_type);
                                 }

@@ -5,6 +5,64 @@
                     gap: 8px;
                 }
 
+.tag-manager__batch-summary {
+                    display: flex;
+                    align-items: center;
+                    gap: 7px;
+                    min-width: max-content;
+                    color: var(--text-primary);
+                    font-size: 13px;
+                    font-weight: 700;
+                }
+
+.tag-manager__batch-actions {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    gap: 6px;
+                    min-width: 0;
+                }
+
+.tag-manager__batch-button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 5px;
+                    min-height: 32px;
+                    padding: 6px 9px;
+                    border: 1px solid var(--line-soft);
+                    border-radius: var(--radius-control);
+                    background: var(--bg-button);
+                    color: var(--text-secondary);
+                    font: inherit;
+                    font-size: 12px;
+                    font-weight: 700;
+                    white-space: nowrap;
+                    cursor: pointer;
+                }
+
+.tag-manager__batch-button:hover:not(:disabled) {
+                    border-color: var(--line-strong);
+                    color: var(--text-primary);
+                    background: var(--bg-input);
+                }
+
+.tag-manager__batch-button--primary {
+                    border-color: var(--accent-color);
+                    background: var(--accent-color);
+                    color: #ffffff;
+                }
+
+.tag-manager__batch-button--danger {
+                    color: #d83b3b;
+                    border-color: rgba(216, 59, 59, 0.35);
+                }
+
+.tag-manager__batch-button:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                }
+
 .tag-manager__manage-button {
                     margin-left: 12px;
                 }
@@ -73,6 +131,11 @@
 
 .tag-manager__items--managing .tag-manager__card--selected {
                     background: var(--card-selected-background);
+                    border-color: var(--card-selected-border-color);
+                    box-shadow: var(--card-selected-shadow);
+                }
+
+.tag-manager__items--managing .tag-manager__card--selected:hover {
                     border-color: var(--card-selected-border-color);
                     box-shadow: var(--card-selected-shadow);
                 }

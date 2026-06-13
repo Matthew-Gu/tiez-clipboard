@@ -21,7 +21,6 @@ describe("ui store", () => {
     const store = useUiStore.getState();
     store.setSearch("tag:work");
     store.setIsComposing(true);
-    store.setSearchIsFocused(true);
     store.setShowTagFilter(true);
     store.setTypeFilter("image");
     store.setSelectedIndex((previous) => previous + 2);
@@ -34,7 +33,6 @@ describe("ui store", () => {
     expect(useUiStore.getState()).toMatchObject({
       search: "tag:work",
       isComposing: true,
-      searchIsFocused: true,
       showTagFilter: true,
       typeFilter: "image",
       selectedIndex: 2,

@@ -13,6 +13,11 @@ interface EditingItem {
     content: string;
 }
 
+interface ColorPickerState {
+    tagName: string;
+    value: string;
+}
+
 interface TagManagerDialogsProps {
     t: (key: string) => string;
     deleteConfirmation: DeleteConfirmation;
@@ -20,15 +25,21 @@ interface TagManagerDialogsProps {
     isCreatingItem: boolean;
     newItemContent: string;
     editingItem: EditingItem | null;
+    colorPicker: ColorPickerState | null;
+    colorPickerError: boolean;
     setDeleteConfirmation: (value: DeleteConfirmation) => void;
     setItemDeleteConfirmation: (value: ItemDeleteConfirmation) => void;
     setIsCreatingItem: (value: boolean) => void;
     setNewItemContent: (value: string) => void;
     setEditingItem: (value: EditingItem | null) => void;
+    setColorPicker: (value: ColorPickerState | null) => void;
+    setColorPickerError: (value: boolean) => void;
     onDeleteTag: (tagName: string) => void;
     onDeleteItems: (id: number) => Promise<void>;
     onAddItem: () => Promise<void>;
     onUpdateItem: () => Promise<void>;
+    onSaveColor: () => Promise<void>;
+    colorPresets: readonly string[];
 }
 
 const TagManagerDialogs = ({
@@ -38,15 +49,21 @@ const TagManagerDialogs = ({
     isCreatingItem,
     newItemContent,
     editingItem,
+    colorPicker,
+    colorPickerError,
     setDeleteConfirmation,
     setItemDeleteConfirmation,
     setIsCreatingItem,
     setNewItemContent,
     setEditingItem,
+    setColorPicker,
+    setColorPickerError,
     onDeleteTag,
     onDeleteItems,
     onAddItem,
-    onUpdateItem
+    onUpdateItem,
+    onSaveColor,
+    colorPresets
 }: TagManagerDialogsProps) => (
     <>
         {deleteConfirmation.show && (
@@ -120,6 +137,50 @@ const TagManagerDialogs = ({
                     <div className="dialog__actions">
                         <button className="dialog__button" onClick={() => setEditingItem(null)}>{t('cancel')}</button>
                         <button className="dialog__button dialog__button--primary" onClick={onUpdateItem}>{t('save')}</button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {colorPicker && (
+            <div className="dialog-backdrop" onClick={() => setColorPicker(null)}>
+                <div className="dialog dialog--color-picker" onClick={(event) => event.stopPropagation()}>
+                    <h3 className="dialog__title">{t('choose_color')}</h3>
+                    <div className="dialog__color-presets">
+                        {colorPresets.map((color) => (
+                            <button
+                                key={color}
+                                type="button"
+                                className={`dialog__color-preset ${colorPicker.value.toLowerCase() === color ? 'dialog__color-preset--active' : ''}`}
+                                style={{ background: color }}
+                                title={color}
+                                onClick={() => {
+                                    setColorPicker({ ...colorPicker, value: color });
+                                    setColorPickerError(false);
+                                }}
+                            />
+                        ))}
+                    </div>
+                    <div className="dialog__color-field">
+                        <span className="dialog__color-preview" style={{ background: colorPicker.value }} />
+                        <input
+                            className={`dialog__input ${colorPickerError ? 'dialog__input--invalid' : ''}`}
+                            value={colorPicker.value}
+                            onChange={(event) => {
+                                setColorPicker({ ...colorPicker, value: event.target.value });
+                                setColorPickerError(false);
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter') onSaveColor();
+                            }}
+                            placeholder="#4f7dff"
+                            autoFocus
+                        />
+                    </div>
+                    {colorPickerError && <div className="dialog__validation">{t('invalid_hex_color')}</div>}
+                    <div className="dialog__actions">
+                        <button className="dialog__button" onClick={() => setColorPicker(null)}>{t('cancel')}</button>
+                        <button className="dialog__button dialog__button--primary" onClick={onSaveColor}>{t('confirm')}</button>
                     </div>
                 </div>
             </div>

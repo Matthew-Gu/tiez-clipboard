@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -14,6 +14,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { activateWindowFocus } from "../../../shared/ipc/commands";
 import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
 import { useUiStore } from "../stores/uiStore";
+import { createTagSearch, getActiveTagSearch } from "../../tag/tagManagerUi";
 
 interface AppHeaderProps {
   t: (key: string) => string;
@@ -57,11 +58,24 @@ const AppHeader = ({
   const setIsComposing = useUiStore((state) => state.setIsComposing);
   const showTagFilter = useUiStore((state) => state.showTagFilter);
   const setShowTagFilter = useUiStore((state) => state.setShowTagFilter);
-  const searchIsFocused = useUiStore((state) => state.searchIsFocused);
-  const setSearchIsFocused = useUiStore((state) => state.setSearchIsFocused);
   const typeFilter = useUiStore((state) => state.typeFilter);
   const setTypeFilter = useUiStore((state) => state.setTypeFilter);
   const setEditingTagsId = useUiStore((state) => state.setEditingTagsId);
+  const activeTagSearch = getActiveTagSearch(search);
+  const tagFilterButtonRef = useRef<HTMLDivElement | null>(null);
+  const tagFilterMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!showTagFilter) return;
+    const closeTagFilter = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!tagFilterButtonRef.current?.contains(target) && !tagFilterMenuRef.current?.contains(target)) {
+        setShowTagFilter(false);
+      }
+    };
+    document.addEventListener("mousedown", closeTagFilter);
+    return () => document.removeEventListener("mousedown", closeTagFilter);
+  }, [showTagFilter, setShowTagFilter]);
 
   const getTypeName = (type: string) => {
     switch (type) {
@@ -151,7 +165,7 @@ const AppHeader = ({
                 <input
                   ref={searchInputRef}
                   type="text"
-                  className={`ui-input ${showTagFilter && allTags.length > 0 ? 'ui-input--menu-open' : ''}`}
+                  className="ui-input"
                   placeholder={t('search_placeholder')}
                   value={search}
                   onCompositionStart={() => setIsComposing(true)}
@@ -165,46 +179,13 @@ const AppHeader = ({
                   onMouseDown={() => {
                     activateWindowFocus().catch(console.error);
                   }}
-                  onClick={() => { setShowTagFilter(true); setEditingTagsId(null); }}
                   onFocus={() => {
                     activateWindowFocus().catch(console.error);
-                    setShowTagFilter(true);
-                    setSearchIsFocused(true);
+                    setShowTagFilter(false);
                     setEditingTagsId(null);
-                  }}
-                  onBlur={() => {
-                    setTimeout(() => {
-                      setShowTagFilter(false);
-                      setSearchIsFocused(false);
-                    }, 200);
                   }}
                   style={{ color: colorMode === 'dark' ? '#ffffff' : undefined }}
                 />
-                {showTagFilter && searchIsFocused && allTags.length > 0 && (
-                  <div className="app-header__tag-menu">
-                    <div className="app-header__tag-menu-label">{t('tags') || "Tags"}</div>
-                    <div className="app-header__tag-menu-list">
-                      {allTags.map(tag => {
-                        const tagBackground = getTagColor(tag, theme);
-                        return (
-                          <span
-                            className="tag-chip"
-                            key={tag}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              setSearch("tag:" + tag);
-                              setShowTagFilter(false);
-                            }}
-                            data-tag={tag}
-                            style={{ background: tagBackground, color: getTagTextColor(tagBackground) }}
-                          >
-                            {tag}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
               </div>
               <div
                 className="app-header__filters ui-scroll--hidden"
@@ -224,8 +205,52 @@ const AppHeader = ({
                     {getTypeName(t)}
                   </button>
                 ))}
+                {tagManagerEnabled && (
+                  <div className="app-header__tag-filter" ref={tagFilterButtonRef}>
+                    <button
+                      className={`ui-button ui-button--icon app-header__filter ${activeTagSearch !== null ? 'app-header__filter--active' : ''}`}
+                      title={t('filter_by_tag')}
+                      onClick={() => {
+                        if (activeTagSearch !== null) {
+                          setSearch("");
+                          setShowTagFilter(false);
+                        } else {
+                          setShowTagFilter((open) => !open);
+                        }
+                        setEditingTagsId(null);
+                      }}
+                    >
+                      <Tag size={13} />
+                      <span>{activeTagSearch || t('tags')}</span>
+                    </button>
+                  </div>
+                )}
               </div>
-
+              {showTagFilter && allTags.length > 0 && (
+                <div className="app-header__tag-menu app-header__tag-menu--filter" ref={tagFilterMenuRef}>
+                  <div className="app-header__tag-menu-label">{t('filter_by_tag')}</div>
+                  <div className="app-header__tag-menu-list">
+                    {allTags.map(tag => {
+                      const tagBackground = getTagColor(tag, theme);
+                      return (
+                        <button
+                          type="button"
+                          className="tag-chip"
+                          key={tag}
+                          onClick={() => {
+                            setSearch(createTagSearch(tag));
+                            setShowTagFilter(false);
+                          }}
+                          data-tag={tag}
+                          style={{ background: tagBackground, color: getTagTextColor(tagBackground) }}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

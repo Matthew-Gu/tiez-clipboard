@@ -160,6 +160,9 @@
   --modal-border: 1px solid var(--line-soft);
   --modal-radius: 20px;
   --modal-shadow: var(--shadow-lg);
+  --dialog-backdrop-background: rgba(8, 12, 18, 0.68);
+  --dialog-surface: rgba(255, 255, 255, 0.96);
+  --dialog-backdrop-filter: blur(12px) saturate(115%);
   --dialog__title-background: transparent;
   --dialog__title-color: var(--text-primary);
   --dialog__title-border: none;
@@ -179,6 +182,10 @@
   --tags-border: 1px solid var(--line-soft);
   --tags-radius: 16px;
   --tags-shadow: var(--shadow-sm);
+  --tag-page-surface: var(--bg-panel);
+  --tag-page-toolbar-surface: var(--bg-panel);
+  --tag-page-card-surface: var(--bg-element);
+  --tag-page-backdrop-filter: none;
   --tag-chip-border: 1px solid rgba(24, 34, 53, 0.08);
   --tag-chip-radius: var(--radius-pill);
   --tag-chip-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
@@ -236,6 +243,7 @@
     --bg-input: rgba(22, 28, 39, 0.96);
     --bg-element: rgba(28, 34, 46, 0.88);
     --bg-button: rgba(31, 37, 49, 0.86);
+    --dialog-surface: rgba(31, 37, 49, 0.96);
 
     --text-primary: #edf1f8;
     --text-secondary: #a7b3c9;
@@ -270,6 +278,7 @@ body.dark-mode {
   --bg-input: rgba(22, 28, 39, 0.96);
   --bg-element: rgba(28, 34, 46, 0.88);
   --bg-button: rgba(31, 37, 49, 0.86);
+  --dialog-surface: rgba(31, 37, 49, 0.96);
 
   --text-primary: #edf1f8;
   --text-secondary: #a7b3c9;
