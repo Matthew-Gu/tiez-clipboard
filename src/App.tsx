@@ -410,8 +410,18 @@ const App = () => {
 
   useCustomBackground({ customBackground, customBackgroundOpacity, theme });
 
+  const handleClipboardUpdated = useCallback((entry: Parameters<typeof handleSummaryUpdated>[0]) => {
+    const isNewEntry = !history.some((item) => item.id === entry.id);
+    handleSummaryUpdated(entry);
+
+    if (!isNewEntry || showSettings || effectiveShowTagManager) return;
+    requestAnimationFrame(() => {
+      virtualListRef.current?.scrollToTop();
+    });
+  }, [effectiveShowTagManager, handleSummaryUpdated, history, showSettings]);
+
   useClipboardEvents({
-    onUpdated: handleSummaryUpdated,
+    onUpdated: handleClipboardUpdated,
     onRemoved: handleRemoved,
     onChanged: () => {
       fetchHistory(true);
