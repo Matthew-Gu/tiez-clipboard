@@ -128,11 +128,19 @@
     overflow-x: hidden;
     padding: 3px;
     border-radius: 8px;
-    background: var(--bg-element);
+    background: var(--dialog-surface);
     border: var(--tags-border);
     box-shadow: var(--tags-shadow);
     z-index: 10060;
     box-sizing: border-box;
+}
+
+.clipboard-item--editing-tags {
+    z-index: 100;
+}
+
+.clipboard-list__virtual [data-item-index]:has(.clipboard-item--editing-tags) {
+    z-index: 100;
 }
 
 .clipboard-item__tag-suggestion {

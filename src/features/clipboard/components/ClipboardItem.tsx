@@ -190,7 +190,7 @@ const ClipboardItem = ({
             animate={{ marginBottom: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.1 }}
-            className={`clipboard-item ${isSelected ? "clipboard-item--selected" : ""} ${item.is_pinned ? "clipboard-item--pinned" : ""} ${className || ''}`}
+            className={`clipboard-item ${isSelected ? "clipboard-item--selected" : ""} ${item.is_pinned ? "clipboard-item--pinned" : ""} ${isEditingTags ? "clipboard-item--editing-tags" : ""} ${className || ''}`}
             onMouseDown={(e) => {
                 const target = e.target as HTMLElement;
                 if (e.button !== 0) return;
